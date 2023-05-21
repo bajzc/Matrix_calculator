@@ -4,7 +4,7 @@ project(test-demo C)
 set(CMAKE_C_STANDARD 11)
 
 include_directories(.)
-include_directories(test)
+include_directories(demo)
 
 add_executable(Matrix_calculator
-        test/demo.c)
+        demo/demo.c)
