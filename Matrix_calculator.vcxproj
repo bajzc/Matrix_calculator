@@ -20,15 +20,15 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="demo.c" />
-    <ClCompile Include="regex.c" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include=".clang-format" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="demo.h" />
+    <ClCompile Include="demo\demo.c" />
+    <ClCompile Include="demo\regex.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="demo\demo.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
