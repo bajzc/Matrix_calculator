@@ -1,14 +1,11 @@
-//
-// Created by LiZeCheng-tony on 2023-05-14.
-//
-#ifndef MATRIX_CALCULATOR_DEMO_H
-#define MATRIX_CALCULATOR_DEMO_H
+//MSVC
+#pragma once
 
-#include <math.h>
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#ifndef DEMO_DEMO_H
+#define DEMO_DEMO_H
+#include <uthash.h> 
+
+
 // data type
 typedef struct {
   unsigned int row;
@@ -24,8 +21,8 @@ typedef struct {
 
 typedef struct {
   char* name;
-  //  UT_hash_handle hh;
-  matrix_t matrix;
+  UT_hash_handle hh;
+  matrix_t *matrix;
 } identifier_t;
 
 // enum
@@ -53,5 +50,5 @@ void matrix_LU_NbyN_Factorization(matrix_t* source, matrix_t* L, matrix_t* U,
                                   double* det, ans_matrix_t* ans);
 void matrix_inverse(matrix_t* a, ans_matrix_t* ans);
 double matrix_det(matrix_t* a);
-int regex();
-#endif  // MATRIX_CALCULATOR_DEMO_H
+int main(int argc, char** argv);
+#endif  // DEMO_DEMO_H

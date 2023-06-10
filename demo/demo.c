@@ -2,7 +2,13 @@
 // Created by LiZeCheng-tony on 2023-05-14.
 //
 #include "demo.h"
+#include <math.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include "errorf.h"
 bool ans_NULL = 0;
+
 void matrix_malloc(matrix_t* a) {
   a->matrix = (double**)malloc(
       a->row * sizeof(double*));  // this * took me a whole afternoon,Ì©¿âÀ²!
@@ -68,7 +74,7 @@ void matrix_input(matrix_t* a) {
   printf("Input a %d * %d matrix:\n", a->row, a->column);
   for (unsigned int i = 0; i < a->row; i++) {
     for (unsigned int j = 0; j < a->column; j++) {
-      if (scanf_s("%lf", &a->matrix[i][j]) != 1) {
+      if (scanf("%lf", &a->matrix[i][j]) != 1) {
         puts("INPUT ERROR");
         exit(INPUT_ERROR);
       }
@@ -301,14 +307,8 @@ double matrix_det(matrix_t* a) {
 
 // main for demo
 int main(int argc, char** argv) {
-  regex();
-  return 0;
-
   matrix_t* a = (matrix_t*)malloc(sizeof(matrix_t));
   matrix_t* b = (matrix_t*)malloc(sizeof(matrix_t));
-  //  if (argc != 1) {
-  //    freopen(argv[1], "r", stdin);
-  //  }
   puts("row and column for first matrix:");
   scanf_s("%d%d", &a->row, &a->column);
   matrix_malloc(a);
@@ -324,8 +324,9 @@ int main(int argc, char** argv) {
   while ((temp_char = getchar()) != '\n' && temp_char != ' ') {
     ungetc(temp_char, stdin);
   }
-  scanf_s("%d", &input_case);
+  (void)scanf("%d", &input_case);
   ans_matrix_t* ans = (ans_matrix_t*)malloc(sizeof(ans_matrix_t));
+  setbuf(stdin, NULL);
   switch (input_case) {
     case 1:
       matrix_plus(a, b, ans);
@@ -346,6 +347,8 @@ int main(int argc, char** argv) {
       matrix_free(a);
       matrix_free(b);
       free(ans);
+      puts("Any key to exit...");
+      (void)getchar();
       return 0;
     default:
       exit(UNKNOWN_INPUT);
@@ -359,5 +362,7 @@ int main(int argc, char** argv) {
   matrix_free(a);
   matrix_free(b);
   ans_matrix_free(ans);
+  puts("Any key to exit...");
+  (void)getchar();
   return 0;
 }
