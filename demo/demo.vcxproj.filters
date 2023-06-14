@@ -30,6 +30,9 @@
     <ClCompile Include="test.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="cli.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="demo.h">
@@ -42,6 +45,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="errorf.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cli.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

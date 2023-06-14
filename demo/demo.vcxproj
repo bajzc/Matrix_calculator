@@ -101,9 +101,10 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <SDLCheck>false</SDLCheck>
+      <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard_C>Default</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -127,6 +128,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="cli.c" />
     <ClCompile Include="demo.c" />
     <ClCompile Include="errorf.c" />
     <ClCompile Include="hash.c" />
@@ -134,6 +136,7 @@
     <ClCompile Include="test.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="cli.h" />
     <ClInclude Include="demo.h" />
     <ClInclude Include="errorf.h" />
     <ClInclude Include="hash.h" />
