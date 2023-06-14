@@ -23,7 +23,7 @@ void print_help_msg(void)
 	printf("%-10s", "clean");
 	printf("%-70s\n",
 	       "Delete all matrix stored in memory! (ans will remain)");
-	printf("%-10s", "Quit (exit)");
+	printf("%-10s", "quit(exit)");
 	printf("%-70s\n", "quit");
 	printf("%-10s", "clear");
 	printf("%-70s\n", "Clean the screen");

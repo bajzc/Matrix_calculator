@@ -32,33 +32,24 @@ void matrix_free(matrix_t *a)
 		free(a->matrix[i]);
 	}
 	free(a->matrix);
-	free(a);
 }
 
 void matrix_plus(matrix_t *a, matrix_t *b, matrix_t *ans)
 {
 	if (a->row != b->row || a->column != b->column) {
-		error_exit("Matrix size do not match");
+		printf("Sizes are different!\n\"ans\" has been overwritten\n");
+		matrix_free(ans);
+		ans->column = ans->row = 1;
+		matrix_calloc(ans);
+		return;
 	}
+	matrix_free(ans);
 	ans->row = a->row;
 	ans->column = a->column;
-	matrix_calloc(ans);
+	matrix_malloc(ans);
 	for (unsigned int i = 0; i < ans->row; i++) {
 		for (unsigned int j = 0; j < ans->column; j++) {
 			ans->matrix[i][j] = a->matrix[i][j] + b->matrix[i][j];
-		}
-	}
-}
-
-void matrix_input(matrix_t *a)
-{
-	printf("Input a %d * %d matrix:\n", a->row, a->column);
-	for (unsigned int i = 0; i < a->row; i++) {
-		for (unsigned int j = 0; j < a->column; j++) {
-			if (scanf("%lf", &a->matrix[i][j]) != 1) {
-				puts("INPUT ERROR");
-				exit(INPUT_ERROR);
-			}
 		}
 	}
 }
@@ -76,11 +67,16 @@ void matrix_t_print(matrix_t *a)
 void matrix_minus(matrix_t *a, matrix_t *b, matrix_t *ans)
 {
 	if (a->row != b->row || a->column != b->column) {
-		exit(NOT_N_BY_N_MATRIX);
+		printf("Sizes are different!\n\"ans\" has been overwritten\n");
+		matrix_free(ans);
+		ans->column = ans->row = 1;
+		matrix_calloc(ans);
+		return;
 	}
+	matrix_free(ans);
 	ans->row = a->row;
 	ans->column = a->column;
-	matrix_calloc(ans);
+	matrix_malloc(ans);
 	for (unsigned int i = 0; i < ans->row; i++) {
 		for (unsigned int j = 0; j < ans->column; j++) {
 			ans->matrix[i][j] = a->matrix[i][j] - b->matrix[i][j];
@@ -90,6 +86,7 @@ void matrix_minus(matrix_t *a, matrix_t *b, matrix_t *ans)
 
 void matrix_times_reorder(matrix_t *a, matrix_t *b, matrix_t *ans)
 {
+	matrix_free(ans);
 	ans->row = a->row;
 	ans->column = b->column;
 	matrix_calloc(ans);
@@ -204,6 +201,8 @@ void matrix_LU_NbyN_Factorization(matrix_t *source, matrix_t *L, matrix_t *U,
 	matrix_times_reorder(U_inv, L_inv, ans);
 	matrix_free(U_inv);
 	matrix_free(L_inv);
+	free(U_inv);
+	free(L_inv);
 }
 
 void matrix_inverse(matrix_t *a, matrix_t *ans)
@@ -223,8 +222,11 @@ void matrix_inverse(matrix_t *a, matrix_t *ans)
 		double det = a->matrix[0][0] * a->matrix[1][1] -
 			     a->matrix[0][1] * a->matrix[1][0];
 		if (det == 0) {
-			puts("Det() = 0!");
-			exit(NOT_INVERTIBLE_MATRIX);
+			puts("Det() = 0!\n\"ans\" has been overwritten\n");
+			matrix_free(ans);
+			ans->column = ans->row = 1;
+			matrix_calloc(ans);
+			return -1;
 		}
 		printf("det:%.5f\n", det);
 		ans->matrix[0][0] = a->matrix[1][1] / det;
@@ -243,6 +245,8 @@ void matrix_inverse(matrix_t *a, matrix_t *ans)
 	matrix_LU_NbyN_Factorization(a, L, U, NULL, ans);
 	matrix_free(L);
 	matrix_free(U);
+	free(L);
+	free(U);
 }
 
 double matrix_det(matrix_t *a)
@@ -260,8 +264,8 @@ double matrix_det(matrix_t *a)
 			      a->matrix[0][1] * a->matrix[1][0];
 		}
 	} else {
-		puts("matrix should be N by N!");
-		exit(NOT_N_BY_N_MATRIX);
+		printf("Row and column are different\n");
+		return NAN;
 	}
 	return det;
 }

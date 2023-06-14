@@ -16,7 +16,7 @@
 
 * This is a matrix calculator with basic math functions and a friendly input syntax.
 * It can do simple operations with several matrices distinguished by their names.
-* It has ability to analysis user's input and convert specific format (supported by PCRE2)
+* It has ability to analyze user's input and convert specific format (supported by PCRE2)
 
 
 ## Getting start
@@ -28,6 +28,7 @@
 **For demo version:**
 
 **Define or overwrite a matrix**
+
 Separate the elements with a `space`.
 To create a matrix that has multiple rows, separate the rows with `;`.
 To create an array with multiple elements in a single row, you don't need `;`.
@@ -37,6 +38,7 @@ So far, we support signed decimal number.
 ```
 
 **Print a matrix**
+
 Just type the name of matrix to print, if your matrix has a bad name, it may be recognized as intrinsic functions (see below).
 ```cmd
 >>>name
@@ -45,6 +47,7 @@ Just type the name of matrix to print, if your matrix has a bad name, it may be 
 ```
 
 **Use math functions**
+
 If you want to add to matrix, use `add()`, the answer will be shown and stored in matrix "ans".
 ```cmd
 >>>add(name1,name2)
@@ -52,6 +55,7 @@ If you want to add to matrix, use `add()`, the answer will be shown and stored i
 To see more math functions, just type `help`.
 
 **Intrinsic functions**
+
 There are some intrinsic functions, like `help`:
 
 ```cmd
@@ -86,4 +90,3 @@ Have a try:
 - [ ] Memory leak
 - [ ] Support arithmetic operations
 - [ ] Trig functions
-- [ ] Fraction
