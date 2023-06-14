@@ -1,6 +1,6 @@
-# A_tiny_matrix_calculator
+# Matrix_calculator
 
-**A tiny matric calculator**
+**Matrix calculator**
 
 **Demo version [README](./demo/README.md)**
 
