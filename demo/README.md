@@ -49,6 +49,11 @@ Just type the name of matrix to print, if your matrix has a bad name, it may be 
 **Use math functions**
 
 If you want to add to matrix, use `add()`, the answer will be shown and stored in matrix "ans".
+
+**Known problem:**
+
+**Math functions will not work as expected if `ans` is used as an argument. Since the program frees the memory of `ans` before computing!**
+
 ```cmd
 >>>add(name1,name2)
 ```
@@ -60,6 +65,9 @@ There are some intrinsic functions, like `help`:
 
 ```cmd
 >>>help
+```
+output:
+```cmd
 test demo
 Matrix calculator
 Math Functions:

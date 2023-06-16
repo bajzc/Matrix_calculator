@@ -27,9 +27,6 @@
     <ClCompile Include="errorf.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="test.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="cli.c">
       <Filter>Source Files</Filter>
     </ClCompile>
