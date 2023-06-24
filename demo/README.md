@@ -16,7 +16,7 @@
 
 * This is a matrix calculator with basic math functions and a friendly input syntax.
 * It can do simple operations with several matrices distinguished by their names.
-* It has ability to analyze user's input and convert specific format (supported by PCRE2)
+* It has ability to analyze user's input and convert specific format (supported by [PCRE2](https://github.com/PCRE2Project/pcre2))
 
 
 ## Getting start
