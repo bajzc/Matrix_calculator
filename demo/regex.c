@@ -29,51 +29,57 @@ const char* StatementPattern =
 const char* ColonPattern = "(;)";  // get the number of ';'
 const char* NumberPattern = "(?'NUMBER'(-?\\d+(,\\d+)*(\\.\\d+)?))";
 
-pcre2_match_data *NameMatchData, *FunctionMatchData, *StatementMatchData,
-    *ColonMatchData, *NumberMatchData;
-PCRE2_SIZE *NameOutVector, *FunctionOutVector, *StatementOutVector,
-    *ColonOutVector, *NumberOutVector;
-pcre2_code *Namere, *Functionre, *Statementre, *Colonre, *Numberre;
-int Namerc, Functionrc, Statementrc, Colonrc, Numberrc;
+pcre2_match_data** MatchData = NULL;
+PCRE2_SIZE** OutVector = NULL;
+pcre2_code** re = NULL;
+int* rc = NULL;
 
-char* FunctionNames[] = {"ADD", "SUB", "MLP", "DET", "INV"};
+//pcre2_match_data *NamseMatchData, *FunctionMatchData, *StatementMatchData,
+//    *ColonMatchData, *NumberMatchData;
+//PCRE2_SIZE *NameOutVector, *FunctionOutVector, *StatementOutVector,
+//    *ColonOutVector, *NumberOutVector;
+//pcre2_code *Namere, *Functionre, *Statementre, *Colonre, *Numberre;
+//int Namerc, Functionrc, Statementrc, Colonrc, Numberrc;
+
+char* FunctionNames[MATRIX_FUNCTION_NUMBER] = {"ADD", "SUB", "MLP", "DET",
+                                               "INV"};
 
 matrix_t* regex_creat_matrix(char* MatrixString) {
   PCRE2_SIZE MatrixStringLength = strlen(MatrixString);
-  Colonre = pcre2_compile((PCRE2_SPTR)ColonPattern, PCRE2_ZERO_TERMINATED, 0,
-                          &errornumber, &erroroffset, NULL);
-  ColonMatchData = pcre2_match_data_create_from_pattern(Colonre, NULL);
-  Colonrc = pcre2_match(Colonre, (PCRE2_SPTR)MatrixString, MatrixStringLength,
-                        0, 0, ColonMatchData, NULL);
-  if (Colonrc >= 0)
-    ColonOutVector = pcre2_get_ovector_pointer(ColonMatchData);
+  re[COLON] = pcre2_compile((PCRE2_SPTR)ColonPattern, PCRE2_ZERO_TERMINATED, 0,
+                            &errornumber, &erroroffset, NULL);
+  MatchData[COLON] = pcre2_match_data_create_from_pattern(re[COLON], NULL);
+  rc[COLON] = pcre2_match(re[COLON], (PCRE2_SPTR)MatrixString,
+                          MatrixStringLength, 0, 0, MatchData[COLON], NULL);
+  if (rc[COLON] >= 0)
+    OutVector[COLON] = pcre2_get_ovector_pointer(MatchData[COLON]);
   matrix_t* new = malloc(sizeof(matrix_t));
-  if (Colonrc > 0) {  // there is at least one colon
+  if (rc[COLON] > 0) {  // there is at least one colon
     PCRE2_SIZE MatrixLength = strlen(MatrixString);
-    Numberre = pcre2_compile((const unsigned char*)NumberPattern,
-                             PCRE2_ZERO_TERMINATED, 0, &errornumber,
-                             &erroroffset, NULL);
-    NumberMatchData = pcre2_match_data_create_from_pattern(Numberre, NULL);
-    NumberOutVector = pcre2_get_ovector_pointer(NumberMatchData);
+    re[NUMBER] = pcre2_compile((const unsigned char*)NumberPattern,
+                               PCRE2_ZERO_TERMINATED, 0, &errornumber,
+                               &erroroffset, NULL);
+    MatchData[NUMBER] = pcre2_match_data_create_from_pattern(re[NUMBER], NULL);
+    OutVector[NUMBER] = pcre2_get_ovector_pointer(MatchData[NUMBER]);
     // convert into num
     PCRE2_SIZE NumberOffset = 0;
     PCRE2_SIZE ColonOffset = 0;
     // the number of digits found before the colon
     unsigned int matrix_column = 0;
     unsigned int matrix_row = 0;
-    while ((Numberrc =
-                pcre2_match(Numberre, (PCRE2_SPTR)MatrixString, MatrixLength,
-                            NumberOffset, 0, NumberMatchData, NULL)) > 0 &&
-           (int)NumberOutVector[1] <= ColonOutVector[0]) {
-      NumberOutVector = pcre2_get_ovector_pointer(NumberMatchData);
-      NumberOffset = NumberOutVector[1];
+    while ((rc[NUMBER] =
+                pcre2_match(re[NUMBER], (PCRE2_SPTR)MatrixString, MatrixLength,
+                            NumberOffset, 0, MatchData[NUMBER], NULL)) > 0 &&
+           (int)OutVector[NUMBER][1] <= OutVector[COLON][0]) {
+      OutVector[NUMBER] = pcre2_get_ovector_pointer(MatchData[NUMBER]);
+      NumberOffset = OutVector[NUMBER][1];
       matrix_column++;
     }
-    while (
-        (Colonrc = pcre2_match(Colonre, (PCRE2_SPTR)MatrixString, MatrixLength,
-                               ColonOffset, 0, ColonMatchData, NULL)) > 0) {
-      ColonOutVector = pcre2_get_ovector_pointer(ColonMatchData);
-      ColonOffset = ColonOutVector[1];
+    while ((rc[COLON] =
+                pcre2_match(re[COLON], (PCRE2_SPTR)MatrixString, MatrixLength,
+                            ColonOffset, 0, MatchData[COLON], NULL)) > 0) {
+      OutVector[COLON] = pcre2_get_ovector_pointer(MatchData[COLON]);
+      ColonOffset = OutVector[COLON][1];
       matrix_row++;
     }
     matrix_row += 1;  // last row without ';'
@@ -89,38 +95,39 @@ matrix_t* regex_creat_matrix(char* MatrixString) {
     NumberOffset = ColonOffset = 0;
     for (unsigned int i = 0; i < matrix_row; i++) {
       for (unsigned int j = 0; j < matrix_column; j++) {
-        Numberrc = pcre2_match(Numberre, (PCRE2_SPTR)MatrixString, MatrixLength,
-                               NumberOffset, 0, NumberMatchData, NULL);
+        rc[NUMBER] =
+            pcre2_match(re[NUMBER], (PCRE2_SPTR)MatrixString, MatrixLength,
+                        NumberOffset, 0, MatchData[NUMBER], NULL);
         // Check if there is number of this place
-        if (Numberrc < 0) {
+        if (rc[NUMBER] < 0) {
           error_print(
               "Check if your matrix contains the same number of elements in "
               "each row");
           exit(-1);
         }
-        NumberOutVector = pcre2_get_ovector_pointer(NumberMatchData);
+        OutVector[NUMBER] = pcre2_get_ovector_pointer(MatchData[NUMBER]);
         PCRE2_SPTR SubStringStart =
-            (PCRE2_SPTR)MatrixString + NumberOutVector[0];
+            (PCRE2_SPTR)MatrixString + OutVector[NUMBER][0];
         PCRE2_SPTR SubStringEnd =
-            (PCRE2_SPTR)MatrixString + NumberOutVector[1] - 1;
+            (PCRE2_SPTR)MatrixString + OutVector[NUMBER][1] - 1;
         new->matrix[i][j] =
             strtod((char*)SubStringStart, (char**)&SubStringEnd);
-        NumberOffset = NumberOutVector[1];
+        NumberOffset = OutVector[NUMBER][1];
       }
     }
   } else {  // 1 by N matrix: [1 2 3 4]
     PCRE2_SIZE MatrixLength = strlen(MatrixString);
-    Numberre = pcre2_compile((PCRE2_SPTR)NumberPattern, PCRE2_ZERO_TERMINATED,
-                             0, &errornumber, &erroroffset, NULL);
-    NumberMatchData = pcre2_match_data_create_from_pattern(Numberre, NULL);
-    NumberOutVector = pcre2_get_ovector_pointer(NumberMatchData);
+    re[NUMBER] = pcre2_compile((PCRE2_SPTR)NumberPattern, PCRE2_ZERO_TERMINATED,
+                               0, &errornumber, &erroroffset, NULL);
+    MatchData[NUMBER] = pcre2_match_data_create_from_pattern(re[NUMBER], NULL);
+    OutVector[NUMBER] = pcre2_get_ovector_pointer(MatchData[NUMBER]);
     PCRE2_SIZE NumberOffset = 0;
     unsigned int matrix_column = 0;
-    while ((Numberrc =
-                pcre2_match(Numberre, (PCRE2_SPTR)MatrixString, MatrixLength,
-                            NumberOffset, 0, NumberMatchData, NULL)) > 0) {
-      NumberOutVector = pcre2_get_ovector_pointer(NumberMatchData);
-      NumberOffset = NumberOutVector[1];
+    while ((rc[NUMBER] =
+                pcre2_match(re[NUMBER], (PCRE2_SPTR)MatrixString, MatrixLength,
+                            NumberOffset, 0, MatchData[NUMBER], NULL)) > 0) {
+      OutVector[NUMBER] = pcre2_get_ovector_pointer(MatchData[NUMBER]);
+      NumberOffset = OutVector[NUMBER][1];
       matrix_column++;
     }
     new->row = 1;
@@ -128,15 +135,17 @@ matrix_t* regex_creat_matrix(char* MatrixString) {
     matrix_malloc(new);
     NumberOffset = 0;
     for (unsigned int j = 0; j < matrix_column; j++) {
-      Numberrc = pcre2_match(Numberre, (PCRE2_SPTR)MatrixString, MatrixLength,
-                             NumberOffset, 0, NumberMatchData, NULL);
+      rc[NUMBER] =
+          pcre2_match(re[NUMBER], (PCRE2_SPTR)MatrixString, MatrixLength,
+                      NumberOffset, 0, MatchData[NUMBER], NULL);
       // Check if there is number of this place
-      NumberOutVector = pcre2_get_ovector_pointer(NumberMatchData);
-      PCRE2_SPTR SubStringStart = (PCRE2_SPTR)MatrixString + NumberOutVector[0];
+      OutVector[NUMBER] = pcre2_get_ovector_pointer(MatchData[NUMBER]);
+      PCRE2_SPTR SubStringStart =
+          (PCRE2_SPTR)MatrixString + OutVector[NUMBER][0];
       PCRE2_SPTR SubStringEnd =
-          (PCRE2_SPTR)MatrixString + NumberOutVector[1] - 1;
+          (PCRE2_SPTR)MatrixString + OutVector[NUMBER][1] - 1;
       new->matrix[0][j] = strtod((char*)SubStringStart, (char**)&SubStringEnd);
-      NumberOffset = NumberOutVector[1];
+      NumberOffset = OutVector[NUMBER][1];
     }
   }
   return new;
@@ -144,25 +153,23 @@ matrix_t* regex_creat_matrix(char* MatrixString) {
 
 // register a new matrix and/or check
 int regex_matrix() {
-  char* Matrix = malloc(sizeof(char) * 1024 * 2);
+  PCRE2_SIZE MatrixLength_require = 1024 * 2;
+  char* Matrix = malloc(sizeof(char) * MatrixLength_require);
+  PCRE2_SIZE NameLength = 128;
   PCRE2_UCHAR* MatrixName =
-      malloc(sizeof(PCRE2_UCHAR) * 128);  // name of matrix
-  uint32_t namecount;
-  (void)pcre2_pattern_info(Statementre, PCRE2_INFO_NAMECOUNT, &namecount);
-
+      malloc(sizeof(PCRE2_UCHAR) * NameLength);  // name of matrix
   PCRE2_SPTR Require_name = (PCRE2_SPTR) "NAME";
-  PCRE2_SIZE NameLength = sizeof(MatrixName);
-  int NameResult = pcre2_substring_copy_byname(StatementMatchData, Require_name,
-                                               MatrixName, &NameLength);
+  int NameResult = pcre2_substring_copy_byname(
+      MatchData[STATEMENT], Require_name, MatrixName, &NameLength);
   if (NameResult < 0) {
     printf("ERROR CODE:%d", NameResult);
     error_print("Matrix name copy error");
     return -1;
   }
+
   // get substring of matrix: [ ... (;) ... ]
-  PCRE2_SIZE MatrixLength_require = sizeof(Matrix);
   int MatrixResult =
-      pcre2_substring_get_byname(StatementMatchData, (PCRE2_SPTR) "MATRIX",
+      pcre2_substring_get_byname(MatchData[STATEMENT], (PCRE2_SPTR) "MATRIX",
                                  (PCRE2_UCHAR**)&Matrix, &MatrixLength_require);
   if (MatrixResult < 0) {
     printf("ERROR CODE:%d", NameResult);
@@ -185,20 +192,44 @@ int regex_matrix() {
   return 0;
 }
 
+void regex_free(void) {
+  for (int i = 0; i < REGEX_OBJ_NUMBER; i++) {
+    if (rc[i] != 1145) {
+      pcre2_match_data_free(MatchData[i]);
+      pcre2_code_free(re[i]);
+    }
+  }
+}
+
+// need to make sure all regex pointers are freed before running this function
+void regex_malloc_all(void) {
+  MatchData =
+      (pcre2_match_data**)malloc(sizeof(pcre2_match_data*) * REGEX_OBJ_NUMBER);
+  OutVector = (PCRE2_SIZE**)malloc(sizeof(PCRE2_SIZE*) * REGEX_OBJ_NUMBER);
+  re = (pcre2_code**)malloc(sizeof(pcre2_code*) * REGEX_OBJ_NUMBER);
+  // rc will be change once we use any of the variable above,
+  // regex_free() will free MatchData, re and rc
+  // by checking the value is 1145 or not
+  rc = (int*)malloc(sizeof(int) * REGEX_OBJ_NUMBER);
+  for (int i = 0; i < REGEX_OBJ_NUMBER; i++) {
+    rc[i] = 1145;
+  }
+}
+
 int regex(const char* string) {
-  bool isName = 0, isStatement = 0, isFunction = 0;
+  bool isName = 0, isStatement = 0;
   PCRE2_SIZE StringLength = (PCRE2_SIZE)strlen((char*)string);
+  regex_free();
+  regex_malloc_all();
 
   // regex about name (may include function name)
-  Namere = pcre2_compile((PCRE2_SPTR)NamePattern, PCRE2_ZERO_TERMINATED, 0,
-                         &errornumber, &erroroffset, NULL);
-  NameMatchData = pcre2_match_data_create_from_pattern(Namere, NULL);
-  Namerc = pcre2_match(Namere, (PCRE2_SPTR)string, StringLength, 0, 0,
-                       NameMatchData, NULL);
-  if (Namerc < 0) {
-    pcre2_match_data_free(NameMatchData);
-    pcre2_code_free(Namere);
-    if (Namerc == PCRE2_ERROR_NOMATCH) {
+  re[NAME] = pcre2_compile((PCRE2_SPTR)NamePattern, PCRE2_ZERO_TERMINATED, 0,
+                           &errornumber, &erroroffset, NULL);
+  MatchData[NAME] = pcre2_match_data_create_from_pattern(re[NAME], NULL);
+  rc[NAME] = pcre2_match(re[NAME], (PCRE2_SPTR)string, StringLength, 0, 0,
+                         MatchData[NAME], NULL);
+  if (rc[NAME] < 0) {
+    if (rc[NAME] == PCRE2_ERROR_NOMATCH) {
       error_print("No name found (Not compliant input)");
       return -1;
     } else {
@@ -207,22 +238,21 @@ int regex(const char* string) {
     }
   }
   isName = 1;
-  NameOutVector = pcre2_get_ovector_pointer(NameMatchData);
+  OutVector[NAME] = pcre2_get_ovector_pointer(MatchData[NAME]);
 
   // regex about statement
-  Statementre =
+  re[STATEMENT] =
       pcre2_compile((PCRE2_SPTR)StatementPattern, PCRE2_ZERO_TERMINATED, 0,
                     &errornumber, &erroroffset, NULL);
-  StatementMatchData = pcre2_match_data_create_from_pattern(Statementre, NULL);
-  Statementrc = pcre2_match(Statementre, (PCRE2_SPTR)string, StringLength, 0, 0,
-                            StatementMatchData, NULL);
-  if (Statementrc < 0) {
-    pcre2_match_data_free(StatementMatchData);
-    pcre2_code_free(Statementre);
-    if (Statementrc == PCRE2_ERROR_NOMATCH) {
+  MatchData[STATEMENT] =
+      pcre2_match_data_create_from_pattern(re[STATEMENT], NULL);
+  rc[STATEMENT] = pcre2_match(re[STATEMENT], (PCRE2_SPTR)string, StringLength,
+                              0, 0, MatchData[STATEMENT], NULL);
+  if (rc[STATEMENT] < 0) {
+    if (rc[STATEMENT] == PCRE2_ERROR_NOMATCH) {
       isStatement = 0;
     } else {
-      printf("ERROR CODE:%d\n", Statementrc);
+      printf("ERROR CODE:%d\n", rc[STATEMENT]);
       error_print("Matching error");
       return -1;
     }
@@ -233,14 +263,14 @@ int regex(const char* string) {
   // Go to add new matrix or alter the old one
   if (isStatement) {
     // Need the number of colon
-    StatementOutVector = pcre2_get_ovector_pointer(StatementMatchData);
+    OutVector[STATEMENT] = pcre2_get_ovector_pointer(MatchData[STATEMENT]);
     regex_matrix();
     return 0;
   }
 
   // the entire input is ONE name, which means print the matrix
   // OR run some internal functions: quit list ...
-  if (NameOutVector[1] == strlen(string)) {
+  if (OutVector[NAME][1] == strlen(string)) {
     // internal functions: list clean quit(exit) help
     if (StringLength == 4 || StringLength == 5) {
       if (strncmp(string, "list", 4) == 0) {
@@ -253,11 +283,9 @@ int regex(const char* string) {
       }
       if (strncmp(string, "quit", 4) == 0) {
         exit(1);
-        return 0;
       }
       if (strncmp(string, "exit", 4) == 0) {
         exit(1);
-        return 0;
       }
       if (strncmp(string, "help", 4) == 0) {
         print_help_msg();
@@ -284,45 +312,44 @@ int regex(const char* string) {
 
   // call function
   if (isName && !isStatement) {
-    Functionre =
+    re[FUNCTION] =
         pcre2_compile((PCRE2_SPTR)FunctionPattern, PCRE2_ZERO_TERMINATED, 0,
                       &errornumber, &erroroffset, NULL);
-    if (Functionre == NULL) {
+    if (re[FUNCTION] == NULL) {
       PCRE2_UCHAR buffer[256];
       pcre2_get_error_message(errornumber, buffer, sizeof(buffer));
       printf("Function pattern compilation failed at offset %d: %s\n",
              (int)erroroffset, buffer);
       error_exit("PCRE2 compilation failed");
     }
-    FunctionMatchData = pcre2_match_data_create_from_pattern(Functionre, NULL);
-    Functionrc = pcre2_match(Functionre, (PCRE2_SPTR)string, StringLength, 0, 0,
-                             FunctionMatchData, NULL);
-    if (Functionrc < 0) {
-      switch (Functionrc) {
+    MatchData[FUNCTION] =
+        pcre2_match_data_create_from_pattern(re[FUNCTION], NULL);
+    rc[FUNCTION] = pcre2_match(re[FUNCTION], (PCRE2_SPTR)string, StringLength,
+                               0, 0, MatchData[FUNCTION], NULL);
+    if (rc[FUNCTION] < 0) {
+      switch (rc[FUNCTION]) {
         case PCRE2_ERROR_NOMATCH:
           error_print("Not compliant input");
           return -1;
           break;
         default:
-          printf("ERROR CODE: %d\n", Functionrc);
-          pcre2_match_data_free(FunctionMatchData);
-          pcre2_code_free(Functionre);
+          printf("ERROR CODE: %d\n", rc[FUNCTION]);
           error_exit("Matching error");
           break;
       }
     }
-    FunctionOutVector = pcre2_get_ovector_pointer(FunctionMatchData);
+    OutVector[FUNCTION] = pcre2_get_ovector_pointer(MatchData[FUNCTION]);
 
     PCRE2_SIZE namelength;  // temporary store
     int WhichFunction = 0;  // which function has been called
     while (0 != pcre2_substring_length_byname(
-                    FunctionMatchData, (PCRE2_SPTR)FunctionNames[WhichFunction],
-                    &namelength)) {
+                    MatchData[FUNCTION],
+                    (PCRE2_SPTR)FunctionNames[WhichFunction], &namelength)) {
       WhichFunction++;
     }
     PCRE2_UCHAR* name_A = NULL;
     PCRE2_UCHAR* name_B = NULL;
-    // name_B is not needed for det() and inv()
+    // name_B is not required for det() and inv()
     if (WhichFunction >= ADD && WhichFunction <= MLP) {
       name_B = malloc(sizeof(PCRE2_UCHAR) * 128);
     }
@@ -331,87 +358,21 @@ int regex(const char* string) {
       case ADD: {
         TWO_MATRIX((PCRE2_SPTR) "ADD_NAMEA", (PCRE2_SPTR) "ADD_NAMEB", name_A,
                    name_B, namelength, matrix_plus);
-        /*int error_code_a = pcre2_substring_get_byname(
-				FunctionMatchData, "ADD_NAMEA", &name_A,
-				&namelength);
-			int error_code_b = pcre2_substring_get_byname(
-				FunctionMatchData, "ADD_NAMEB", &name_B,
-				&namelength);
-			if (!hash_have_name((char *)name_A)) {
-				printf("Can't find matrix %s", (char *)name_A);
-				error_print("No matrix matched");
-				return -1;
-			}
-			if (!hash_have_name((char *)name_B)) {
-				printf("Can't find matrix %s", (char *)name_B);
-				error_print("No matrix matched");
-				return -1;
-			}
-			identifier_t *matrix_A = hash_find_matrix(name_A);
-			identifier_t *matrix_B = hash_find_matrix(name_B);
-			identifier_t *matrix_ans = hash_find_matrix("ans");
-			matrix_plus(matrix_A->matrix, matrix_B->matrix,
-				    matrix_ans->matrix);
-			matrix_t_print(matrix_ans->matrix);*/
         return 0;
       }
       case SUB: {
         TWO_MATRIX((PCRE2_SPTR) "SUB_NAMEA", (PCRE2_SPTR) "SUB_NAMEB", name_A,
                    name_B, namelength, matrix_minus);
-        /*int error_code_a = pcre2_substring_get_byname(
-				FunctionMatchData, "SUB_NAMEA", &name_A,
-				&namelength);
-			int error_code_b = pcre2_substring_get_byname(
-				FunctionMatchData, "SUB_NAMEB", &name_B,
-				&namelength);
-			if (!hash_have_name((char *)name_A)) {
-				printf("Can't find matrix %s", (char *)name_A);
-				error_print("No matrix matched");
-				return -1;
-			}
-			if (!hash_have_name((char *)name_B)) {
-				printf("Can't find matrix %s", (char *)name_B);
-				error_print("No matrix matched");
-				return -1;
-			}
-			identifier_t *matrix_A = hash_find_matrix(name_A);
-			identifier_t *matrix_B = hash_find_matrix(name_B);
-			identifier_t *matrix_ans = hash_find_matrix("ans");
-			matrix_minus(matrix_A->matrix, matrix_B->matrix,
-				     matrix_ans->matrix);
-			matrix_t_print(matrix_ans->matrix);*/
         return 0;
       }
       case MLP: {
         TWO_MATRIX((PCRE2_SPTR) "MLP_NAMEA", (PCRE2_SPTR) "MLP_NAMEB", name_A,
                    name_B, namelength, matrix_times_reorder);
-        /*int error_code_a = pcre2_substring_get_byname(
-				FunctionMatchData, "MLP_NAMEA", &name_A,
-				&namelength);
-			int error_code_b = pcre2_substring_get_byname(
-				FunctionMatchData, "MLP_NAMEB", &name_B,
-				&namelength);
-			if (!hash_have_name((char *)name_A)) {
-				printf("Can't find matrix %s", (char *)name_A);
-				error_print("No matrix matched");
-				return -1;
-			}
-			if (!hash_have_name((char *)name_B)) {
-				printf("Can't find matrix %s", (char *)name_B);
-				error_print("No matrix matched");
-				return -1;
-			}
-			identifier_t *matrix_A = hash_find_matrix(name_A);
-			identifier_t *matrix_B = hash_find_matrix(name_B);
-			identifier_t *matrix_ans = hash_find_matrix("ans");
-			matrix_times_reorder(matrix_A->matrix, matrix_B->matrix,
-					     matrix_ans->matrix);
-			matrix_t_print(matrix_ans->matrix);*/
         return 0;
       }
       case DET: {
-        int error_code_a = pcre2_substring_get_byname(
-            FunctionMatchData, (PCRE2_SPTR) "DET_NAME", &name_A, &namelength);
+        (void)pcre2_substring_get_byname(
+            MatchData[FUNCTION], (PCRE2_SPTR) "DET_NAME", &name_A, &namelength);
         if (!hash_have_name((char*)name_A)) {
           printf("Can't find matrix %s", (char*)name_A);
           error_print("No matrix matched");
@@ -424,8 +385,9 @@ int regex(const char* string) {
         return 0;
       }
       case INV: {
-        int error_code_a = pcre2_substring_get_byname(
-            FunctionMatchData, (PCRE2_SPTR8) "INV_NAME", &name_A, &namelength);
+        (void)pcre2_substring_get_byname(MatchData[FUNCTION],
+                                         (PCRE2_SPTR8) "INV_NAME", &name_A,
+                                         &namelength);
         if (!hash_have_name((char*)name_A)) {
           printf("Can't find matrix %s", (char*)name_A);
           error_print("No matrix matched");

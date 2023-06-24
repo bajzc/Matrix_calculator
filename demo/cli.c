@@ -1,10 +1,6 @@
-#include "cli.h"
 #include "regex.h"
-extern pcre2_match_data *NameMatchData, *FunctionMatchData, *StatementMatchData,
-    *ColonMatchData, *NumberMatchData;
-extern PCRE2_SIZE *NameOutVector, *FunctionOutVector, *StatementOutVector,
-    *ColonOutVector, *NumberOutVector;
-extern pcre2_code *Namere, *Functionre, *Statementre, *Colonre, *Numberre;
+#include "cli.h"
+
 void print_help_msg(void) {
   printf("test demo\n");
   printf("%.80s", "Matrix calculator\n");
@@ -37,14 +33,6 @@ void print_help_msg(void) {
   printf(">>>inv(A_1)\n");
   printf(">>>ans\n\n");
 }
-void free_regex(void) {
-  pcre2_match_data_free(NameMatchData);
-  pcre2_match_data_free(FunctionMatchData);
-  pcre2_match_data_free(StatementMatchData);
-  pcre2_match_data_free(ColonMatchData);
-  pcre2_match_data_free(NumberMatchData);
-  pcre2_code_free(Namere);
-}
 int cli(void) {
   setbuf(stdin, NULL);
   printf(">>>");
@@ -54,17 +42,16 @@ int cli(void) {
     exit(-1);
   }
   char* ptr = input;
-  char ch = getchar();
+  char ch = (char)getchar();
   if (ch == '\n')
     cli();
   *ptr = ch;
   ptr++;
-  while ((ch = getchar()) != '\n') {
+  while ((ch = (char)getchar()) != '\n') {
     *ptr = ch;
     ptr++;
   }
   *ptr = '\0';
   (void)regex(input);
-  // free_regex();
   return 0;
 }

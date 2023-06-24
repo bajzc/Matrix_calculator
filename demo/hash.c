@@ -41,11 +41,11 @@ void hash_print_all_matrix(void) {
 void hash_delete_all(void) {
   identifier_t* s;
   for (s = bucket; s != NULL; s = s->hh.next) {
-    if (s->name != NULL) {
-      if (strncmp(s->name, "ans", 3) == 0) {
-        continue;
-      }
+    if (strncmp(s->name, "ans", 3) == 0) {
+      continue;
     }
+    matrix_free(s->matrix);
+    free(s->matrix);
     HASH_DEL(bucket, s);
   }
 }

@@ -200,8 +200,11 @@ void matrix_inverse(matrix_t* a, matrix_t* ans) {
     exit(NOT_N_BY_N_MATRIX);
   }
   if (a->row == 1) {
-    printf("No inverse matrix for 1 by 1 matrix!\n");
-    exit(NOT_INVERTIBLE_MATRIX);
+    matrix_free(ans);
+    ans->column = ans->row = 1;
+    matrix_malloc(ans);
+    ans->matrix[0][0] = 1.0 / a->matrix[0][0];
+    return;
   }
   if (a->row == 2) {
     ans->row = a->row;
@@ -240,6 +243,9 @@ void matrix_inverse(matrix_t* a, matrix_t* ans) {
 double matrix_det(matrix_t* a) {
   double det = 0;
   if (a->row == a->column) {
+    if (a->row == 1) {
+      return a->matrix[0][0];
+    }
     if (a->row > 2) {
       matrix_t* L = (matrix_t*)malloc(sizeof(matrix_t));
       matrix_t* U = (matrix_t*)malloc(sizeof(matrix_t));
@@ -264,6 +270,7 @@ int main(int argc, char** argv) {
   ans->row = 1;
   matrix_calloc(ans);
   hash_new_matrix("ans", ans);
+  regex_malloc_all();
   while (1)
     cli();
   return 0;

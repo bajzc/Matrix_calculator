@@ -14,19 +14,27 @@ int regex(const char* string);
 #include <pcre2.h>
 #include <stdbool.h>
 #include <stdio.h>
+#define MATRIX_FUNCTION_NUMBER 5
 #define ADD 0
 #define SUB 1
 #define MLP 2
 #define DET 3
 #define INV 4
 
+#define REGEX_OBJ_NUMBER 5
+#define NAME 0
+#define FUNCTION 1
+#define STATEMENT 2
+#define COLON 3
+#define NUMBER 4
+
 #define TWO_MATRIX(require_nameA, require_nameB, name_A, name_B, namelength, \
                    func_name)                                                \
   do {                                                                       \
-    int error_code_a = pcre2_substring_get_byname(                           \
-        FunctionMatchData, require_nameA, &name_A, &namelength);             \
-    int error_code_b = pcre2_substring_get_byname(                           \
-        FunctionMatchData, require_nameB, &name_B, &namelength);             \
+    (void)pcre2_substring_get_byname(MatchData[FUNCTION], require_nameA,     \
+                                     &name_A, &namelength);                  \
+    (void)pcre2_substring_get_byname(MatchData[FUNCTION], require_nameB,     \
+                                     &name_B, &namelength);                  \
     if (!hash_have_name((char*)name_A)) {                                    \
       printf("Can't find matrix %s", (char*)name_A);                         \
       error_print("No matrix matched");                                      \
