@@ -1,3 +1,6 @@
+//
+// Created by LiZeCheng-Jason on 2023-06-25.
+//
 #include "errorf.h"
 void error_exit(char* errormsg) {
   printf("\n\033[31m%s\033[0m\n", errormsg);

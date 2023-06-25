@@ -1,9 +1,13 @@
+//
+// Created by LiZeCheng-Jason on 2023-06-25.
+//
 #include "regex.h"
 #include "cli.h"
 
 void print_help_msg(void) {
   printf("test demo\n");
-  printf("%.80s", "Matrix calculator\n");
+  printf("%.80s", "Matrix calculator(Demo)\n");
+  printf("GPL-3.0 Author: Zecheng Li\n");
   printf("Math Functions:\n");
   printf("%-40s", "1.add(matrix_A,matrix_B)");
   printf("%-40s\n", "matrix_A + matrix_B");

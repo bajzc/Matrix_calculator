@@ -1,4 +1,7 @@
-﻿#define PCRE2_CODE_UNIT_WIDTH 8
+﻿//
+// Created by LiZeCheng-Jason on 2023-06-25.
+//
+#define PCRE2_CODE_UNIT_WIDTH 8
 #include "regex.h"
 #include "cli.h"
 #include "demo.h"
@@ -33,13 +36,6 @@ pcre2_match_data** MatchData = NULL;
 PCRE2_SIZE** OutVector = NULL;
 pcre2_code** re = NULL;
 int* rc = NULL;
-
-//pcre2_match_data *NamseMatchData, *FunctionMatchData, *StatementMatchData,
-//    *ColonMatchData, *NumberMatchData;
-//PCRE2_SIZE *NameOutVector, *FunctionOutVector, *StatementOutVector,
-//    *ColonOutVector, *NumberOutVector;
-//pcre2_code *Namere, *Functionre, *Statementre, *Colonre, *Numberre;
-//int Namerc, Functionrc, Statementrc, Colonrc, Numberrc;
 
 char* FunctionNames[MATRIX_FUNCTION_NUMBER] = {"ADD", "SUB", "MLP", "DET",
                                                "INV"};

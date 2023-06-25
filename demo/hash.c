@@ -1,3 +1,6 @@
+//
+// Created by LiZeCheng-Jason on 2023-06-25.
+//
 #include "hash.h"
 #include "demo.h"
 identifier_t* bucket = NULL;

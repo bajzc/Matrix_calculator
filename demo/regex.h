@@ -1,3 +1,6 @@
+//
+// Created by LiZeCheng-Jason on 2023-06-25.
+//
 #ifndef DEMO_REGEX_H
 #define DEMO_REGEX_H
 
@@ -14,19 +17,8 @@ int regex(const char* string);
 #include <pcre2.h>
 #include <stdbool.h>
 #include <stdio.h>
-#define MATRIX_FUNCTION_NUMBER 5
-#define ADD 0
-#define SUB 1
-#define MLP 2
-#define DET 3
-#define INV 4
-
-#define REGEX_OBJ_NUMBER 5
-#define NAME 0
-#define FUNCTION 1
-#define STATEMENT 2
-#define COLON 3
-#define NUMBER 4
+enum { ADD = 0, SUB, MLP, DET, INV, MATRIX_FUNCTION_NUMBER };
+enum { NAME = 0, FUNCTION, STATEMENT, COLON, NUMBER, REGEX_OBJ_NUMBER };
 
 #define TWO_MATRIX(require_nameA, require_nameB, name_A, name_B, namelength, \
                    func_name)                                                \
