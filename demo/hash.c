@@ -2,7 +2,7 @@
 // Created by LiZeCheng-Jason on 2023-06-25.
 //
 #include "hash.h"
-#include "demo.h"
+#include "matrix.h"
 identifier_t* bucket = NULL;
 int hash_have_name(char* MatrixName) {
   extern identifier_t* bucket;
@@ -13,6 +13,7 @@ int hash_have_name(char* MatrixName) {
   else
     return 1;
 }
+
 identifier_t* hash_new_matrix(char* MatrixName, matrix_t* NewMatrix) {
   identifier_t* new;
   new = malloc(sizeof(identifier_t));
@@ -21,6 +22,7 @@ identifier_t* hash_new_matrix(char* MatrixName, matrix_t* NewMatrix) {
   new->matrix = NewMatrix;
   return new;
 }
+
 identifier_t* hash_find_matrix(char* MatrixName) {
   identifier_t* old;
   HASH_FIND_STR(bucket, MatrixName, old);
@@ -33,8 +35,7 @@ void hash_print_all_matrix(void) {
   for (s = bucket; s != NULL; s = s->hh.next) {
     if (s->matrix->matrix != NULL) {
       printf("%s: %d by %d\n", s->name, s->matrix->row, s->matrix->column);
-      matrix_t_print(s->matrix);
-      printf("\n");
+      matrix_print(s->matrix);
     } else {
       printf("%s: NO DATA\n", s->name);
     }

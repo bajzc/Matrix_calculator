@@ -1,8 +1,8 @@
 //
 // Created by LiZeCheng-Jason on 2023-06-25.
 //
-#include "regex.h"
 #include "cli.h"
+#include "regex.h"
 
 void print_help_msg(void) {
   printf("test demo\n");

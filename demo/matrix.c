@@ -1,7 +1,7 @@
 //
 // Created by LiZeCheng-Jason on 2023-06-25.
 //
-#include "demo.h"
+#include "matrix.h"
 #include "cli.h"
 #include "errorf.h"
 #include "hash.h"
@@ -30,13 +30,41 @@ void matrix_free(matrix_t* a) {
   free(a->matrix);
 }
 
-void matrix_plus(matrix_t* a, matrix_t* b, matrix_t* ans) {
+void matrix_print(matrix_t* a) {
+  for (unsigned int i = 0; i < a->row; i++) {
+    for (unsigned int j = 0; j < a->column; j++) {
+      printf("%.5f ", a->matrix[i][j]);
+    }
+    printf("\n");
+  }
+}
+
+matrix_t* matrix_copy(matrix_t* a) {
+  matrix_t* new = malloc(sizeof(matrix_t));
+  new->row = a->row;
+  new->column = a->column;
+  matrix_malloc(new);
+  for (unsigned int i = 0; i < a->row; i++)
+    memcpy(new->matrix[i], a->matrix[i], sizeof(a->matrix[i]) * a->column);
+  return new;
+}
+
+void matrix_add(matrix_t* a, matrix_t* b, matrix_t* ans) {
   if (a->row != b->row || a->column != b->column) {
     printf("Sizes are different!\n\"ans\" has been overwritten\n");
     matrix_free(ans);
     ans->column = ans->row = 1;
     matrix_calloc(ans);
     return;
+  }
+  // check if any parameter is 'ans'
+  if (&*a == &*ans) {
+    matrix_t* a_bk = matrix_copy(a);
+    a = a_bk;
+  }
+  if (&*b == &*ans) {
+    matrix_t* b_bk = matrix_copy(b);
+    b = b_bk;
   }
   matrix_free(ans);
   ans->row = a->row;
@@ -49,22 +77,22 @@ void matrix_plus(matrix_t* a, matrix_t* b, matrix_t* ans) {
   }
 }
 
-void matrix_t_print(matrix_t* a) {
-  for (unsigned int i = 0; i < a->row; i++) {
-    for (unsigned int j = 0; j < a->column; j++) {
-      printf("%.5f ", a->matrix[i][j]);
-    }
-    printf("\n");
-  }
-}
-
-void matrix_minus(matrix_t* a, matrix_t* b, matrix_t* ans) {
+void matrix_sub(matrix_t* a, matrix_t* b, matrix_t* ans) {
   if (a->row != b->row || a->column != b->column) {
     printf("Sizes are different!\n\"ans\" has been overwritten\n");
     matrix_free(ans);
     ans->column = ans->row = 1;
     matrix_calloc(ans);
     return;
+  }
+  // check if any parameter is 'ans'
+  if (&*a == &*ans) {
+    matrix_t* a_bk = matrix_copy(a);
+    a = a_bk;
+  }
+  if (&*b == &*ans) {
+    matrix_t* b_bk = matrix_copy(b);
+    b = b_bk;
   }
   matrix_free(ans);
   ans->row = a->row;
@@ -77,7 +105,16 @@ void matrix_minus(matrix_t* a, matrix_t* b, matrix_t* ans) {
   }
 }
 
-void matrix_times_reorder(matrix_t* a, matrix_t* b, matrix_t* ans) {
+void matrix_mlp_reorder(matrix_t* a, matrix_t* b, matrix_t* ans) {
+  // check if any parameter is 'ans'
+  if (&*a == &*ans) {
+    matrix_t* a_bk = matrix_copy(a);
+    a = a_bk;
+  }
+  if (&*b == &*ans) {
+    matrix_t* b_bk = matrix_copy(b);
+    b = b_bk;
+  }
   matrix_free(ans);
   ans->row = a->row;
   ans->column = b->column;
@@ -91,7 +128,7 @@ void matrix_times_reorder(matrix_t* a, matrix_t* b, matrix_t* ans) {
   }
 }
 
-void matrix_LU_NbyN_Factorization(matrix_t* source, matrix_t* L, matrix_t* U,
+void matrix_LU_NbyN_Decomposition(matrix_t* source, matrix_t* L, matrix_t* U,
                                   double* det, matrix_t* ans) {
   bool flag_return_det = det != NULL ? 1 : 0;
 
@@ -187,7 +224,7 @@ void matrix_LU_NbyN_Factorization(matrix_t* source, matrix_t* L, matrix_t* U,
     }
     U_inv->matrix[j][j] = 1 / U->matrix[j][j];
   }
-  matrix_times_reorder(U_inv, L_inv, ans);
+  matrix_mlp_reorder(U_inv, L_inv, ans);
   matrix_free(U_inv);
   matrix_free(L_inv);
   free(U_inv);
@@ -195,6 +232,11 @@ void matrix_LU_NbyN_Factorization(matrix_t* source, matrix_t* L, matrix_t* U,
 }
 
 void matrix_inverse(matrix_t* a, matrix_t* ans) {
+  // check if *a is 'ans'
+  if (&*a == &*ans) {
+    matrix_t* a_bk = matrix_copy(a);
+    a = a_bk;
+  }
   if (a->column != a->row) {
     printf("Only n by n matrix has inverse!\n");
     exit(NOT_N_BY_N_MATRIX);
@@ -233,7 +275,7 @@ void matrix_inverse(matrix_t* a, matrix_t* ans) {
   }
   matrix_t* L = (matrix_t*)malloc(sizeof(matrix_t));
   matrix_t* U = (matrix_t*)malloc(sizeof(matrix_t));
-  matrix_LU_NbyN_Factorization(a, L, U, NULL, ans);
+  matrix_LU_NbyN_Decomposition(a, L, U, NULL, ans);
   matrix_free(L);
   matrix_free(U);
   free(L);
@@ -249,7 +291,7 @@ double matrix_det(matrix_t* a) {
     if (a->row > 2) {
       matrix_t* L = (matrix_t*)malloc(sizeof(matrix_t));
       matrix_t* U = (matrix_t*)malloc(sizeof(matrix_t));
-      matrix_LU_NbyN_Factorization(a, L, U, &det, NULL);
+      matrix_LU_NbyN_Decomposition(a, L, U, &det, NULL);
       matrix_free(L);
       matrix_free(U);
     } else {
@@ -261,17 +303,4 @@ double matrix_det(matrix_t* a) {
     return NAN;
   }
   return det;
-}
-
-// main for demo
-int main(int argc, char** argv) {
-  matrix_t* ans = malloc(sizeof(matrix_t));
-  ans->column = 1;
-  ans->row = 1;
-  matrix_calloc(ans);
-  hash_new_matrix("ans", ans);
-  regex_malloc_all();
-  while (1)
-    cli();
-  return 0;
 }

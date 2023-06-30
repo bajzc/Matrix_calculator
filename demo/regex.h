@@ -5,6 +5,7 @@
 #define DEMO_REGEX_H
 
 int regex(const char* string);
+void regex_malloc_all(void);
 
 #ifdef __GNUC__
 #define CLEAR "clear"
@@ -37,10 +38,10 @@ enum { NAME = 0, FUNCTION, STATEMENT, COLON, NUMBER, REGEX_OBJ_NUMBER };
       error_print("No matrix matched");                                      \
       return -1;                                                             \
     }                                                                        \
-    identifier_t* matrix_A = hash_find_matrix(name_A);                       \
-    identifier_t* matrix_B = hash_find_matrix(name_B);                       \
+    identifier_t* matrix_A = hash_find_matrix((char*)name_A);                \
+    identifier_t* matrix_B = hash_find_matrix((char*)name_B);                \
     identifier_t* matrix_ans = hash_find_matrix("ans");                      \
     func_name(matrix_A->matrix, matrix_B->matrix, matrix_ans->matrix);       \
-    matrix_t_print(matrix_ans->matrix);                                      \
+    matrix_print(matrix_ans->matrix);                                        \
   } while (0)
 #endif  // !DEMO_REGEX_H

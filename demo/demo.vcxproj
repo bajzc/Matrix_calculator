@@ -133,16 +133,18 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="cli.c" />
-    <ClCompile Include="demo.c" />
     <ClCompile Include="errorf.c" />
+    <ClCompile Include="GSL-checker.c" />
     <ClCompile Include="hash.c" />
+    <ClCompile Include="main.c" />
+    <ClCompile Include="matrix.c" />
     <ClCompile Include="regex.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cli.h" />
-    <ClInclude Include="demo.h" />
     <ClInclude Include="errorf.h" />
     <ClInclude Include="hash.h" />
+    <ClInclude Include="matrix.h" />
     <ClInclude Include="regex.h" />
   </ItemGroup>
   <ItemGroup>
