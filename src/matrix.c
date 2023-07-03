@@ -1,11 +1,7 @@
 //
 // Created by LiZeCheng-Jason on 2023-06-25.
 //
-#include "matrix.h"
-#include "cli.h"
-#include "errorf.h"
-#include "hash.h"
-#include "regex.h"
+#include "config.h"
 bool ans_NULL = 0;
 
 void matrix_malloc(matrix_t* a) {
@@ -30,7 +26,7 @@ void matrix_free(matrix_t* a) {
   free(a->matrix);
 }
 
-void matrix_print(matrix_t* a) {
+void matrix_t_print(matrix_t* a) {
   for (unsigned int i = 0; i < a->row; i++) {
     for (unsigned int j = 0; j < a->column; j++) {
       printf("%.5f ", a->matrix[i][j]);
@@ -39,7 +35,7 @@ void matrix_print(matrix_t* a) {
   }
 }
 
-matrix_t* matrix_copy(matrix_t* a) {
+matrix_t* matrix_t_copy(matrix_t* a) {
   matrix_t* new = malloc(sizeof(matrix_t));
   new->row = a->row;
   new->column = a->column;
@@ -59,11 +55,11 @@ void matrix_add(matrix_t* a, matrix_t* b, matrix_t* ans) {
   }
   // check if any parameter is 'ans'
   if (&*a == &*ans) {
-    matrix_t* a_bk = matrix_copy(a);
+    matrix_t* a_bk = matrix_t_copy(a);
     a = a_bk;
   }
   if (&*b == &*ans) {
-    matrix_t* b_bk = matrix_copy(b);
+    matrix_t* b_bk = matrix_t_copy(b);
     b = b_bk;
   }
   matrix_free(ans);
@@ -87,11 +83,11 @@ void matrix_sub(matrix_t* a, matrix_t* b, matrix_t* ans) {
   }
   // check if any parameter is 'ans'
   if (&*a == &*ans) {
-    matrix_t* a_bk = matrix_copy(a);
+    matrix_t* a_bk = matrix_t_copy(a);
     a = a_bk;
   }
   if (&*b == &*ans) {
-    matrix_t* b_bk = matrix_copy(b);
+    matrix_t* b_bk = matrix_t_copy(b);
     b = b_bk;
   }
   matrix_free(ans);
@@ -105,14 +101,14 @@ void matrix_sub(matrix_t* a, matrix_t* b, matrix_t* ans) {
   }
 }
 
-void matrix_mlp_reorder(matrix_t* a, matrix_t* b, matrix_t* ans) {
+void matrix_times_reorder(matrix_t* a, matrix_t* b, matrix_t* ans) {
   // check if any parameter is 'ans'
   if (&*a == &*ans) {
-    matrix_t* a_bk = matrix_copy(a);
+    matrix_t* a_bk = matrix_t_copy(a);
     a = a_bk;
   }
   if (&*b == &*ans) {
-    matrix_t* b_bk = matrix_copy(b);
+    matrix_t* b_bk = matrix_t_copy(b);
     b = b_bk;
   }
   matrix_free(ans);
@@ -224,7 +220,7 @@ void matrix_LU_NbyN_Decomposition(matrix_t* source, matrix_t* L, matrix_t* U,
     }
     U_inv->matrix[j][j] = 1 / U->matrix[j][j];
   }
-  matrix_mlp_reorder(U_inv, L_inv, ans);
+  matrix_times_reorder(U_inv, L_inv, ans);
   matrix_free(U_inv);
   matrix_free(L_inv);
   free(U_inv);
@@ -234,7 +230,7 @@ void matrix_LU_NbyN_Decomposition(matrix_t* source, matrix_t* L, matrix_t* U,
 void matrix_inverse(matrix_t* a, matrix_t* ans) {
   // check if *a is 'ans'
   if (&*a == &*ans) {
-    matrix_t* a_bk = matrix_copy(a);
+    matrix_t* a_bk = matrix_t_copy(a);
     a = a_bk;
   }
   if (a->column != a->row) {

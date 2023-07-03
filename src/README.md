@@ -11,7 +11,6 @@
 ## License
 
 **GPL-3.0 license**
-
 This software is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 
 ## What is this
@@ -97,7 +96,6 @@ Have a try:
 
 ## TODO
 
-- [ x ] Memory leak
-- [ ] GUI
+- [ ] Memory leak
 - [ ] Support arithmetic operations
 - [ ] Trig functions

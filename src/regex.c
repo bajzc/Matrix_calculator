@@ -17,13 +17,7 @@
  *                            |                           *
  *              matrix_print() OR key wrods               *
  *********************************************************/
-#define PCRE2_CODE_UNIT_WIDTH 8
-#include "regex.h"
-#include "cli.h"
-#include "errorf.h"
-#include "hash.h"
-#include "matrix.h"
-
+#include "config.h"
 int errornumber;
 PCRE2_SIZE erroroffset;
 // NAME may be repeated with reserved word: "add sub mlp det inv"
@@ -55,7 +49,6 @@ int* rc = NULL;
 
 char* FunctionNames[MATRIX_FUNCTION_NUMBER] = {"ADD", "SUB", "MLP", "DET",
                                                "INV"};
-
 matrix_t* regex_creat_matrix(char* MatrixString) {
   PCRE2_SIZE MatrixStringLength = strlen(MatrixString);
   re[COLON] = pcre2_compile((PCRE2_SPTR)ColonPattern, PCRE2_ZERO_TERMINATED, 0,
@@ -194,13 +187,13 @@ int regex_matrix() {
     // haven't been registered
     matrix_t* new = regex_creat_matrix(Matrix);
     identifier_t* NewMatrix = hash_new_matrix((char*)MatrixName, new);
-    matrix_print(NewMatrix->matrix);
+    matrix_t_print(NewMatrix->matrix);
   } else {
     identifier_t* OldMatrix = hash_find_matrix((char*)MatrixName);
     matrix_t* new = regex_creat_matrix(Matrix);
     matrix_free(OldMatrix->matrix);
     OldMatrix->matrix = new;
-    matrix_print(OldMatrix->matrix);
+    matrix_t_print(OldMatrix->matrix);
   }
   return 0;
 }
@@ -318,7 +311,7 @@ int regex(const char* string) {
       printf("NO DATA\n");
       return -1;
     } else {
-      matrix_print(matrix_find->matrix);
+      matrix_t_print(matrix_find->matrix);
     }
     return 0;
   }
@@ -380,7 +373,7 @@ int regex(const char* string) {
       }
       case MLP: {
         TWO_MATRIX((PCRE2_SPTR) "MLP_NAMEA", (PCRE2_SPTR) "MLP_NAMEB", name_A,
-                   name_B, namelength, matrix_mlp_reorder);
+                   name_B, namelength, matrix_times_reorder);
         return 0;
       }
       case DET: {
@@ -409,7 +402,7 @@ int regex(const char* string) {
         identifier_t* matrix_A = hash_find_matrix((char*)name_A);
         identifier_t* matrix_ans = hash_find_matrix("ans");
         matrix_inverse(matrix_A->matrix, matrix_ans->matrix);
-        matrix_print(matrix_ans->matrix);
+        matrix_t_print(matrix_ans->matrix);
         return 0;
       }
     }
