@@ -1,14 +1,10 @@
 //
 // Created by LiZeCheng-Jason on 2023-06-28.
 //
-#include "cli.h"
-#include "hash.h"
-#include "matrix.h"
-#include "regex.h"
-
+#include "config.h"
 int main(void) {
   matrix_t* ans = malloc(sizeof(matrix_t));
-  if (ans) {
+  if (ans) { // successfully allocated memory
     ans->column = 1;
     ans->row = 1;
     matrix_calloc(ans);

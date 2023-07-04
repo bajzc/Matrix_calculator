@@ -1,8 +1,7 @@
 //
 // Created by LiZeCheng-Jason on 2023-06-25.
 //
-#include "hash.h"
-#include "matrix.h"
+#include "config.h"
 identifier_t* bucket = NULL;
 int hash_have_name(char* MatrixName) {
   extern identifier_t* bucket;
@@ -35,7 +34,7 @@ void hash_print_all_matrix(void) {
   for (s = bucket; s != NULL; s = s->hh.next) {
     if (s->matrix->matrix != NULL) {
       printf("%s: %d by %d\n", s->name, s->matrix->row, s->matrix->column);
-      matrix_print(s->matrix);
+      matrix_t_print(s->matrix);
     } else {
       printf("%s: NO DATA\n", s->name);
     }

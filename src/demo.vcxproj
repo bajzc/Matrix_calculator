@@ -24,6 +24,7 @@
     <ProjectGuid>{57b9a1c0-6b3f-4b28-aecc-5f6b8492f0f0}</ProjectGuid>
     <RootNamespace>demo</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>src</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -132,24 +133,19 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include=".clang-format" />
+    <None Include="README.md" />
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="cli.c" />
     <ClCompile Include="errorf.c" />
-    <ClCompile Include="GSL-checker.c" />
     <ClCompile Include="hash.c" />
     <ClCompile Include="main.c" />
     <ClCompile Include="matrix.c" />
     <ClCompile Include="regex.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="cli.h" />
-    <ClInclude Include="errorf.h" />
-    <ClInclude Include="hash.h" />
-    <ClInclude Include="matrix.h" />
-    <ClInclude Include="regex.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include=".clang-format" />
-    <None Include="README.md" />
+    <ClInclude Include="config.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
