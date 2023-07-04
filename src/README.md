@@ -1,6 +1,6 @@
-# Demo
+# CLI Matrix Calculator
 
-**Demo version of the matrix calculator, with some math functions:**
+**CLI version of the matrix calculator, with some math functions:**
 
 * addition
 * subtraction
@@ -11,7 +11,10 @@
 ## License
 
 **GPL-3.0 license**
-This software is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+This is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.    
+
+This software is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.    
 
 ## What is this
 
@@ -26,7 +29,7 @@ This software is distributed in the hope that it will be useful, but WITHOUT ANY
 
 ## Using
 
-**For demo version:**
+**For CLI version:**
 
 **Define or overwrite a matrix**
 
