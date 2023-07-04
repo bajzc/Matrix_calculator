@@ -99,6 +99,7 @@ Have a try:
 
 ## TODO
 
-- [ ] Memory leak
+- [x] Memory leak
+- [ ] GUI
 - [ ] Support arithmetic operations
 - [ ] Trig functions
