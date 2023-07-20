@@ -11,18 +11,45 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
+find_package(Qt6 REQUIRED COMPONENTS LinguistTools)
+qt_add_lupdate(GUI_calculator TS_FILES Translate_zh_CN.ts Translate_en.ts)
+
+if(WIN32)
+    if (CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+        message("Using MSVC")
+        set(CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} /bigobj")
+    elseif (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+        message("Using GCC")
+        add_compile_options(-O2 -Wa,-mbig-obj)
+    endif()
+    message("Using windows")
+    include_directories(C:/msys64/mingw64/include/eigen3)
+endif(WIN32)
+
+if(UNIX)
+    message("Using UNIX")
+    find_package (Eigen3 REQUIRED)
+    include_directories(/usr/include/eigen3)
+    add_compile_options(-O2 -pthread)
+endif(UNIX)
+
+
+
 
 set(PROJECT_SOURCES
         main.cpp
         mainwindow.cpp
         mainwindow.h
         mainwindow.ui
+        matrixeditor.h matrixeditor.cpp matrixeditor.ui
+        exprtk.hpp
+        myexprtk.h myexprtk.cpp
 )
 
 if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(GUI_calculator
         MANUAL_FINALIZATION
-        ${PROJECT_SOURCES}
+        ${PROJECT_SOURCES}      
     )
 # Define target properties for Android with Qt 6 as:
 #    set_property(TARGET GUI_calculator APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
@@ -42,7 +69,9 @@ else()
     endif()
 endif()
 
-target_link_libraries(GUI_calculator PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(GUI_calculator
+    ${Eigen_LIBRARIES}
+    PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
 
 set_target_properties(GUI_calculator PROPERTIES
     MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
@@ -61,3 +90,5 @@ install(TARGETS GUI_calculator
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(GUI_calculator)
 endif()
+
+

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>595</width>
+    <height>407</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,47 +15,43 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0">
-     <widget class="QLineEdit" name="Line_input">
-      <property name="minimumSize">
-       <size>
-        <width>100</width>
-        <height>40</height>
-       </size>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>15</pointsize>
-        <bold>false</bold>
-       </font>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="1" alignment="Qt::AlignTop">
-     <widget class="QPushButton" name="Run_button">
-      <property name="minimumSize">
-       <size>
-        <width>0</width>
-        <height>40</height>
-       </size>
-      </property>
-      <property name="font">
-       <font>
-        <pointsize>15</pointsize>
-       </font>
-      </property>
+    <item row="3" column="1">
+     <widget class="QPushButton" name="MSubMButton">
       <property name="text">
-       <string>Run</string>
+       <string>A - B</string>
       </property>
      </widget>
     </item>
-    <item row="1" column="0" colspan="2">
-     <widget class="QTableWidget" name="Matrix_table">
-      <property name="font">
-       <font>
-        <pointsize>15</pointsize>
-       </font>
+    <item row="5" column="1">
+     <widget class="QPushButton" name="MScaleButton">
+      <property name="text">
+       <string>A * k</string>
       </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QPushButton" name="NewButton">
+      <property name="text">
+       <string>New Matrix</string>
+      </property>
+     </widget>
+    </item>
+    <item row="7" column="1">
+     <widget class="QPushButton" name="DeterminantButton">
+      <property name="text">
+       <string>Determinant</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="1">
+     <widget class="QPushButton" name="MTimeMButton">
+      <property name="text">
+       <string>A x B</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="0" rowspan="8">
+     <widget class="QTableWidget" name="MatrixTable">
       <column>
        <property name="text">
         <string>Name</string>
@@ -69,7 +65,7 @@
       </column>
       <column>
        <property name="text">
-        <string>Size</string>
+        <string>Dimension</string>
        </property>
        <property name="font">
         <font>
@@ -80,6 +76,27 @@
       </column>
      </widget>
     </item>
+    <item row="2" column="1">
+     <widget class="QPushButton" name="MAddMButton">
+      <property name="text">
+       <string>A + B</string>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="1">
+     <widget class="QPushButton" name="InverseButton">
+      <property name="text">
+       <string>Inverse</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="QPushButton" name="DeleteMButton">
+      <property name="text">
+       <string>Delete Matrix</string>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -87,18 +104,27 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>595</width>
      <height>25</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menuMatrix_Calculator">
+   <widget class="QMenu" name="menuHelp">
     <property name="title">
-     <string>Matrix Calculator</string>
+     <string>Help</string>
     </property>
-    <addaction name="actionHelp_2"/>
-    <addaction name="actionAbout"/>
+    <addaction name="actionShowHelpMsg"/>
+    <addaction name="separator"/>
+    <addaction name="actionAbout_2"/>
    </widget>
-   <addaction name="menuMatrix_Calculator"/>
+   <widget class="QMenu" name="menuLanguage">
+    <property name="title">
+     <string>Language</string>
+    </property>
+    <addaction name="actionEnglish"/>
+    <addaction name="actionChinese"/>
+   </widget>
+   <addaction name="menuHelp"/>
+   <addaction name="menuLanguage"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionHelp">
@@ -106,12 +132,36 @@
     <string>Help</string>
    </property>
   </action>
-  <action name="actionHelp_2">
+  <action name="actionShowHelpMsg">
    <property name="text">
-    <string>Help</string>
+    <string>Get Help</string>
    </property>
   </action>
   <action name="actionAbout">
+   <property name="text">
+    <string>About</string>
+   </property>
+  </action>
+  <action name="actionEnglish">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>English</string>
+   </property>
+  </action>
+  <action name="actionChinese">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>简体中文</string>
+   </property>
+  </action>
+  <action name="actionAbout_2">
    <property name="text">
     <string>About</string>
    </property>
