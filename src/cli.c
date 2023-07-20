@@ -3,9 +3,9 @@
 //
 #include "config.h"
 void print_help_msg(void) {
-  printf("test demo\n");
-  printf("%.80s", "Matrix calculator(Demo)\n");
-  printf("GPL-3.0 Author: Zecheng Li\n");
+  printf("CLI release 1.0-rc-1\n");
+  printf("%.80s", "Matrix calculator(1.0)\n");
+  printf("License: GPL-3.0 Author: bajzc lzecheng98@gmail.com\n");
   printf("Math Functions:\n");
   printf("%-40s", "1.add(matrix_A,matrix_B)");
   printf("%-40s\n", "matrix_A + matrix_B");
