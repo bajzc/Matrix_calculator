@@ -1,4 +1,17 @@
-# 🚧GUI Version🚧
+# GUI Version
+
+## Showcase
+
+![OnLinux](./doc/OnLinux.png)
+![OnWindows](./doc/OnWindows.png)
+
+## Getting Start
+
+[Download](https://github.com/bajzc/Matrix_calculator/releases)
+
+## Run from source
+
+For all OS, you may need to install Qt creator, and Eigen3.
 
 ## License
 
