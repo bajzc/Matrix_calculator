@@ -1,6 +1,4 @@
-# Demo
-
-**Demo version of the matrix calculator, with some math functions:**
+# Matrix calculator: development
 
 * addition
 * subtraction
@@ -14,7 +12,7 @@
 
 This is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 
-Matrix_calculator is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 
 ## What is this
 
@@ -28,8 +26,6 @@ Matrix_calculator is distributed in the hope that it will be useful, but WITHOUT
 [Download](https://github.com/bajzc/A_tiny_matrix_calculator/releases) from releases
 
 ## Using
-
-**For demo version:**
 
 **Define or overwrite a matrix**
 
@@ -72,34 +68,35 @@ There are some intrinsic functions, like `help`:
 ```
 output:
 ```cmd
-test demo
-Matrix calculator
+>>> help
+Matrix-calculator 1.0
+License: GPL-3.0 Author: bajzc lzecheng98@gmail.com
 Math Functions:
-1.add(matrix_A,matrix_B)                matrix_A + matrix_B
-2.sub(matrix_A,matrix_B)                matrix_A - matrix_B
-3.mlp(matrix_A,matrix_B)                matrix_A * matrix_B
-4.inv(matrix)                           Find the inverse of matrix
-5.det(matrix)                           The determinant of matrix
+1.add(matrix_A,matrix_B)                matrix_A + matrix_B                     
+2.sub(matrix_A,matrix_B)                matrix_A - matrix_B                     
+3.mlp(matrix_A,matrix_B)                matrix_A * matrix_B                     
+4.inv(matrix)                           Find the inverse of matrix              
+5.det(matrix)                           The determinant of matrix               
 Answer of 1-4 will be stored in "ans"
 
 
 Intrinsic function:
-"name"    Print the matrix
-list      Show all initialized matrix
-clean     Delete all matrix stored in memory! (ans will remain)
-Quit (exit)quit
-clear     Clean the screen
-help      Show this information.
+"name"    Print the matrix                                                      
+list      Show all initialized matrix                                           
+clean     Delete all matrix stored in memory! (ans will remain)                 
+quit(exit)quit                                                                  
+clear     Clean the screen                                                      
+help      Show this information.                                                
 
 Have a try:
->>>A_1=[2 4 2 6; 4 9 6 15;2 6 9 18;6 15 18 40]
->>>inv(A_1)
->>>ans
+>>> A_1=[2 4 2 6; 4 9 6 15;2 6 9 18;6 15 18 40]
+>>> inv(A_1)
+>>> ans
 ```
 
 ## TODO
 
 - [x] Memory leak
-- [ ] GUI
+- [x] GUI
 - [ ] Support arithmetic operations
 - [ ] Trig functions

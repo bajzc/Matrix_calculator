@@ -42,12 +42,11 @@ const char* StatementPattern =
 const char* ColonPattern = "(;)";  // get the number of ';'
 const char* NumberPattern = "(?'NUMBER'(-?\\d+(,\\d+)*(\\.\\d+)?))";
 
-pcre2_match_data** MatchData = NULL;
-PCRE2_SIZE** OutVector = NULL;
-pcre2_code** re = NULL;
-int* rc = NULL;
-
-char* FunctionNames[MATRIX_FUNCTION_NUMBER] = {"ADD", "SUB", "MLP", "DET",
+static pcre2_match_data** MatchData = NULL;
+static PCRE2_SIZE** OutVector = NULL;
+static pcre2_code** re = NULL;
+static int* rc = NULL;
+static char* FunctionNames[MATRIX_FUNCTION_NUMBER] = {"ADD", "SUB", "MLP", "DET",
                                                "INV"};
 matrix_t* regex_creat_matrix(char* MatrixString) {
   PCRE2_SIZE MatrixStringLength = strlen(MatrixString);
@@ -276,31 +275,30 @@ int regex(const char* string) {
 
   // the entire input is ONE name, which means print the matrix
   // OR run some internal functions: quit list ...
+  
   if (OutVector[NAME][1] == strlen(string)) {
     // internal functions: list clean quit(exit) help
-    if (StringLength == 4 || StringLength == 5) {
-      if (strncmp(string, "list", 4) == 0) {
-        hash_print_all_matrix();
-        return 0;
-      }
-      if (strncmp(string, "clean", 5) == 0) {
-        hash_delete_all();
-        return 0;
-      }
-      if (strncmp(string, "quit", 4) == 0) {
-        exit(1);
-      }
-      if (strncmp(string, "exit", 4) == 0) {
-        exit(1);
-      }
-      if (strncmp(string, "help", 4) == 0) {
-        print_help_msg();
-        return 0;
-      }
-      if (strncmp(string, "clear", 5) == 0) {
-        system(CLEAR);
-        return 0;
-      }
+    if (strncmp(string, "list", 4) == 0) {
+      hash_print_all_matrix();
+      return 0;
+    }
+    if (strncmp(string, "clean", 5) == 0) {
+      hash_delete_all();
+      return 0;
+    }
+    if (strncmp(string, "quit", 4) == 0) {
+      exit(1);
+    }
+    if (strncmp(string, "exit", 4) == 0) {
+      exit(1);
+    }
+    if (strncmp(string, "help", 4) == 0) {
+      print_help_msg();
+      return 0;
+    }
+    if (strncmp(string, "clear", 5) == 0) {
+      system(CLEAR);
+      return 0;
     }
     if (!hash_have_name((char*)string)) {
       error_print("No matrix found");

@@ -8,12 +8,61 @@
 #define PCRE2_CODE_UNIT_WIDTH 8
 
 // Header files
-#include <pcre2.h>
 #include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include <math.h>
+
+#if defined (HAVE_CONFIG_H)
+#include "../config.h"
+#else
+#error "..\/config.h is not found"
+#endif
+
+#if HAVE_LIBPCRE2_8
+#include <pcre2.h>
+#else
+#error "PCRE2 NOT FOUND\n!!!RUN \"./configure" before "make\"!!!"
+#endif
+
+#if HAVE_UTHASH_H
 #include <uthash.h>
+#else
+#error "uthash.h NOT FOUND\n!!!RUN \"./configure" before "make\"!!!"
+#endif
+
+#if HAVE_STDLIB_H
+#include <stdlib.h>
+#else
+#error "stdlib.h NOT FOUND"
+#endif
+
+#if HAVE__BOOL
+#include <stdio.h>
+#else
+#error "stdio.h not found"
+#endif
+
+#if HAVE_LOCALE_H
+#include <locale.h>
+#else
+#warning "NO locale.h FOUND"
+#endif
+
+#if HAVE_LIBREADLINE
+#include <readline/readline.h>
+#include <readline/history.h>
+// or "readline.h" if add link config in Makefile.ac
+#else
+#error "LIBRARY READLINE NOT FOUND\n!!!RUN \"./configure" before "make\"!!!"
+#endif
+
+#if HAVE_UNISTD_H
+#include <unistd.h>
+extern char *optarg;
+#else
+#warning "won't support options as unistd.h not found"
+// a portable getopt.h may be implemented in the future
+// to support WINDOWS user
+#endif
 
 // Macro
 #define TWO_MATRIX(require_nameA, require_nameB, name_A, name_B, namelength, \
@@ -53,6 +102,11 @@ typedef struct {
   matrix_t* matrix;
 } identifier_t;
 
+typedef struct {
+  char *name;
+  char *doc;
+} COMMAND;//readline completion
+
 // enum
 enum {
   NOT_N_BY_N_MATRIX = 2,
@@ -62,6 +116,7 @@ enum {
 };
 enum { ADD = 0, SUB, MLP, DET, INV, MATRIX_FUNCTION_NUMBER };
 enum { NAME = 0, FUNCTION, STATEMENT, COLON, NUMBER, REGEX_OBJ_NUMBER };
+
 
 // Functions
 void matrix_malloc(matrix_t* a);
@@ -75,15 +130,18 @@ void matrix_LU_NbyN_Decomposition(matrix_t* source, matrix_t* L, matrix_t* U,
                                   double* det, matrix_t* ans);
 void matrix_inverse(matrix_t* a, matrix_t* ans);
 double matrix_det(matrix_t* a);
-int main(void);
 matrix_t* matrix_t_copy(matrix_t* a);
 int hash_have_name(char* MatrixName);
 identifier_t* hash_new_matrix(char* MatrixName, matrix_t* NewMatrix);
 identifier_t* hash_find_matrix(char* MatrixName);
 void hash_print_all_matrix(void);
 void hash_delete_all(void);
-int cli(void);
+int cli(int opt);
+char **cal_completion(const char *text,int start,int end);
+char *command_generator (const char *text,int state);
+char *var_generator (const char *text,int state);
 void print_help_msg(void);
+void print_ver_msg(void);
 void error_exit(char* errormsg);
 void error_print(char* errormsg);
 int regex(const char* string);
