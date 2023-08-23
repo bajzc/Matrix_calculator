@@ -8,10 +8,10 @@
 #define PCRE2_CODE_UNIT_WIDTH 8
 
 // Header files
-#include <stdbool.h>
 #include <math.h>
+#include <stdbool.h>
 
-#if defined (HAVE_CONFIG_H)
+#if defined(HAVE_CONFIG_H)
 #include "../config.h"
 #else
 #error "..\/config.h is not found"
@@ -36,8 +36,8 @@
 #endif
 
 #if HAVE_LIBREADLINE
-#include <readline/readline.h>
 #include <readline/history.h>
+#include <readline/readline.h>
 // or "readline.h" if add link config in Makefile.ac
 #else
 #error "LIBRARY READLINE NOT FOUND\n!!!RUN \"./configure" before "make\"!!!"
@@ -45,7 +45,7 @@
 
 #if HAVE_UNISTD_H
 #include <unistd.h>
-extern char *optarg;
+extern char* optarg;
 #else
 #warning "won't support options as unistd.h not found"
 // a portable getopt.h may be implemented in the future
@@ -85,9 +85,9 @@ typedef struct {
 } matrix_t;
 
 typedef struct {
-  char *name;
-  char *doc;
-} COMMAND;//readline completion
+  char* name;
+  char* doc;
+} COMMAND;  //readline completion
 
 // enum
 enum {
@@ -98,7 +98,6 @@ enum {
 };
 enum { ADD = 0, SUB, MLP, DET, INV, MATRIX_FUNCTION_NUMBER };
 enum { NAME = 0, FUNCTION, STATEMENT, COLON, NUMBER, REGEX_OBJ_NUMBER };
-
 
 // Functions
 void matrix_malloc(matrix_t* a);
@@ -115,9 +114,9 @@ double matrix_det(matrix_t* a);
 matrix_t* matrix_t_copy(matrix_t* a);
 int hash_have_name(char* MatrixName);
 int cli(int opt);
-char **cal_completion(const char *text,int start,int end);
-char *command_generator (const char *text,int state);
-char *var_generator (const char *text,int state);
+char** cal_completion(const char* text, int start, int end);
+char* command_generator(const char* text, int state);
+char* var_generator(const char* text, int state);
 void print_help_msg(void);
 void print_ver_msg(void);
 void error_exit(char* errormsg);

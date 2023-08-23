@@ -48,8 +48,8 @@ input:
 
 line:
   '\n'
-| command '\n'       {}
-| m_exp '\n'         { matrix_t_print($1);}
+| command '\n'       {                                  }
+| m_exp '\n'         { matrix_t_print($1);              }
 | exp '\n'           { printf ("exp:%g\n", $1); 			  }
 | error '\n'         { yyerrok;                				  }
 ;

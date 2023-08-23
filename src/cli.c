@@ -130,7 +130,7 @@ int cli(int opt) {
   if (opt == 'f') {
     extern FILE* ifp;
     fclose(stdin);
-    stdin=ifp;
+    stdin = ifp;
     yy_scan_buffer(stdin);
     yyparse();
     fclose(ifp);
@@ -144,10 +144,10 @@ int cli(int opt) {
     return 0;
   }
   add_history(input);
-  int newline=strlen(input);
-  realloc(input,strlen(input)+2);
-  input[newline]='\n';
-  input[newline+1]='\0';
+  int newline = strlen(input);
+  realloc(input, strlen(input) + 2);
+  input[newline] = '\n';
+  input[newline + 1] = '\0';
   yy_scan_string(input);
   return yyparse();
 }

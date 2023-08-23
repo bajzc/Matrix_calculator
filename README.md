@@ -9,7 +9,7 @@
 ``./src/CLI``
 
 ### TODO:
-0. [ ]Optimize the process from exp -> matrix
-1. [ ]Support the similar grammar as dev/gnu-main using lex&bison
-2. [ ]More functions:exp ln sin cos tan (diff integral)?
-3. [ ]A new Turing completeness language, LOL
+[ ]Optimize the process from exp -> matrix
+[ ]Support the similar grammar as dev/gnu-main using lex&bison
+[ ]More functions:exp ln sin cos tan (diff integral)?
+[ ]A new Turing completeness language, LOL
