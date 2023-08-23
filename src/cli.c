@@ -2,6 +2,7 @@
 // Created by LiZeCheng-Jason on 2023-06-25.
 //
 #include "config.h"
+#include "syms.h"
 
 void print_help_msg(void) {
   printf("%.80s\n", PACKAGE_STRING);
@@ -55,106 +56,72 @@ void print_ver_msg(void) {
       "with \n"
       "this program. If not, see <https://www.gnu.org/licenses/>.\n");
 }
-/*
-int cli(void) {
-  setbuf(stdin, NULL);
-  printf(">>>");
-  char* input = malloc(sizeof(char) * 1024 * 2);
-  if (input == NULL) {
-    printf("Memory error!\n");
-    exit(-1);
-  }
-  char* ptr = input;
-  char ch = (char)getchar();
-  if (ch == '\n')
-    cli();
-  *ptr = ch;
-  ptr++;
-  while ((ch = (char)getchar()) != '\n') {
-    *ptr = ch;
-    ptr++;
-  }
-  *ptr = '\0';
-  (void)regex(input);
-  return 0;
-}
-*/
 
 // reference: https://tiswww.case.edu/php/chet/readline/readline.html#A-Short-Completion-Example
 COMMAND commands[] = {
-  { "add", "add(matrix_A,matrix_B)" },
-  { "sub", "matrix_A - matrix_B" },
-  { "inv",  "1 / matrix" },
-  { "mlp",  "matrix_A * matrix_B" },
-  { "det",  "The determinant of matrix" },
-	{"list","Show all initialized matrix"},
-	{"clean","Delete all matrix stored in memory! (ans will remain)"},
-	{"quit","quit this program"},
-	{"exit","same as above"},
-	{"help","print help message"},
-  { (char *)NULL, (char *)NULL }
-};//readline completion commands
+    {"inv", "1 / matrix"},
+    {"det", "The determinant of matrix"},
+    {"list", "Show all initialized matrix"},
+    {"clean", "Delete all matrix stored in memory! (ans will remain)"},
+    {"quit", "quit this program"},
+    {"exit", "same as above"},
+    {"help", "print help message"},
+    {(char*)NULL, (char*)NULL}};  //readline completion commands
 
-char *dupstr (char *s)
-{
-  char *r;
+char* dupstr(char* s) {
+  char* r;
 
-  r = malloc (strlen (s) + 1);
-  strcpy (r, s);
+  r = malloc(strlen(s) + 1);
+  strcpy(r, s);
   return r;
 }
 
-char **cal_completion(const char *text,int start,int end){
-	char **matches=NULL;
-	
-	rl_attempted_completion_over=1;// disable default completion
-	
-	int list_index = 0;
-	char *name;
+char** cal_completion(const char* text, int start, int end) {
+  char** matches = NULL;
 
-  while (name = commands[list_index].name)
-    {
-    	if (strncmp (name, text, 3) == 0)
-        break;
-       list_index++;
+  rl_attempted_completion_over = 1;  // disable default completion
+
+  int list_index = 0;
+  char* name;
+
+  while (name = commands[list_index].name) {
+    if (strncmp(name, text, 3) == 0)
+      break;
+    list_index++;
+  }
+
+  if (start == 0) {
+    if (list_index < 5) {
+      matches = rl_completion_matches(text, var_generator);
     }
-    
-    
-	
-	if(start==0){
-		if(list_index<5){
-			matches = rl_completion_matches (text, var_generator);
-		}
-		matches = rl_completion_matches (text, command_generator);
-	}
-	return matches;
+    matches = rl_completion_matches(text, command_generator);
+  }
+  return matches;
 }
 
-char *var_generator (const char *text,int state){
-	// TODO list all variable
-	
-	return NULL;
+char* var_generator(const char* text, int state) {
+  // TODO list all variable
+
+  return NULL;
 }
 
-char *command_generator (const char *text,int state)
-{
+char* command_generator(const char* text, int state) {
   static int list_index, len;
-  char *name;
+  char* name;
 
-  if (!state)
-    {
-      list_index = 0;
-      len = strlen (text);
-    }
+  if (!state) {
+    list_index = 0;
+    len = strlen(text);
+  }
 
-  while (name = commands[list_index].name)
-    {
-   // TODO functions should follow by '('
-		rl_completion_suppress_append=1;// "not appended to matches at the end of the command line"
-      list_index++;
-      if (strncmp (name, text, len) == 0)
-        return (dupstr(name));
-    }
+  while (name = commands[list_index].name) {
+    // TODO functions should follow by '('
+    rl_completion_suppress_append =
+        1;  // "not appended to matches at the end of the command line"
+    list_index++;
+    if (strncmp(name, text, len) == 0)
+      return (dupstr(name));
+  }
 
   return NULL;
 }
@@ -162,26 +129,25 @@ char *command_generator (const char *text,int state)
 int cli(int opt) {
   if (opt == 'f') {
     extern FILE* ifp;
-    char* input = malloc(sizeof(char) * 1024 * 2);
-    while (fgets(input, 1024 * 2 - 1, ifp) != NULL) {
-      input[strcspn(input, "\n")] = 0;
-      add_history(input);
-      (void)regex(input);
-    }
-    free(input);
+    fclose(stdin);
+    stdin=ifp;
+    yy_scan_buffer(stdin);
+    yyparse();
     fclose(ifp);
-    return 0;
+    exit(1);
   }
-
   // normal mode
-  setbuf(stdin, NULL);
   char* input = readline(">>> ");
-  if (*input == EOF || *input == '\n') {
+  if (*input == EOF || *input == '\0') {
     free(input);
     cli(0);
     return 0;
   }
-	add_history(input);
-  (void)regex(input);
-  return 0;
+  add_history(input);
+  int newline=strlen(input);
+  realloc(input,strlen(input)+2);
+  input[newline]='\n';
+  input[newline+1]='\0';
+  yy_scan_string(input);
+  return yyparse();
 }

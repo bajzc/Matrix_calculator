@@ -2,13 +2,12 @@
 // Created by LiZeCheng-Jason on 2023-06-28.
 //
 #include "config.h"
+#include "syms.h"
 FILE *ifp=NULL;
+int opt=256;
 	
 int main(int argc, char **argv) {
-  matrix_t* ans = malloc(sizeof(matrix_t));
-	if (!ans) {// successfully allocated memory
-  return -1;
-  }
+	init_table();
   	
 #if HAVE_LOCALE_H
 	(void)setlocale (LC_ALL, "");
@@ -19,14 +18,7 @@ int main(int argc, char **argv) {
 	rl_bind_key('\t',rl_complete);
 	using_history();
 	// readline library init
-	
-  ans->column = 1;
-  ans->row = 1;
-  matrix_calloc(ans);
-  hash_new_matrix("ans", ans);
-  regex_malloc_all();
   
-	int opt=256;
 	while((opt = getopt(argc,argv,"f:hv"))!=EOF){
 		switch (opt)
 		{
@@ -40,10 +32,10 @@ int main(int argc, char **argv) {
 			break;
 			case 'h':
 			print_help_msg();
-			return 0;
+      break;
 			case 'v':
 			print_ver_msg();
-			return 0;
+      break;
 		}
 	}
 	

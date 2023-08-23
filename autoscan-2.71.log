@@ -1,6 +1,0 @@
-autoscan-2.71: warning: missing AC_CHECK_FUNCS([setlocale]) wanted by: 
-	src/main.c:15
-autoscan-2.71: warning: missing AC_CHECK_FUNCS([strcspn]) wanted by: 
-	src/cli.c:122
-autoscan-2.71: warning: missing AC_CHECK_HEADERS([unistd.h]) wanted by: 
-	src/config.h:59

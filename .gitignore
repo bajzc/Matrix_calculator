@@ -51,6 +51,19 @@ Module.symvers
 Mkfile.old
 dkms.conf
 
-src/x64/*
-*.vcxproj.user
-.vs/*
+aclocal.m4
+ar-lib
+autom4te.cache
+compile
+config.guess
+config.log
+config.status
+config.sub
+configure
+depcomp
+install-sh
+libtool
+ltmain.sh
+missing
+
+*~

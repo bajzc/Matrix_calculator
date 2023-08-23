@@ -1,3 +1,5 @@
 bin_PROGRAMS = CLI
-CLI_SOURCES = cli.c errorf.c main.c hash.c matrix.c regex.c
-CLI_LDADD = -lpcre2-8
+BUILT_SOURCES = parser.h
+AM_YFLAGS = -d -Wcounterexamples -o parser.c
+CLI_SOURCES = cli.c errorf.c main.c lex.l parser.y matrix.c
+CLI_LDADD = -lm

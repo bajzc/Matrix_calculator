@@ -17,18 +17,6 @@
 #error "..\/config.h is not found"
 #endif
 
-#if HAVE_LIBPCRE2_8
-#include <pcre2.h>
-#else
-#error "PCRE2 NOT FOUND\n!!!RUN \"./configure" before "make\"!!!"
-#endif
-
-#if HAVE_UTHASH_H
-#include <uthash.h>
-#else
-#error "uthash.h NOT FOUND\n!!!RUN \"./configure" before "make\"!!!"
-#endif
-
 #if HAVE_STDLIB_H
 #include <stdlib.h>
 #else
@@ -97,12 +85,6 @@ typedef struct {
 } matrix_t;
 
 typedef struct {
-  char* name;
-  UT_hash_handle hh;
-  matrix_t* matrix;
-} identifier_t;
-
-typedef struct {
   char *name;
   char *doc;
 } COMMAND;//readline completion
@@ -132,10 +114,6 @@ void matrix_inverse(matrix_t* a, matrix_t* ans);
 double matrix_det(matrix_t* a);
 matrix_t* matrix_t_copy(matrix_t* a);
 int hash_have_name(char* MatrixName);
-identifier_t* hash_new_matrix(char* MatrixName, matrix_t* NewMatrix);
-identifier_t* hash_find_matrix(char* MatrixName);
-void hash_print_all_matrix(void);
-void hash_delete_all(void);
 int cli(int opt);
 char **cal_completion(const char *text,int start,int end);
 char *command_generator (const char *text,int state);

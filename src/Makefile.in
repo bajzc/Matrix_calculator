@@ -102,7 +102,7 @@ CONFIG_CLEAN_VPATH_FILES =
 am__installdirs = "$(DESTDIR)$(bindir)"
 PROGRAMS = $(bin_PROGRAMS)
 am_CLI_OBJECTS = cli.$(OBJEXT) errorf.$(OBJEXT) main.$(OBJEXT) \
-	hash.$(OBJEXT) matrix.$(OBJEXT) regex.$(OBJEXT)
+	lex.$(OBJEXT) parser.$(OBJEXT) matrix.$(OBJEXT)
 CLI_OBJECTS = $(am_CLI_OBJECTS)
 CLI_DEPENDENCIES =
 AM_V_P = $(am__v_P_@AM_V@)
@@ -121,8 +121,8 @@ DEFAULT_INCLUDES = -I.@am__isrc@ -I$(top_builddir)
 depcomp = $(SHELL) $(top_srcdir)/depcomp
 am__maybe_remake_depfiles = depfiles
 am__depfiles_remade = ./$(DEPDIR)/cli.Po ./$(DEPDIR)/errorf.Po \
-	./$(DEPDIR)/hash.Po ./$(DEPDIR)/main.Po ./$(DEPDIR)/matrix.Po \
-	./$(DEPDIR)/regex.Po
+	./$(DEPDIR)/lex.Po ./$(DEPDIR)/main.Po ./$(DEPDIR)/matrix.Po \
+	./$(DEPDIR)/parser.Po
 am__mv = mv -f
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
@@ -136,6 +136,19 @@ AM_V_CCLD = $(am__v_CCLD_@AM_V@)
 am__v_CCLD_ = $(am__v_CCLD_@AM_DEFAULT_V@)
 am__v_CCLD_0 = @echo "  CCLD    " $@;
 am__v_CCLD_1 = 
+LEXCOMPILE = $(LEX) $(AM_LFLAGS) $(LFLAGS)
+AM_V_LEX = $(am__v_LEX_@AM_V@)
+am__v_LEX_ = $(am__v_LEX_@AM_DEFAULT_V@)
+am__v_LEX_0 = @echo "  LEX     " $@;
+am__v_LEX_1 = 
+YLWRAP = $(top_srcdir)/ylwrap
+am__yacc_c2h = sed -e s/cc$$/hh/ -e s/cpp$$/hpp/ -e s/cxx$$/hxx/ \
+		   -e s/c++$$/h++/ -e s/c$$/h/
+YACCCOMPILE = $(YACC) $(AM_YFLAGS) $(YFLAGS)
+AM_V_YACC = $(am__v_YACC_@AM_V@)
+am__v_YACC_ = $(am__v_YACC_@AM_DEFAULT_V@)
+am__v_YACC_0 = @echo "  YACC    " $@;
+am__v_YACC_1 = 
 SOURCES = $(CLI_SOURCES)
 DIST_SOURCES = $(CLI_SOURCES)
 am__can_run_installinfo = \
@@ -161,7 +174,7 @@ am__define_uniq_tagged_files = \
     if test -f "$$i"; then echo $$i; else echo $(srcdir)/$$i; fi; \
   done | $(am__uniquify_input)`
 am__DIST_COMMON = $(srcdir)/Makefile.in $(top_srcdir)/depcomp \
-	README.md
+	$(top_srcdir)/ylwrap README.md lex.c parser.c parser.h
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
@@ -190,6 +203,9 @@ INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
 INSTALL_STRIP_PROGRAM = @INSTALL_STRIP_PROGRAM@
 LDFLAGS = @LDFLAGS@
+LEX = @LEX@
+LEXLIB = @LEXLIB@
+LEX_OUTPUT_ROOT = @LEX_OUTPUT_ROOT@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
 LTLIBOBJS = @LTLIBOBJS@
@@ -212,6 +228,7 @@ SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
 VERSION = @VERSION@
+YACC = @YACC@
 abs_builddir = @abs_builddir@
 abs_srcdir = @abs_srcdir@
 abs_top_builddir = @abs_top_builddir@
@@ -263,12 +280,15 @@ target_alias = @target_alias@
 top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
-CLI_SOURCES = cli.c errorf.c main.c hash.c matrix.c regex.c
-CLI_LDADD = -lpcre2-8
-all: all-am
+BUILT_SOURCES = parser.h
+AM_YFLAGS = -d -Wcounterexamples -o parser.c
+CLI_SOURCES = cli.c errorf.c main.c lex.l parser.y matrix.c
+CLI_LDADD = -lm
+all: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) all-am
 
 .SUFFIXES:
-.SUFFIXES: .c .o .obj
+.SUFFIXES: .c .l .o .obj .y
 $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am  $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
@@ -340,6 +360,9 @@ uninstall-binPROGRAMS:
 
 clean-binPROGRAMS:
 	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
+parser.h: parser.c
+	@if test ! -f $@; then rm -f parser.c; else :; fi
+	@if test ! -f $@; then $(MAKE) $(AM_MAKEFLAGS) parser.c; else :; fi
 
 CLI$(EXEEXT): $(CLI_OBJECTS) $(CLI_DEPENDENCIES) $(EXTRA_CLI_DEPENDENCIES) 
 	@rm -f CLI$(EXEEXT)
@@ -353,10 +376,10 @@ distclean-compile:
 
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cli.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/errorf.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/hash.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/lex.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/main.Po@am__quote@ # am--include-marker
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/matrix.Po@am__quote@ # am--include-marker
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/regex.Po@am__quote@ # am--include-marker
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/parser.Po@am__quote@ # am--include-marker
 
 $(am__depfiles_remade):
 	@$(MKDIR_P) $(@D)
@@ -377,6 +400,12 @@ am--depfiles: $(am__depfiles_remade)
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	$(AM_V_CC)source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(AM_V_CC@am__nodep@)$(COMPILE) -c -o $@ `$(CYGPATH_W) '$<'`
+
+.l.c:
+	$(AM_V_LEX)$(am__skiplex) $(SHELL) $(YLWRAP) $< $(LEX_OUTPUT_ROOT).c $@ -- $(LEXCOMPILE)
+
+.y.c:
+	$(AM_V_YACC)$(am__skipyacc) $(SHELL) $(YLWRAP) $< y.tab.c $@ y.tab.h `echo $@ | $(am__yacc_c2h)` y.output $*.output -- $(YACCCOMPILE)
 
 ID: $(am__tagged_files)
 	$(am__define_uniq_tagged_files); mkid -fID $$unique
@@ -463,14 +492,17 @@ distdir-am: $(DISTFILES)
 	  fi; \
 	done
 check-am: all-am
-check: check-am
+check: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) check-am
 all-am: Makefile $(PROGRAMS)
 installdirs:
 	for dir in "$(DESTDIR)$(bindir)"; do \
 	  test -z "$$dir" || $(MKDIR_P) "$$dir"; \
 	done
-install: install-am
-install-exec: install-exec-am
+install: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) install-am
+install-exec: $(BUILT_SOURCES)
+	$(MAKE) $(AM_MAKEFLAGS) install-exec-am
 install-data: install-data-am
 uninstall: uninstall-am
 
@@ -499,6 +531,10 @@ distclean-generic:
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
+	-rm -f lex.c
+	-rm -f parser.c
+	-rm -f parser.h
+	-test -z "$(BUILT_SOURCES)" || rm -f $(BUILT_SOURCES)
 clean: clean-am
 
 clean-am: clean-binPROGRAMS clean-generic mostlyclean-am
@@ -506,10 +542,10 @@ clean-am: clean-binPROGRAMS clean-generic mostlyclean-am
 distclean: distclean-am
 		-rm -f ./$(DEPDIR)/cli.Po
 	-rm -f ./$(DEPDIR)/errorf.Po
-	-rm -f ./$(DEPDIR)/hash.Po
+	-rm -f ./$(DEPDIR)/lex.Po
 	-rm -f ./$(DEPDIR)/main.Po
 	-rm -f ./$(DEPDIR)/matrix.Po
-	-rm -f ./$(DEPDIR)/regex.Po
+	-rm -f ./$(DEPDIR)/parser.Po
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
 	distclean-tags
@@ -557,10 +593,10 @@ installcheck-am:
 maintainer-clean: maintainer-clean-am
 		-rm -f ./$(DEPDIR)/cli.Po
 	-rm -f ./$(DEPDIR)/errorf.Po
-	-rm -f ./$(DEPDIR)/hash.Po
+	-rm -f ./$(DEPDIR)/lex.Po
 	-rm -f ./$(DEPDIR)/main.Po
 	-rm -f ./$(DEPDIR)/matrix.Po
-	-rm -f ./$(DEPDIR)/regex.Po
+	-rm -f ./$(DEPDIR)/parser.Po
 	-rm -f Makefile
 maintainer-clean-am: distclean-am maintainer-clean-generic
 
@@ -578,7 +614,7 @@ ps-am:
 
 uninstall-am: uninstall-binPROGRAMS
 
-.MAKE: install-am install-strip
+.MAKE: all check install install-am install-exec install-strip
 
 .PHONY: CTAGS GTAGS TAGS all all-am am--depfiles check check-am clean \
 	clean-binPROGRAMS clean-generic cscopelist-am ctags ctags-am \
