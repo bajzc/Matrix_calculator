@@ -174,7 +174,6 @@ matrix_t* matrix_init(vector_t* vector) {
   //  }
   for (int i = 0; i < matrix->row; i++) {
     for (int j = 0; j < matrix->column; j++) {
-      // BUG SIGSEGV here
       matrix->matrix[i][j] = vector->arrays[i]->num[j];
     }
   }
