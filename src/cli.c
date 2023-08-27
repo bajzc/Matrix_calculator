@@ -38,7 +38,7 @@ void print_help_msg(void) {
 int cli(void) {
   setbuf(stdin, NULL);
   printf(">>>");
-  char* input = malloc(sizeof(char) * 1024 * 2);
+  char* input = malloc(sizeof(char) * 1024 * 4);
   if (input == NULL) {
     printf("Memory error!\n");
     exit(-1);

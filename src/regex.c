@@ -36,11 +36,11 @@ const char* FunctionPattern =
     "|((?'INV'inv)\\(\\s*(?'INV_NAME'([a-zA-Z_][0-9a-zA-Z_]*))\\s*\\))";
 
 const char* StatementPattern =
-    "(?'NAME'[a-zA-Z_][0-9a-zA-Z_]*)(\\s)*=(?'MATRIX'(\\s*\\[)(\\s*(-?\\d+(,"
-    "\\d+)*(\\.\\d+)?))+(\\s*(\\;)(\\s*-?\\d+(,\\d+)*(\\.\\d+)?)+)*("
+    "(?'NAME'[a-zA-Z_][0-9a-zA-Z_]*)(\\s)*=(?'MATRIX'(\\s*\\[)(\\s*(-?"
+    "\\d+(\\.\\d+)?))+(\\s*(\\;)(\\s*-?\\d+(\\.\\d+)?)+)*("
     "\\s*\\]))\\s*$";
 const char* ColonPattern = "(;)";  // get the number of ';'
-const char* NumberPattern = "(?'NUMBER'(-?\\d+(,\\d+)*(\\.\\d+)?))";
+const char* NumberPattern = "(?'NUMBER'(-?\\d+(\\.\\d+)?))";
 
 pcre2_match_data** MatchData = NULL;
 PCRE2_SIZE** OutVector = NULL;
