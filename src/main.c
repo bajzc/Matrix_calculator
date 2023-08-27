@@ -25,6 +25,7 @@ int main(int argc, char** argv) {
         puts(optarg);
         if ((ifp = fopen(optarg, "r")) == NULL) {
           fprintf(stderr, "ERROR: cannot open file: '%s'", optarg);
+          fclose(ifp);
           return -1;
         }
         cli('f');

@@ -65,5 +65,23 @@ install-sh
 libtool
 ltmain.sh
 missing
+ylwrap
 
 *~
+
+*.data
+*.old
+
+# Texinfo
+*.aux
+*.cp
+*.cps
+*.log
+*.toc
+
+#bison
+parser.xml
+parser.html
+
+#vscodium
+*.json

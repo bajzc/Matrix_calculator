@@ -10,6 +10,6 @@ void error_exit(char* errormsg) {
   exit(-1);
 }
 void error_print(char* errormsg) {
-  fprintf(stderr, "\033[31m%U+s\033[0m\n", errormsg);
+  fprintf(stderr, "\033[31m%s\033[0m\n", errormsg);
   setbuf(stdin, NULL);
 }

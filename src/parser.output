@@ -1,4 +1,4 @@
-语法
+Grammar
 
     0 $accept: input $end
 
@@ -12,1251 +12,1373 @@
     7     | error '\n'
 
     8 matrix_stmt: t_name '=' m_exp
+    9            | t_matrix '=' m_exp
 
-    9 matrix: '[' exp ']'
-   10       | '[' vector ']'
+   10 matrix: '[' exp ']'
+   11       | '[' vector ']'
 
-   11 vector: array
-   12       | vector ';' array
+   12 vector: array
+   13       | vector ';' array
 
-   13 array: exp ',' exp
-   14      | array ',' exp
+   14 array: exp ',' exp
+   15      | array ',' exp
 
-   15 exp: t_num
-   16    | t_name
-   17    | t_name '=' exp
-   18    | t_fun '(' exp ')'
-   19    | t_det '(' t_matrix ')'
-   20    | m_exp '[' exp ']' '[' exp ']'
-   21    | m_exp '[' exp ']' '[' exp ']' '=' exp
-   22    | exp '+' exp
-   23    | exp '-' exp
-   24    | exp '*' exp
-   25    | exp '/' exp
-   26    | exp '%' exp
-   27    | '-' exp
-   28    | exp '^' exp
-   29    | '(' exp ')'
+   16 exp: t_num
+   17    | t_name
+   18    | t_name '=' exp
+   19    | t_fun '(' exp ')'
+   20    | t_det '(' t_matrix ')'
+   21    | m_exp '[' exp ']' '[' exp ']'
+   22    | m_exp '[' exp ']' '[' exp ']' '=' exp
+   23    | t_matrix '=' exp
+   24    | exp '+' exp
+   25    | exp '-' exp
+   26    | exp '*' exp
+   27    | exp '/' exp
+   28    | exp '%' exp
+   29    | '-' exp
+   30    | exp '^' exp
+   31    | '(' exp ')'
 
-   30 m_exp: matrix
-   31      | t_matrix
-   32      | matrix_stmt
-   33      | t_inv '(' m_exp ')'
-   34      | m_exp '+' m_exp
-   35      | m_exp '*' m_exp
-   36      | '(' t_matrix ')'
+   32 m_exp: matrix
+   33      | t_matrix
+   34      | matrix_stmt
+   35      | t_inv '(' m_exp ')'
+   36      | m_exp '+' m_exp
+   37      | m_exp '*' m_exp
+   38      | '(' t_matrix ')'
 
-   37 command: t_clear
-   38        | t_clean
-   39        | t_quit
+   39 command: t_clear
+   40        | t_clean
+   41        | t_quit
+   42        | t_help
+   43        | t_list
 
 
-终结语词，附有它们出现处的规则
+Terminals, with rules where they appear
 
     $end (0) 0
     '\n' (10) 3 4 5 6 7
-    '%' (37) 26
-    '(' (40) 18 19 29 33 36
-    ')' (41) 18 19 29 33 36
-    '*' (42) 24 35
-    '+' (43) 22 34
-    ',' (44) 13 14
-    '-' (45) 23 27
-    '/' (47) 25
-    ';' (59) 12
-    '=' (61) 8 17 21
-    '[' (91) 9 10 20 21
-    ']' (93) 9 10 20 21
-    '^' (94) 28
+    '%' (37) 28
+    '(' (40) 19 20 31 35 38
+    ')' (41) 19 20 31 35 38
+    '*' (42) 26 37
+    '+' (43) 24 36
+    ',' (44) 14 15
+    '-' (45) 25 29
+    '/' (47) 27
+    ';' (59) 13
+    '=' (61) 8 9 18 22 23
+    '[' (91) 10 11 21 22
+    ']' (93) 10 11 21 22
+    '^' (94) 30
     error (256) 7
-    t_clear <char*> (258) 37
-    t_clean <char*> (259) 38
-    t_quit <char*> (260) 39
-    t_num <double> (261) 15
-    t_name <symvar *> (262) 8 16 17
-    t_fun <symvar *> (263) 18
-    t_matrix <symvar *> (264) 19 31 36
-    t_det <symvar *> (265) 19
-    t_inv <matrix_t*> (266) 33
-    NEG (267)
+    t_clear <char*> (258) 39
+    t_clean <char*> (259) 40
+    t_quit <char*> (260) 41
+    t_help <char*> (261) 42
+    t_list <char*> (262) 43
+    t_num <double> (263) 16
+    t_name <symvar *> (264) 8 17 18
+    t_fun <symvar *> (265) 19
+    t_matrix <symvar *> (266) 9 20 23 33 38
+    t_det <symvar *> (267) 20
+    t_inv <matrix_t*> (268) 35
+    NEG (269)
 
 
-非终结语词，附有它们出现处的规则
+Nonterminals, with rules where they appear
 
-    $accept (27)
+    $accept (29)
         on left: 0
-    input (28)
+    input (30)
         on left: 1 2
         on right: 0 2
-    line (29)
+    line (31)
         on left: 3 4 5 6 7
         on right: 2
-    matrix_stmt <symvar *> (30)
-        on left: 8
+    matrix_stmt <symvar *> (32)
+        on left: 8 9
+        on right: 34
+    matrix <matrix_t *> (33)
+        on left: 10 11
         on right: 32
-    matrix <matrix_t *> (31)
-        on left: 9 10
-        on right: 30
-    vector <vector_t *> (32)
-        on left: 11 12
-        on right: 10 12
-    array <array_t *> (33)
-        on left: 13 14
-        on right: 11 12 14
-    exp <double> (34)
-        on left: 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29
-        on right: 6 9 13 14 17 18 20 21 22 23 24 25 26 27 28 29
-    m_exp <matrix_t *> (35)
-        on left: 30 31 32 33 34 35 36
-        on right: 5 8 20 21 33 34 35
-    command (36)
-        on left: 37 38 39
+    vector <vector_t *> (34)
+        on left: 12 13
+        on right: 11 13
+    array <array_t *> (35)
+        on left: 14 15
+        on right: 12 13 15
+    exp <double> (36)
+        on left: 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31
+        on right: 6 10 14 15 18 19 21 22 23 24 25 26 27 28 29 30 31
+    m_exp <matrix_t *> (37)
+        on left: 32 33 34 35 36 37 38
+        on right: 5 8 9 21 22 35 36 37
+    command (38)
+        on left: 39 40 41 42 43
         on right: 4
 
 
-状态 0
+State 0
 
     0 $accept: • input $end
 
-    $default  使用规则 1 以归约 (input)
+    $default  reduce using rule 1 (input)
 
-    input  转到状态 1
+    input  go to state 1
 
 
-状态 1
+State 1
 
     0 $accept: input • $end
     2 input: input • line
 
-    $end      偏移，并进入状态 2
-    error     偏移，并进入状态 3
-    t_clear   偏移，并进入状态 4
-    t_clean   偏移，并进入状态 5
-    t_quit    偏移，并进入状态 6
-    t_num     偏移，并进入状态 7
-    t_name    偏移，并进入状态 8
-    t_fun     偏移，并进入状态 9
-    t_matrix  偏移，并进入状态 10
-    t_det     偏移，并进入状态 11
-    t_inv     偏移，并进入状态 12
-    '['       偏移，并进入状态 13
-    '-'       偏移，并进入状态 14
-    '\n'      偏移，并进入状态 15
-    '('       偏移，并进入状态 16
+    $end      shift, and go to state 2
+    error     shift, and go to state 3
+    t_clear   shift, and go to state 4
+    t_clean   shift, and go to state 5
+    t_quit    shift, and go to state 6
+    t_help    shift, and go to state 7
+    t_list    shift, and go to state 8
+    t_num     shift, and go to state 9
+    t_name    shift, and go to state 10
+    t_fun     shift, and go to state 11
+    t_matrix  shift, and go to state 12
+    t_det     shift, and go to state 13
+    t_inv     shift, and go to state 14
+    '['       shift, and go to state 15
+    '-'       shift, and go to state 16
+    '\n'      shift, and go to state 17
+    '('       shift, and go to state 18
 
-    line         转到状态 17
-    matrix_stmt  转到状态 18
-    matrix       转到状态 19
-    exp          转到状态 20
-    m_exp        转到状态 21
-    command      转到状态 22
+    line         go to state 19
+    matrix_stmt  go to state 20
+    matrix       go to state 21
+    exp          go to state 22
+    m_exp        go to state 23
+    command      go to state 24
 
 
-状态 2
+State 2
 
     0 $accept: input $end •
 
-    $default  接受
+    $default  accept
 
 
-状态 3
+State 3
 
     7 line: error • '\n'
 
-    '\n'  偏移，并进入状态 23
+    '\n'  shift, and go to state 25
 
 
-状态 4
+State 4
 
-   37 command: t_clear •
+   39 command: t_clear •
 
-    $default  使用规则 37 以归约 (command)
-
-
-状态 5
-
-   38 command: t_clean •
-
-    $default  使用规则 38 以归约 (command)
+    $default  reduce using rule 39 (command)
 
 
-状态 6
+State 5
 
-   39 command: t_quit •
+   40 command: t_clean •
 
-    $default  使用规则 39 以归约 (command)
-
-
-状态 7
-
-   15 exp: t_num •
-
-    $default  使用规则 15 以归约 (exp)
+    $default  reduce using rule 40 (command)
 
 
-状态 8
+State 6
+
+   41 command: t_quit •
+
+    $default  reduce using rule 41 (command)
+
+
+State 7
+
+   42 command: t_help •
+
+    $default  reduce using rule 42 (command)
+
+
+State 8
+
+   43 command: t_list •
+
+    $default  reduce using rule 43 (command)
+
+
+State 9
+
+   16 exp: t_num •
+
+    $default  reduce using rule 16 (exp)
+
+
+State 10
 
     8 matrix_stmt: t_name • '=' m_exp
-   16 exp: t_name •
-   17    | t_name • '=' exp
+   17 exp: t_name •
+   18    | t_name • '=' exp
 
-    '='  偏移，并进入状态 24
+    '='  shift, and go to state 26
 
-    $default  使用规则 16 以归约 (exp)
-
-
-状态 9
-
-   18 exp: t_fun • '(' exp ')'
-
-    '('  偏移，并进入状态 25
+    $default  reduce using rule 17 (exp)
 
 
-状态 10
+State 11
 
-   31 m_exp: t_matrix •
+   19 exp: t_fun • '(' exp ')'
 
-    $default  使用规则 31 以归约 (m_exp)
-
-
-状态 11
-
-   19 exp: t_det • '(' t_matrix ')'
-
-    '('  偏移，并进入状态 26
+    '('  shift, and go to state 27
 
 
-状态 12
+State 12
 
-   33 m_exp: t_inv • '(' m_exp ')'
+    9 matrix_stmt: t_matrix • '=' m_exp
+   23 exp: t_matrix • '=' exp
+   33 m_exp: t_matrix •
 
-    '('  偏移，并进入状态 27
+    '='  shift, and go to state 28
 
-
-状态 13
-
-    9 matrix: '[' • exp ']'
-   10       | '[' • vector ']'
-
-    t_num     偏移，并进入状态 7
-    t_name    偏移，并进入状态 8
-    t_fun     偏移，并进入状态 9
-    t_matrix  偏移，并进入状态 10
-    t_det     偏移，并进入状态 11
-    t_inv     偏移，并进入状态 12
-    '['       偏移，并进入状态 13
-    '-'       偏移，并进入状态 14
-    '('       偏移，并进入状态 16
-
-    matrix_stmt  转到状态 18
-    matrix       转到状态 19
-    vector       转到状态 28
-    array        转到状态 29
-    exp          转到状态 30
-    m_exp        转到状态 31
+    $default  reduce using rule 33 (m_exp)
 
 
-状态 14
+State 13
 
-   27 exp: '-' • exp
+   20 exp: t_det • '(' t_matrix ')'
 
-    t_num     偏移，并进入状态 7
-    t_name    偏移，并进入状态 8
-    t_fun     偏移，并进入状态 9
-    t_matrix  偏移，并进入状态 10
-    t_det     偏移，并进入状态 11
-    t_inv     偏移，并进入状态 12
-    '['       偏移，并进入状态 13
-    '-'       偏移，并进入状态 14
-    '('       偏移，并进入状态 16
-
-    matrix_stmt  转到状态 18
-    matrix       转到状态 19
-    exp          转到状态 32
-    m_exp        转到状态 31
+    '('  shift, and go to state 29
 
 
-状态 15
+State 14
+
+   35 m_exp: t_inv • '(' m_exp ')'
+
+    '('  shift, and go to state 30
+
+
+State 15
+
+   10 matrix: '[' • exp ']'
+   11       | '[' • vector ']'
+
+    t_num     shift, and go to state 9
+    t_name    shift, and go to state 10
+    t_fun     shift, and go to state 11
+    t_matrix  shift, and go to state 12
+    t_det     shift, and go to state 13
+    t_inv     shift, and go to state 14
+    '['       shift, and go to state 15
+    '-'       shift, and go to state 16
+    '('       shift, and go to state 18
+
+    matrix_stmt  go to state 20
+    matrix       go to state 21
+    vector       go to state 31
+    array        go to state 32
+    exp          go to state 33
+    m_exp        go to state 34
+
+
+State 16
+
+   29 exp: '-' • exp
+
+    t_num     shift, and go to state 9
+    t_name    shift, and go to state 10
+    t_fun     shift, and go to state 11
+    t_matrix  shift, and go to state 12
+    t_det     shift, and go to state 13
+    t_inv     shift, and go to state 14
+    '['       shift, and go to state 15
+    '-'       shift, and go to state 16
+    '('       shift, and go to state 18
+
+    matrix_stmt  go to state 20
+    matrix       go to state 21
+    exp          go to state 35
+    m_exp        go to state 34
+
+
+State 17
 
     3 line: '\n' •
 
-    $default  使用规则 3 以归约 (line)
+    $default  reduce using rule 3 (line)
 
 
-状态 16
+State 18
 
-   29 exp: '(' • exp ')'
-   36 m_exp: '(' • t_matrix ')'
+   31 exp: '(' • exp ')'
+   38 m_exp: '(' • t_matrix ')'
 
-    t_num     偏移，并进入状态 7
-    t_name    偏移，并进入状态 8
-    t_fun     偏移，并进入状态 9
-    t_matrix  偏移，并进入状态 33
-    t_det     偏移，并进入状态 11
-    t_inv     偏移，并进入状态 12
-    '['       偏移，并进入状态 13
-    '-'       偏移，并进入状态 14
-    '('       偏移，并进入状态 16
+    t_num     shift, and go to state 9
+    t_name    shift, and go to state 10
+    t_fun     shift, and go to state 11
+    t_matrix  shift, and go to state 36
+    t_det     shift, and go to state 13
+    t_inv     shift, and go to state 14
+    '['       shift, and go to state 15
+    '-'       shift, and go to state 16
+    '('       shift, and go to state 18
 
-    matrix_stmt  转到状态 18
-    matrix       转到状态 19
-    exp          转到状态 34
-    m_exp        转到状态 31
+    matrix_stmt  go to state 20
+    matrix       go to state 21
+    exp          go to state 37
+    m_exp        go to state 34
 
 
-状态 17
+State 19
 
     2 input: input line •
 
-    $default  使用规则 2 以归约 (input)
+    $default  reduce using rule 2 (input)
 
 
-状态 18
+State 20
 
-   32 m_exp: matrix_stmt •
+   34 m_exp: matrix_stmt •
 
-    $default  使用规则 32 以归约 (m_exp)
-
-
-状态 19
-
-   30 m_exp: matrix •
-
-    $default  使用规则 30 以归约 (m_exp)
+    $default  reduce using rule 34 (m_exp)
 
 
-状态 20
+State 21
+
+   32 m_exp: matrix •
+
+    $default  reduce using rule 32 (m_exp)
+
+
+State 22
 
     6 line: exp • '\n'
-   22 exp: exp • '+' exp
-   23    | exp • '-' exp
-   24    | exp • '*' exp
-   25    | exp • '/' exp
-   26    | exp • '%' exp
-   28    | exp • '^' exp
+   24 exp: exp • '+' exp
+   25    | exp • '-' exp
+   26    | exp • '*' exp
+   27    | exp • '/' exp
+   28    | exp • '%' exp
+   30    | exp • '^' exp
 
-    '-'   偏移，并进入状态 35
-    '+'   偏移，并进入状态 36
-    '*'   偏移，并进入状态 37
-    '/'   偏移，并进入状态 38
-    '^'   偏移，并进入状态 39
-    '%'   偏移，并进入状态 40
-    '\n'  偏移，并进入状态 41
+    '-'   shift, and go to state 38
+    '+'   shift, and go to state 39
+    '*'   shift, and go to state 40
+    '/'   shift, and go to state 41
+    '^'   shift, and go to state 42
+    '%'   shift, and go to state 43
+    '\n'  shift, and go to state 44
 
 
-状态 21
+State 23
 
     5 line: m_exp • '\n'
-   20 exp: m_exp • '[' exp ']' '[' exp ']'
-   21    | m_exp • '[' exp ']' '[' exp ']' '=' exp
-   34 m_exp: m_exp • '+' m_exp
-   35      | m_exp • '*' m_exp
+   21 exp: m_exp • '[' exp ']' '[' exp ']'
+   22    | m_exp • '[' exp ']' '[' exp ']' '=' exp
+   36 m_exp: m_exp • '+' m_exp
+   37      | m_exp • '*' m_exp
 
-    '['   偏移，并进入状态 42
-    '+'   偏移，并进入状态 43
-    '*'   偏移，并进入状态 44
-    '\n'  偏移，并进入状态 45
+    '['   shift, and go to state 45
+    '+'   shift, and go to state 46
+    '*'   shift, and go to state 47
+    '\n'  shift, and go to state 48
 
 
-状态 22
+State 24
 
     4 line: command • '\n'
 
-    '\n'  偏移，并进入状态 46
+    '\n'  shift, and go to state 49
 
 
-状态 23
+State 25
 
     7 line: error '\n' •
 
-    $default  使用规则 7 以归约 (line)
+    $default  reduce using rule 7 (line)
 
 
-状态 24
+State 26
 
     8 matrix_stmt: t_name '=' • m_exp
-   17 exp: t_name '=' • exp
+   18 exp: t_name '=' • exp
 
-    t_num     偏移，并进入状态 7
-    t_name    偏移，并进入状态 8
-    t_fun     偏移，并进入状态 9
-    t_matrix  偏移，并进入状态 10
-    t_det     偏移，并进入状态 11
-    t_inv     偏移，并进入状态 12
-    '['       偏移，并进入状态 13
-    '-'       偏移，并进入状态 14
-    '('       偏移，并进入状态 16
+    t_num     shift, and go to state 9
+    t_name    shift, and go to state 10
+    t_fun     shift, and go to state 11
+    t_matrix  shift, and go to state 12
+    t_det     shift, and go to state 13
+    t_inv     shift, and go to state 14
+    '['       shift, and go to state 15
+    '-'       shift, and go to state 16
+    '('       shift, and go to state 18
 
-    matrix_stmt  转到状态 18
-    matrix       转到状态 19
-    exp          转到状态 47
-    m_exp        转到状态 48
+    matrix_stmt  go to state 20
+    matrix       go to state 21
+    exp          go to state 50
+    m_exp        go to state 51
 
 
-状态 25
+State 27
 
-   18 exp: t_fun '(' • exp ')'
+   19 exp: t_fun '(' • exp ')'
 
-    t_num     偏移，并进入状态 7
-    t_name    偏移，并进入状态 8
-    t_fun     偏移，并进入状态 9
-    t_matrix  偏移，并进入状态 10
-    t_det     偏移，并进入状态 11
-    t_inv     偏移，并进入状态 12
-    '['       偏移，并进入状态 13
-    '-'       偏移，并进入状态 14
-    '('       偏移，并进入状态 16
+    t_num     shift, and go to state 9
+    t_name    shift, and go to state 10
+    t_fun     shift, and go to state 11
+    t_matrix  shift, and go to state 12
+    t_det     shift, and go to state 13
+    t_inv     shift, and go to state 14
+    '['       shift, and go to state 15
+    '-'       shift, and go to state 16
+    '('       shift, and go to state 18
 
-    matrix_stmt  转到状态 18
-    matrix       转到状态 19
-    exp          转到状态 49
-    m_exp        转到状态 31
+    matrix_stmt  go to state 20
+    matrix       go to state 21
+    exp          go to state 52
+    m_exp        go to state 34
 
 
-状态 26
+State 28
 
-   19 exp: t_det '(' • t_matrix ')'
+    9 matrix_stmt: t_matrix '=' • m_exp
+   23 exp: t_matrix '=' • exp
 
-    t_matrix  偏移，并进入状态 50
+    t_num     shift, and go to state 9
+    t_name    shift, and go to state 10
+    t_fun     shift, and go to state 11
+    t_matrix  shift, and go to state 12
+    t_det     shift, and go to state 13
+    t_inv     shift, and go to state 14
+    '['       shift, and go to state 15
+    '-'       shift, and go to state 16
+    '('       shift, and go to state 18
 
+    matrix_stmt  go to state 20
+    matrix       go to state 21
+    exp          go to state 53
+    m_exp        go to state 54
 
-状态 27
 
-   33 m_exp: t_inv '(' • m_exp ')'
+State 29
 
-    t_name    偏移，并进入状态 51
-    t_matrix  偏移，并进入状态 10
-    t_inv     偏移，并进入状态 12
-    '['       偏移，并进入状态 13
-    '('       偏移，并进入状态 52
+   20 exp: t_det '(' • t_matrix ')'
 
-    matrix_stmt  转到状态 18
-    matrix       转到状态 19
-    m_exp        转到状态 53
+    t_matrix  shift, and go to state 55
 
 
-状态 28
+State 30
 
-   10 matrix: '[' vector • ']'
-   12 vector: vector • ';' array
+   35 m_exp: t_inv '(' • m_exp ')'
 
-    ';'  偏移，并进入状态 54
-    ']'  偏移，并进入状态 55
+    t_name    shift, and go to state 56
+    t_matrix  shift, and go to state 57
+    t_inv     shift, and go to state 14
+    '['       shift, and go to state 15
+    '('       shift, and go to state 58
 
+    matrix_stmt  go to state 20
+    matrix       go to state 21
+    m_exp        go to state 59
 
-状态 29
 
-   11 vector: array •
-   14 array: array • ',' exp
+State 31
 
-    ','  偏移，并进入状态 56
+   11 matrix: '[' vector • ']'
+   13 vector: vector • ';' array
 
-    $default  使用规则 11 以归约 (vector)
+    ';'  shift, and go to state 60
+    ']'  shift, and go to state 61
 
 
-状态 30
+State 32
 
-    9 matrix: '[' exp • ']'
-   13 array: exp • ',' exp
-   22 exp: exp • '+' exp
-   23    | exp • '-' exp
-   24    | exp • '*' exp
-   25    | exp • '/' exp
-   26    | exp • '%' exp
-   28    | exp • '^' exp
+   12 vector: array •
+   15 array: array • ',' exp
 
-    ','  偏移，并进入状态 57
-    '-'  偏移，并进入状态 35
-    '+'  偏移，并进入状态 36
-    '*'  偏移，并进入状态 37
-    '/'  偏移，并进入状态 38
-    ']'  偏移，并进入状态 58
-    '^'  偏移，并进入状态 39
-    '%'  偏移，并进入状态 40
+    ','  shift, and go to state 62
 
+    $default  reduce using rule 12 (vector)
 
-状态 31
 
-   20 exp: m_exp • '[' exp ']' '[' exp ']'
-   21    | m_exp • '[' exp ']' '[' exp ']' '=' exp
-   34 m_exp: m_exp • '+' m_exp
-   35      | m_exp • '*' m_exp
+State 33
 
-    '['  偏移，并进入状态 42
-    '+'  偏移，并进入状态 43
-    '*'  偏移，并进入状态 44
+   10 matrix: '[' exp • ']'
+   14 array: exp • ',' exp
+   24 exp: exp • '+' exp
+   25    | exp • '-' exp
+   26    | exp • '*' exp
+   27    | exp • '/' exp
+   28    | exp • '%' exp
+   30    | exp • '^' exp
 
+    ','  shift, and go to state 63
+    '-'  shift, and go to state 38
+    '+'  shift, and go to state 39
+    '*'  shift, and go to state 40
+    '/'  shift, and go to state 41
+    ']'  shift, and go to state 64
+    '^'  shift, and go to state 42
+    '%'  shift, and go to state 43
 
-状态 32
 
-   22 exp: exp • '+' exp
-   23    | exp • '-' exp
-   24    | exp • '*' exp
-   25    | exp • '/' exp
-   26    | exp • '%' exp
-   27    | '-' exp •
-   28    | exp • '^' exp
+State 34
 
-    '^'  偏移，并进入状态 39
-    '%'  偏移，并进入状态 40
+   21 exp: m_exp • '[' exp ']' '[' exp ']'
+   22    | m_exp • '[' exp ']' '[' exp ']' '=' exp
+   36 m_exp: m_exp • '+' m_exp
+   37      | m_exp • '*' m_exp
 
-    $default  使用规则 27 以归约 (exp)
+    '['  shift, and go to state 45
+    '+'  shift, and go to state 46
+    '*'  shift, and go to state 47
 
 
-状态 33
+State 35
 
-   31 m_exp: t_matrix •
-   36      | '(' t_matrix • ')'
+   24 exp: exp • '+' exp
+   25    | exp • '-' exp
+   26    | exp • '*' exp
+   27    | exp • '/' exp
+   28    | exp • '%' exp
+   29    | '-' exp •
+   30    | exp • '^' exp
 
-    ')'  偏移，并进入状态 59
+    '^'  shift, and go to state 42
+    '%'  shift, and go to state 43
 
-    $default  使用规则 31 以归约 (m_exp)
+    $default  reduce using rule 29 (exp)
 
 
-状态 34
+State 36
 
-   22 exp: exp • '+' exp
-   23    | exp • '-' exp
-   24    | exp • '*' exp
-   25    | exp • '/' exp
-   26    | exp • '%' exp
-   28    | exp • '^' exp
-   29    | '(' exp • ')'
+    9 matrix_stmt: t_matrix • '=' m_exp
+   23 exp: t_matrix • '=' exp
+   33 m_exp: t_matrix •
+   38      | '(' t_matrix • ')'
 
-    '-'  偏移，并进入状态 35
-    '+'  偏移，并进入状态 36
-    '*'  偏移，并进入状态 37
-    '/'  偏移，并进入状态 38
-    '^'  偏移，并进入状态 39
-    '%'  偏移，并进入状态 40
-    ')'  偏移，并进入状态 60
+    '='  shift, and go to state 28
+    ')'  shift, and go to state 65
 
+    $default  reduce using rule 33 (m_exp)
 
-状态 35
 
-   23 exp: exp '-' • exp
+State 37
 
-    t_num     偏移，并进入状态 7
-    t_name    偏移，并进入状态 8
-    t_fun     偏移，并进入状态 9
-    t_matrix  偏移，并进入状态 10
-    t_det     偏移，并进入状态 11
-    t_inv     偏移，并进入状态 12
-    '['       偏移，并进入状态 13
-    '-'       偏移，并进入状态 14
-    '('       偏移，并进入状态 16
+   24 exp: exp • '+' exp
+   25    | exp • '-' exp
+   26    | exp • '*' exp
+   27    | exp • '/' exp
+   28    | exp • '%' exp
+   30    | exp • '^' exp
+   31    | '(' exp • ')'
 
-    matrix_stmt  转到状态 18
-    matrix       转到状态 19
-    exp          转到状态 61
-    m_exp        转到状态 31
+    '-'  shift, and go to state 38
+    '+'  shift, and go to state 39
+    '*'  shift, and go to state 40
+    '/'  shift, and go to state 41
+    '^'  shift, and go to state 42
+    '%'  shift, and go to state 43
+    ')'  shift, and go to state 66
 
 
-状态 36
+State 38
 
-   22 exp: exp '+' • exp
+   25 exp: exp '-' • exp
 
-    t_num     偏移，并进入状态 7
-    t_name    偏移，并进入状态 8
-    t_fun     偏移，并进入状态 9
-    t_matrix  偏移，并进入状态 10
-    t_det     偏移，并进入状态 11
-    t_inv     偏移，并进入状态 12
-    '['       偏移，并进入状态 13
-    '-'       偏移，并进入状态 14
-    '('       偏移，并进入状态 16
+    t_num     shift, and go to state 9
+    t_name    shift, and go to state 10
+    t_fun     shift, and go to state 11
+    t_matrix  shift, and go to state 12
+    t_det     shift, and go to state 13
+    t_inv     shift, and go to state 14
+    '['       shift, and go to state 15
+    '-'       shift, and go to state 16
+    '('       shift, and go to state 18
 
-    matrix_stmt  转到状态 18
-    matrix       转到状态 19
-    exp          转到状态 62
-    m_exp        转到状态 31
+    matrix_stmt  go to state 20
+    matrix       go to state 21
+    exp          go to state 67
+    m_exp        go to state 34
 
 
-状态 37
+State 39
 
-   24 exp: exp '*' • exp
+   24 exp: exp '+' • exp
 
-    t_num     偏移，并进入状态 7
-    t_name    偏移，并进入状态 8
-    t_fun     偏移，并进入状态 9
-    t_matrix  偏移，并进入状态 10
-    t_det     偏移，并进入状态 11
-    t_inv     偏移，并进入状态 12
-    '['       偏移，并进入状态 13
-    '-'       偏移，并进入状态 14
-    '('       偏移，并进入状态 16
+    t_num     shift, and go to state 9
+    t_name    shift, and go to state 10
+    t_fun     shift, and go to state 11
+    t_matrix  shift, and go to state 12
+    t_det     shift, and go to state 13
+    t_inv     shift, and go to state 14
+    '['       shift, and go to state 15
+    '-'       shift, and go to state 16
+    '('       shift, and go to state 18
 
-    matrix_stmt  转到状态 18
-    matrix       转到状态 19
-    exp          转到状态 63
-    m_exp        转到状态 31
+    matrix_stmt  go to state 20
+    matrix       go to state 21
+    exp          go to state 68
+    m_exp        go to state 34
 
 
-状态 38
+State 40
 
-   25 exp: exp '/' • exp
+   26 exp: exp '*' • exp
 
-    t_num     偏移，并进入状态 7
-    t_name    偏移，并进入状态 8
-    t_fun     偏移，并进入状态 9
-    t_matrix  偏移，并进入状态 10
-    t_det     偏移，并进入状态 11
-    t_inv     偏移，并进入状态 12
-    '['       偏移，并进入状态 13
-    '-'       偏移，并进入状态 14
-    '('       偏移，并进入状态 16
+    t_num     shift, and go to state 9
+    t_name    shift, and go to state 10
+    t_fun     shift, and go to state 11
+    t_matrix  shift, and go to state 12
+    t_det     shift, and go to state 13
+    t_inv     shift, and go to state 14
+    '['       shift, and go to state 15
+    '-'       shift, and go to state 16
+    '('       shift, and go to state 18
 
-    matrix_stmt  转到状态 18
-    matrix       转到状态 19
-    exp          转到状态 64
-    m_exp        转到状态 31
+    matrix_stmt  go to state 20
+    matrix       go to state 21
+    exp          go to state 69
+    m_exp        go to state 34
 
 
-状态 39
+State 41
 
-   28 exp: exp '^' • exp
+   27 exp: exp '/' • exp
 
-    t_num     偏移，并进入状态 7
-    t_name    偏移，并进入状态 8
-    t_fun     偏移，并进入状态 9
-    t_matrix  偏移，并进入状态 10
-    t_det     偏移，并进入状态 11
-    t_inv     偏移，并进入状态 12
-    '['       偏移，并进入状态 13
-    '-'       偏移，并进入状态 14
-    '('       偏移，并进入状态 16
+    t_num     shift, and go to state 9
+    t_name    shift, and go to state 10
+    t_fun     shift, and go to state 11
+    t_matrix  shift, and go to state 12
+    t_det     shift, and go to state 13
+    t_inv     shift, and go to state 14
+    '['       shift, and go to state 15
+    '-'       shift, and go to state 16
+    '('       shift, and go to state 18
 
-    matrix_stmt  转到状态 18
-    matrix       转到状态 19
-    exp          转到状态 65
-    m_exp        转到状态 31
+    matrix_stmt  go to state 20
+    matrix       go to state 21
+    exp          go to state 70
+    m_exp        go to state 34
 
 
-状态 40
+State 42
 
-   26 exp: exp '%' • exp
+   30 exp: exp '^' • exp
 
-    t_num     偏移，并进入状态 7
-    t_name    偏移，并进入状态 8
-    t_fun     偏移，并进入状态 9
-    t_matrix  偏移，并进入状态 10
-    t_det     偏移，并进入状态 11
-    t_inv     偏移，并进入状态 12
-    '['       偏移，并进入状态 13
-    '-'       偏移，并进入状态 14
-    '('       偏移，并进入状态 16
+    t_num     shift, and go to state 9
+    t_name    shift, and go to state 10
+    t_fun     shift, and go to state 11
+    t_matrix  shift, and go to state 12
+    t_det     shift, and go to state 13
+    t_inv     shift, and go to state 14
+    '['       shift, and go to state 15
+    '-'       shift, and go to state 16
+    '('       shift, and go to state 18
 
-    matrix_stmt  转到状态 18
-    matrix       转到状态 19
-    exp          转到状态 66
-    m_exp        转到状态 31
+    matrix_stmt  go to state 20
+    matrix       go to state 21
+    exp          go to state 71
+    m_exp        go to state 34
 
 
-状态 41
+State 43
+
+   28 exp: exp '%' • exp
+
+    t_num     shift, and go to state 9
+    t_name    shift, and go to state 10
+    t_fun     shift, and go to state 11
+    t_matrix  shift, and go to state 12
+    t_det     shift, and go to state 13
+    t_inv     shift, and go to state 14
+    '['       shift, and go to state 15
+    '-'       shift, and go to state 16
+    '('       shift, and go to state 18
+
+    matrix_stmt  go to state 20
+    matrix       go to state 21
+    exp          go to state 72
+    m_exp        go to state 34
+
+
+State 44
 
     6 line: exp '\n' •
 
-    $default  使用规则 6 以归约 (line)
+    $default  reduce using rule 6 (line)
 
 
-状态 42
+State 45
 
-   20 exp: m_exp '[' • exp ']' '[' exp ']'
-   21    | m_exp '[' • exp ']' '[' exp ']' '=' exp
+   21 exp: m_exp '[' • exp ']' '[' exp ']'
+   22    | m_exp '[' • exp ']' '[' exp ']' '=' exp
 
-    t_num     偏移，并进入状态 7
-    t_name    偏移，并进入状态 8
-    t_fun     偏移，并进入状态 9
-    t_matrix  偏移，并进入状态 10
-    t_det     偏移，并进入状态 11
-    t_inv     偏移，并进入状态 12
-    '['       偏移，并进入状态 13
-    '-'       偏移，并进入状态 14
-    '('       偏移，并进入状态 16
+    t_num     shift, and go to state 9
+    t_name    shift, and go to state 10
+    t_fun     shift, and go to state 11
+    t_matrix  shift, and go to state 12
+    t_det     shift, and go to state 13
+    t_inv     shift, and go to state 14
+    '['       shift, and go to state 15
+    '-'       shift, and go to state 16
+    '('       shift, and go to state 18
 
-    matrix_stmt  转到状态 18
-    matrix       转到状态 19
-    exp          转到状态 67
-    m_exp        转到状态 31
-
-
-状态 43
-
-   34 m_exp: m_exp '+' • m_exp
-
-    t_name    偏移，并进入状态 51
-    t_matrix  偏移，并进入状态 10
-    t_inv     偏移，并进入状态 12
-    '['       偏移，并进入状态 13
-    '('       偏移，并进入状态 52
-
-    matrix_stmt  转到状态 18
-    matrix       转到状态 19
-    m_exp        转到状态 68
+    matrix_stmt  go to state 20
+    matrix       go to state 21
+    exp          go to state 73
+    m_exp        go to state 34
 
 
-状态 44
+State 46
 
-   35 m_exp: m_exp '*' • m_exp
+   36 m_exp: m_exp '+' • m_exp
 
-    t_name    偏移，并进入状态 51
-    t_matrix  偏移，并进入状态 10
-    t_inv     偏移，并进入状态 12
-    '['       偏移，并进入状态 13
-    '('       偏移，并进入状态 52
+    t_name    shift, and go to state 56
+    t_matrix  shift, and go to state 57
+    t_inv     shift, and go to state 14
+    '['       shift, and go to state 15
+    '('       shift, and go to state 58
 
-    matrix_stmt  转到状态 18
-    matrix       转到状态 19
-    m_exp        转到状态 69
+    matrix_stmt  go to state 20
+    matrix       go to state 21
+    m_exp        go to state 74
 
 
-状态 45
+State 47
+
+   37 m_exp: m_exp '*' • m_exp
+
+    t_name    shift, and go to state 56
+    t_matrix  shift, and go to state 57
+    t_inv     shift, and go to state 14
+    '['       shift, and go to state 15
+    '('       shift, and go to state 58
+
+    matrix_stmt  go to state 20
+    matrix       go to state 21
+    m_exp        go to state 75
+
+
+State 48
 
     5 line: m_exp '\n' •
 
-    $default  使用规则 5 以归约 (line)
+    $default  reduce using rule 5 (line)
 
 
-状态 46
+State 49
 
     4 line: command '\n' •
 
-    $default  使用规则 4 以归约 (line)
+    $default  reduce using rule 4 (line)
 
 
-状态 47
+State 50
 
-   17 exp: t_name '=' exp •
-   22    | exp • '+' exp
-   23    | exp • '-' exp
-   24    | exp • '*' exp
-   25    | exp • '/' exp
-   26    | exp • '%' exp
-   28    | exp • '^' exp
+   18 exp: t_name '=' exp •
+   24    | exp • '+' exp
+   25    | exp • '-' exp
+   26    | exp • '*' exp
+   27    | exp • '/' exp
+   28    | exp • '%' exp
+   30    | exp • '^' exp
 
-    '-'  偏移，并进入状态 35
-    '+'  偏移，并进入状态 36
-    '*'  偏移，并进入状态 37
-    '/'  偏移，并进入状态 38
-    '^'  偏移，并进入状态 39
-    '%'  偏移，并进入状态 40
+    '-'  shift, and go to state 38
+    '+'  shift, and go to state 39
+    '*'  shift, and go to state 40
+    '/'  shift, and go to state 41
+    '^'  shift, and go to state 42
+    '%'  shift, and go to state 43
 
-    $default  使用规则 17 以归约 (exp)
+    $default  reduce using rule 18 (exp)
 
 
-状态 48
+State 51
 
     8 matrix_stmt: t_name '=' m_exp •
-   20 exp: m_exp • '[' exp ']' '[' exp ']'
-   21    | m_exp • '[' exp ']' '[' exp ']' '=' exp
-   34 m_exp: m_exp • '+' m_exp
-   35      | m_exp • '*' m_exp
+   21 exp: m_exp • '[' exp ']' '[' exp ']'
+   22    | m_exp • '[' exp ']' '[' exp ']' '=' exp
+   36 m_exp: m_exp • '+' m_exp
+   37      | m_exp • '*' m_exp
 
-    '['  偏移，并进入状态 42
-    '+'  偏移，并进入状态 43
-    '*'  偏移，并进入状态 44
+    '['  shift, and go to state 45
+    '+'  shift, and go to state 46
+    '*'  shift, and go to state 47
 
-    $default  使用规则 8 以归约 (matrix_stmt)
-
-
-状态 49
-
-   18 exp: t_fun '(' exp • ')'
-   22    | exp • '+' exp
-   23    | exp • '-' exp
-   24    | exp • '*' exp
-   25    | exp • '/' exp
-   26    | exp • '%' exp
-   28    | exp • '^' exp
-
-    '-'  偏移，并进入状态 35
-    '+'  偏移，并进入状态 36
-    '*'  偏移，并进入状态 37
-    '/'  偏移，并进入状态 38
-    '^'  偏移，并进入状态 39
-    '%'  偏移，并进入状态 40
-    ')'  偏移，并进入状态 70
+    $default  reduce using rule 8 (matrix_stmt)
 
 
-状态 50
+State 52
 
-   19 exp: t_det '(' t_matrix • ')'
+   19 exp: t_fun '(' exp • ')'
+   24    | exp • '+' exp
+   25    | exp • '-' exp
+   26    | exp • '*' exp
+   27    | exp • '/' exp
+   28    | exp • '%' exp
+   30    | exp • '^' exp
 
-    ')'  偏移，并进入状态 71
+    '-'  shift, and go to state 38
+    '+'  shift, and go to state 39
+    '*'  shift, and go to state 40
+    '/'  shift, and go to state 41
+    '^'  shift, and go to state 42
+    '%'  shift, and go to state 43
+    ')'  shift, and go to state 76
 
 
-状态 51
+State 53
+
+   23 exp: t_matrix '=' exp •
+   24    | exp • '+' exp
+   25    | exp • '-' exp
+   26    | exp • '*' exp
+   27    | exp • '/' exp
+   28    | exp • '%' exp
+   30    | exp • '^' exp
+
+    '-'  shift, and go to state 38
+    '+'  shift, and go to state 39
+    '*'  shift, and go to state 40
+    '/'  shift, and go to state 41
+    '^'  shift, and go to state 42
+    '%'  shift, and go to state 43
+
+    $default  reduce using rule 23 (exp)
+
+
+State 54
+
+    9 matrix_stmt: t_matrix '=' m_exp •
+   21 exp: m_exp • '[' exp ']' '[' exp ']'
+   22    | m_exp • '[' exp ']' '[' exp ']' '=' exp
+   36 m_exp: m_exp • '+' m_exp
+   37      | m_exp • '*' m_exp
+
+    '['  shift, and go to state 45
+    '+'  shift, and go to state 46
+    '*'  shift, and go to state 47
+
+    $default  reduce using rule 9 (matrix_stmt)
+
+
+State 55
+
+   20 exp: t_det '(' t_matrix • ')'
+
+    ')'  shift, and go to state 77
+
+
+State 56
 
     8 matrix_stmt: t_name • '=' m_exp
 
-    '='  偏移，并进入状态 72
+    '='  shift, and go to state 78
 
 
-状态 52
+State 57
 
-   36 m_exp: '(' • t_matrix ')'
+    9 matrix_stmt: t_matrix • '=' m_exp
+   33 m_exp: t_matrix •
 
-    t_matrix  偏移，并进入状态 73
+    '='  shift, and go to state 79
 
+    $default  reduce using rule 33 (m_exp)
 
-状态 53
 
-   33 m_exp: t_inv '(' m_exp • ')'
-   34      | m_exp • '+' m_exp
-   35      | m_exp • '*' m_exp
+State 58
 
-    '+'  偏移，并进入状态 43
-    '*'  偏移，并进入状态 44
-    ')'  偏移，并进入状态 74
+   38 m_exp: '(' • t_matrix ')'
 
+    t_matrix  shift, and go to state 80
 
-状态 54
 
-   12 vector: vector ';' • array
+State 59
 
-    t_num     偏移，并进入状态 7
-    t_name    偏移，并进入状态 8
-    t_fun     偏移，并进入状态 9
-    t_matrix  偏移，并进入状态 10
-    t_det     偏移，并进入状态 11
-    t_inv     偏移，并进入状态 12
-    '['       偏移，并进入状态 13
-    '-'       偏移，并进入状态 14
-    '('       偏移，并进入状态 16
+   35 m_exp: t_inv '(' m_exp • ')'
+   36      | m_exp • '+' m_exp
+   37      | m_exp • '*' m_exp
 
-    matrix_stmt  转到状态 18
-    matrix       转到状态 19
-    array        转到状态 75
-    exp          转到状态 76
-    m_exp        转到状态 31
+    '+'  shift, and go to state 46
+    '*'  shift, and go to state 47
+    ')'  shift, and go to state 81
 
 
-状态 55
+State 60
 
-   10 matrix: '[' vector ']' •
+   13 vector: vector ';' • array
 
-    $default  使用规则 10 以归约 (matrix)
+    t_num     shift, and go to state 9
+    t_name    shift, and go to state 10
+    t_fun     shift, and go to state 11
+    t_matrix  shift, and go to state 12
+    t_det     shift, and go to state 13
+    t_inv     shift, and go to state 14
+    '['       shift, and go to state 15
+    '-'       shift, and go to state 16
+    '('       shift, and go to state 18
 
+    matrix_stmt  go to state 20
+    matrix       go to state 21
+    array        go to state 82
+    exp          go to state 83
+    m_exp        go to state 34
 
-状态 56
 
-   14 array: array ',' • exp
+State 61
 
-    t_num     偏移，并进入状态 7
-    t_name    偏移，并进入状态 8
-    t_fun     偏移，并进入状态 9
-    t_matrix  偏移，并进入状态 10
-    t_det     偏移，并进入状态 11
-    t_inv     偏移，并进入状态 12
-    '['       偏移，并进入状态 13
-    '-'       偏移，并进入状态 14
-    '('       偏移，并进入状态 16
+   11 matrix: '[' vector ']' •
 
-    matrix_stmt  转到状态 18
-    matrix       转到状态 19
-    exp          转到状态 77
-    m_exp        转到状态 31
+    $default  reduce using rule 11 (matrix)
 
 
-状态 57
+State 62
 
-   13 array: exp ',' • exp
+   15 array: array ',' • exp
 
-    t_num     偏移，并进入状态 7
-    t_name    偏移，并进入状态 8
-    t_fun     偏移，并进入状态 9
-    t_matrix  偏移，并进入状态 10
-    t_det     偏移，并进入状态 11
-    t_inv     偏移，并进入状态 12
-    '['       偏移，并进入状态 13
-    '-'       偏移，并进入状态 14
-    '('       偏移，并进入状态 16
+    t_num     shift, and go to state 9
+    t_name    shift, and go to state 10
+    t_fun     shift, and go to state 11
+    t_matrix  shift, and go to state 12
+    t_det     shift, and go to state 13
+    t_inv     shift, and go to state 14
+    '['       shift, and go to state 15
+    '-'       shift, and go to state 16
+    '('       shift, and go to state 18
 
-    matrix_stmt  转到状态 18
-    matrix       转到状态 19
-    exp          转到状态 78
-    m_exp        转到状态 31
+    matrix_stmt  go to state 20
+    matrix       go to state 21
+    exp          go to state 84
+    m_exp        go to state 34
 
 
-状态 58
+State 63
 
-    9 matrix: '[' exp ']' •
+   14 array: exp ',' • exp
 
-    $default  使用规则 9 以归约 (matrix)
+    t_num     shift, and go to state 9
+    t_name    shift, and go to state 10
+    t_fun     shift, and go to state 11
+    t_matrix  shift, and go to state 12
+    t_det     shift, and go to state 13
+    t_inv     shift, and go to state 14
+    '['       shift, and go to state 15
+    '-'       shift, and go to state 16
+    '('       shift, and go to state 18
 
+    matrix_stmt  go to state 20
+    matrix       go to state 21
+    exp          go to state 85
+    m_exp        go to state 34
 
-状态 59
 
-   36 m_exp: '(' t_matrix ')' •
+State 64
 
-    $default  使用规则 36 以归约 (m_exp)
+   10 matrix: '[' exp ']' •
 
+    $default  reduce using rule 10 (matrix)
 
-状态 60
 
-   29 exp: '(' exp ')' •
+State 65
 
-    $default  使用规则 29 以归约 (exp)
+   38 m_exp: '(' t_matrix ')' •
 
+    $default  reduce using rule 38 (m_exp)
 
-状态 61
 
-   22 exp: exp • '+' exp
-   23    | exp • '-' exp
-   23    | exp '-' exp •
-   24    | exp • '*' exp
-   25    | exp • '/' exp
-   26    | exp • '%' exp
-   28    | exp • '^' exp
+State 66
 
-    '*'  偏移，并进入状态 37
-    '/'  偏移，并进入状态 38
-    '^'  偏移，并进入状态 39
-    '%'  偏移，并进入状态 40
+   31 exp: '(' exp ')' •
 
-    $default  使用规则 23 以归约 (exp)
+    $default  reduce using rule 31 (exp)
 
 
-状态 62
+State 67
 
-   22 exp: exp • '+' exp
-   22    | exp '+' exp •
-   23    | exp • '-' exp
-   24    | exp • '*' exp
-   25    | exp • '/' exp
-   26    | exp • '%' exp
-   28    | exp • '^' exp
+   24 exp: exp • '+' exp
+   25    | exp • '-' exp
+   25    | exp '-' exp •
+   26    | exp • '*' exp
+   27    | exp • '/' exp
+   28    | exp • '%' exp
+   30    | exp • '^' exp
 
-    '*'  偏移，并进入状态 37
-    '/'  偏移，并进入状态 38
-    '^'  偏移，并进入状态 39
-    '%'  偏移，并进入状态 40
+    '*'  shift, and go to state 40
+    '/'  shift, and go to state 41
+    '^'  shift, and go to state 42
+    '%'  shift, and go to state 43
 
-    $default  使用规则 22 以归约 (exp)
+    $default  reduce using rule 25 (exp)
 
 
-状态 63
+State 68
 
-   22 exp: exp • '+' exp
-   23    | exp • '-' exp
-   24    | exp • '*' exp
-   24    | exp '*' exp •
-   25    | exp • '/' exp
-   26    | exp • '%' exp
-   28    | exp • '^' exp
+   24 exp: exp • '+' exp
+   24    | exp '+' exp •
+   25    | exp • '-' exp
+   26    | exp • '*' exp
+   27    | exp • '/' exp
+   28    | exp • '%' exp
+   30    | exp • '^' exp
 
-    '^'  偏移，并进入状态 39
-    '%'  偏移，并进入状态 40
+    '*'  shift, and go to state 40
+    '/'  shift, and go to state 41
+    '^'  shift, and go to state 42
+    '%'  shift, and go to state 43
 
-    $default  使用规则 24 以归约 (exp)
+    $default  reduce using rule 24 (exp)
 
 
-状态 64
+State 69
 
-   22 exp: exp • '+' exp
-   23    | exp • '-' exp
-   24    | exp • '*' exp
-   25    | exp • '/' exp
-   25    | exp '/' exp •
-   26    | exp • '%' exp
-   28    | exp • '^' exp
+   24 exp: exp • '+' exp
+   25    | exp • '-' exp
+   26    | exp • '*' exp
+   26    | exp '*' exp •
+   27    | exp • '/' exp
+   28    | exp • '%' exp
+   30    | exp • '^' exp
 
-    '^'  偏移，并进入状态 39
-    '%'  偏移，并进入状态 40
+    '^'  shift, and go to state 42
+    '%'  shift, and go to state 43
 
-    $default  使用规则 25 以归约 (exp)
+    $default  reduce using rule 26 (exp)
 
 
-状态 65
+State 70
 
-   22 exp: exp • '+' exp
-   23    | exp • '-' exp
-   24    | exp • '*' exp
-   25    | exp • '/' exp
-   26    | exp • '%' exp
-   28    | exp • '^' exp
-   28    | exp '^' exp •
+   24 exp: exp • '+' exp
+   25    | exp • '-' exp
+   26    | exp • '*' exp
+   27    | exp • '/' exp
+   27    | exp '/' exp •
+   28    | exp • '%' exp
+   30    | exp • '^' exp
 
-    '^'  偏移，并进入状态 39
-    '%'  偏移，并进入状态 40
+    '^'  shift, and go to state 42
+    '%'  shift, and go to state 43
 
-    $default  使用规则 28 以归约 (exp)
+    $default  reduce using rule 27 (exp)
 
 
-状态 66
+State 71
 
-   22 exp: exp • '+' exp
-   23    | exp • '-' exp
-   24    | exp • '*' exp
-   25    | exp • '/' exp
-   26    | exp • '%' exp
-   26    | exp '%' exp •
-   28    | exp • '^' exp
+   24 exp: exp • '+' exp
+   25    | exp • '-' exp
+   26    | exp • '*' exp
+   27    | exp • '/' exp
+   28    | exp • '%' exp
+   30    | exp • '^' exp
+   30    | exp '^' exp •
 
-    '^'  偏移，并进入状态 39
-    '%'  偏移，并进入状态 40
+    '^'  shift, and go to state 42
+    '%'  shift, and go to state 43
 
-    $default  使用规则 26 以归约 (exp)
+    $default  reduce using rule 30 (exp)
 
 
-状态 67
+State 72
 
-   20 exp: m_exp '[' exp • ']' '[' exp ']'
-   21    | m_exp '[' exp • ']' '[' exp ']' '=' exp
-   22    | exp • '+' exp
-   23    | exp • '-' exp
-   24    | exp • '*' exp
-   25    | exp • '/' exp
-   26    | exp • '%' exp
-   28    | exp • '^' exp
+   24 exp: exp • '+' exp
+   25    | exp • '-' exp
+   26    | exp • '*' exp
+   27    | exp • '/' exp
+   28    | exp • '%' exp
+   28    | exp '%' exp •
+   30    | exp • '^' exp
 
-    '-'  偏移，并进入状态 35
-    '+'  偏移，并进入状态 36
-    '*'  偏移，并进入状态 37
-    '/'  偏移，并进入状态 38
-    ']'  偏移，并进入状态 79
-    '^'  偏移，并进入状态 39
-    '%'  偏移，并进入状态 40
+    '^'  shift, and go to state 42
+    '%'  shift, and go to state 43
 
+    $default  reduce using rule 28 (exp)
 
-状态 68
 
-   34 m_exp: m_exp • '+' m_exp
-   34      | m_exp '+' m_exp •
-   35      | m_exp • '*' m_exp
+State 73
 
-    '*'  偏移，并进入状态 44
+   21 exp: m_exp '[' exp • ']' '[' exp ']'
+   22    | m_exp '[' exp • ']' '[' exp ']' '=' exp
+   24    | exp • '+' exp
+   25    | exp • '-' exp
+   26    | exp • '*' exp
+   27    | exp • '/' exp
+   28    | exp • '%' exp
+   30    | exp • '^' exp
 
-    $default  使用规则 34 以归约 (m_exp)
+    '-'  shift, and go to state 38
+    '+'  shift, and go to state 39
+    '*'  shift, and go to state 40
+    '/'  shift, and go to state 41
+    ']'  shift, and go to state 86
+    '^'  shift, and go to state 42
+    '%'  shift, and go to state 43
 
 
-状态 69
+State 74
 
-   34 m_exp: m_exp • '+' m_exp
-   35      | m_exp • '*' m_exp
-   35      | m_exp '*' m_exp •
+   36 m_exp: m_exp • '+' m_exp
+   36      | m_exp '+' m_exp •
+   37      | m_exp • '*' m_exp
 
-    $default  使用规则 35 以归约 (m_exp)
+    '*'  shift, and go to state 47
 
+    $default  reduce using rule 36 (m_exp)
 
-状态 70
 
-   18 exp: t_fun '(' exp ')' •
+State 75
 
-    $default  使用规则 18 以归约 (exp)
+   36 m_exp: m_exp • '+' m_exp
+   37      | m_exp • '*' m_exp
+   37      | m_exp '*' m_exp •
 
+    $default  reduce using rule 37 (m_exp)
 
-状态 71
 
-   19 exp: t_det '(' t_matrix ')' •
+State 76
 
-    $default  使用规则 19 以归约 (exp)
+   19 exp: t_fun '(' exp ')' •
 
+    $default  reduce using rule 19 (exp)
 
-状态 72
+
+State 77
+
+   20 exp: t_det '(' t_matrix ')' •
+
+    $default  reduce using rule 20 (exp)
+
+
+State 78
 
     8 matrix_stmt: t_name '=' • m_exp
 
-    t_name    偏移，并进入状态 51
-    t_matrix  偏移，并进入状态 10
-    t_inv     偏移，并进入状态 12
-    '['       偏移，并进入状态 13
-    '('       偏移，并进入状态 52
+    t_name    shift, and go to state 56
+    t_matrix  shift, and go to state 57
+    t_inv     shift, and go to state 14
+    '['       shift, and go to state 15
+    '('       shift, and go to state 58
 
-    matrix_stmt  转到状态 18
-    matrix       转到状态 19
-    m_exp        转到状态 80
-
-
-状态 73
-
-   36 m_exp: '(' t_matrix • ')'
-
-    ')'  偏移，并进入状态 59
+    matrix_stmt  go to state 20
+    matrix       go to state 21
+    m_exp        go to state 87
 
 
-状态 74
+State 79
 
-   33 m_exp: t_inv '(' m_exp ')' •
+    9 matrix_stmt: t_matrix '=' • m_exp
 
-    $default  使用规则 33 以归约 (m_exp)
+    t_name    shift, and go to state 56
+    t_matrix  shift, and go to state 57
+    t_inv     shift, and go to state 14
+    '['       shift, and go to state 15
+    '('       shift, and go to state 58
 
-
-状态 75
-
-   12 vector: vector ';' array •
-   14 array: array • ',' exp
-
-    ','  偏移，并进入状态 56
-
-    $default  使用规则 12 以归约 (vector)
+    matrix_stmt  go to state 20
+    matrix       go to state 21
+    m_exp        go to state 88
 
 
-状态 76
+State 80
 
-   13 array: exp • ',' exp
-   22 exp: exp • '+' exp
-   23    | exp • '-' exp
-   24    | exp • '*' exp
-   25    | exp • '/' exp
-   26    | exp • '%' exp
-   28    | exp • '^' exp
+   38 m_exp: '(' t_matrix • ')'
 
-    ','  偏移，并进入状态 57
-    '-'  偏移，并进入状态 35
-    '+'  偏移，并进入状态 36
-    '*'  偏移，并进入状态 37
-    '/'  偏移，并进入状态 38
-    '^'  偏移，并进入状态 39
-    '%'  偏移，并进入状态 40
+    ')'  shift, and go to state 65
 
 
-状态 77
+State 81
 
-   14 array: array ',' exp •
-   22 exp: exp • '+' exp
-   23    | exp • '-' exp
-   24    | exp • '*' exp
-   25    | exp • '/' exp
-   26    | exp • '%' exp
-   28    | exp • '^' exp
+   35 m_exp: t_inv '(' m_exp ')' •
 
-    '-'  偏移，并进入状态 35
-    '+'  偏移，并进入状态 36
-    '*'  偏移，并进入状态 37
-    '/'  偏移，并进入状态 38
-    '^'  偏移，并进入状态 39
-    '%'  偏移，并进入状态 40
-
-    $default  使用规则 14 以归约 (array)
+    $default  reduce using rule 35 (m_exp)
 
 
-状态 78
+State 82
 
-   13 array: exp ',' exp •
-   22 exp: exp • '+' exp
-   23    | exp • '-' exp
-   24    | exp • '*' exp
-   25    | exp • '/' exp
-   26    | exp • '%' exp
-   28    | exp • '^' exp
+   13 vector: vector ';' array •
+   15 array: array • ',' exp
 
-    '-'  偏移，并进入状态 35
-    '+'  偏移，并进入状态 36
-    '*'  偏移，并进入状态 37
-    '/'  偏移，并进入状态 38
-    '^'  偏移，并进入状态 39
-    '%'  偏移，并进入状态 40
+    ','  shift, and go to state 62
 
-    $default  使用规则 13 以归约 (array)
+    $default  reduce using rule 13 (vector)
 
 
-状态 79
+State 83
 
-   20 exp: m_exp '[' exp ']' • '[' exp ']'
-   21    | m_exp '[' exp ']' • '[' exp ']' '=' exp
+   14 array: exp • ',' exp
+   24 exp: exp • '+' exp
+   25    | exp • '-' exp
+   26    | exp • '*' exp
+   27    | exp • '/' exp
+   28    | exp • '%' exp
+   30    | exp • '^' exp
 
-    '['  偏移，并进入状态 81
+    ','  shift, and go to state 63
+    '-'  shift, and go to state 38
+    '+'  shift, and go to state 39
+    '*'  shift, and go to state 40
+    '/'  shift, and go to state 41
+    '^'  shift, and go to state 42
+    '%'  shift, and go to state 43
 
 
-状态 80
+State 84
+
+   15 array: array ',' exp •
+   24 exp: exp • '+' exp
+   25    | exp • '-' exp
+   26    | exp • '*' exp
+   27    | exp • '/' exp
+   28    | exp • '%' exp
+   30    | exp • '^' exp
+
+    '-'  shift, and go to state 38
+    '+'  shift, and go to state 39
+    '*'  shift, and go to state 40
+    '/'  shift, and go to state 41
+    '^'  shift, and go to state 42
+    '%'  shift, and go to state 43
+
+    $default  reduce using rule 15 (array)
+
+
+State 85
+
+   14 array: exp ',' exp •
+   24 exp: exp • '+' exp
+   25    | exp • '-' exp
+   26    | exp • '*' exp
+   27    | exp • '/' exp
+   28    | exp • '%' exp
+   30    | exp • '^' exp
+
+    '-'  shift, and go to state 38
+    '+'  shift, and go to state 39
+    '*'  shift, and go to state 40
+    '/'  shift, and go to state 41
+    '^'  shift, and go to state 42
+    '%'  shift, and go to state 43
+
+    $default  reduce using rule 14 (array)
+
+
+State 86
+
+   21 exp: m_exp '[' exp ']' • '[' exp ']'
+   22    | m_exp '[' exp ']' • '[' exp ']' '=' exp
+
+    '['  shift, and go to state 89
+
+
+State 87
 
     8 matrix_stmt: t_name '=' m_exp •
-   34 m_exp: m_exp • '+' m_exp
-   35      | m_exp • '*' m_exp
+   36 m_exp: m_exp • '+' m_exp
+   37      | m_exp • '*' m_exp
 
-    '+'  偏移，并进入状态 43
-    '*'  偏移，并进入状态 44
+    '+'  shift, and go to state 46
+    '*'  shift, and go to state 47
 
-    $default  使用规则 8 以归约 (matrix_stmt)
-
-
-状态 81
-
-   20 exp: m_exp '[' exp ']' '[' • exp ']'
-   21    | m_exp '[' exp ']' '[' • exp ']' '=' exp
-
-    t_num     偏移，并进入状态 7
-    t_name    偏移，并进入状态 8
-    t_fun     偏移，并进入状态 9
-    t_matrix  偏移，并进入状态 10
-    t_det     偏移，并进入状态 11
-    t_inv     偏移，并进入状态 12
-    '['       偏移，并进入状态 13
-    '-'       偏移，并进入状态 14
-    '('       偏移，并进入状态 16
-
-    matrix_stmt  转到状态 18
-    matrix       转到状态 19
-    exp          转到状态 82
-    m_exp        转到状态 31
+    $default  reduce using rule 8 (matrix_stmt)
 
 
-状态 82
+State 88
 
-   20 exp: m_exp '[' exp ']' '[' exp • ']'
-   21    | m_exp '[' exp ']' '[' exp • ']' '=' exp
-   22    | exp • '+' exp
-   23    | exp • '-' exp
-   24    | exp • '*' exp
-   25    | exp • '/' exp
-   26    | exp • '%' exp
-   28    | exp • '^' exp
+    9 matrix_stmt: t_matrix '=' m_exp •
+   36 m_exp: m_exp • '+' m_exp
+   37      | m_exp • '*' m_exp
 
-    '-'  偏移，并进入状态 35
-    '+'  偏移，并进入状态 36
-    '*'  偏移，并进入状态 37
-    '/'  偏移，并进入状态 38
-    ']'  偏移，并进入状态 83
-    '^'  偏移，并进入状态 39
-    '%'  偏移，并进入状态 40
+    '+'  shift, and go to state 46
+    '*'  shift, and go to state 47
+
+    $default  reduce using rule 9 (matrix_stmt)
 
 
-状态 83
+State 89
 
-   20 exp: m_exp '[' exp ']' '[' exp ']' •
-   21    | m_exp '[' exp ']' '[' exp ']' • '=' exp
+   21 exp: m_exp '[' exp ']' '[' • exp ']'
+   22    | m_exp '[' exp ']' '[' • exp ']' '=' exp
 
-    '='  偏移，并进入状态 84
+    t_num     shift, and go to state 9
+    t_name    shift, and go to state 10
+    t_fun     shift, and go to state 11
+    t_matrix  shift, and go to state 12
+    t_det     shift, and go to state 13
+    t_inv     shift, and go to state 14
+    '['       shift, and go to state 15
+    '-'       shift, and go to state 16
+    '('       shift, and go to state 18
 
-    $default  使用规则 20 以归约 (exp)
-
-
-状态 84
-
-   21 exp: m_exp '[' exp ']' '[' exp ']' '=' • exp
-
-    t_num     偏移，并进入状态 7
-    t_name    偏移，并进入状态 8
-    t_fun     偏移，并进入状态 9
-    t_matrix  偏移，并进入状态 10
-    t_det     偏移，并进入状态 11
-    t_inv     偏移，并进入状态 12
-    '['       偏移，并进入状态 13
-    '-'       偏移，并进入状态 14
-    '('       偏移，并进入状态 16
-
-    matrix_stmt  转到状态 18
-    matrix       转到状态 19
-    exp          转到状态 85
-    m_exp        转到状态 31
+    matrix_stmt  go to state 20
+    matrix       go to state 21
+    exp          go to state 90
+    m_exp        go to state 34
 
 
-状态 85
+State 90
 
-   21 exp: m_exp '[' exp ']' '[' exp ']' '=' exp •
-   22    | exp • '+' exp
-   23    | exp • '-' exp
-   24    | exp • '*' exp
-   25    | exp • '/' exp
-   26    | exp • '%' exp
-   28    | exp • '^' exp
+   21 exp: m_exp '[' exp ']' '[' exp • ']'
+   22    | m_exp '[' exp ']' '[' exp • ']' '=' exp
+   24    | exp • '+' exp
+   25    | exp • '-' exp
+   26    | exp • '*' exp
+   27    | exp • '/' exp
+   28    | exp • '%' exp
+   30    | exp • '^' exp
 
-    '-'  偏移，并进入状态 35
-    '+'  偏移，并进入状态 36
-    '*'  偏移，并进入状态 37
-    '/'  偏移，并进入状态 38
-    '^'  偏移，并进入状态 39
-    '%'  偏移，并进入状态 40
+    '-'  shift, and go to state 38
+    '+'  shift, and go to state 39
+    '*'  shift, and go to state 40
+    '/'  shift, and go to state 41
+    ']'  shift, and go to state 91
+    '^'  shift, and go to state 42
+    '%'  shift, and go to state 43
 
-    $default  使用规则 21 以归约 (exp)
+
+State 91
+
+   21 exp: m_exp '[' exp ']' '[' exp ']' •
+   22    | m_exp '[' exp ']' '[' exp ']' • '=' exp
+
+    '='  shift, and go to state 92
+
+    $default  reduce using rule 21 (exp)
+
+
+State 92
+
+   22 exp: m_exp '[' exp ']' '[' exp ']' '=' • exp
+
+    t_num     shift, and go to state 9
+    t_name    shift, and go to state 10
+    t_fun     shift, and go to state 11
+    t_matrix  shift, and go to state 12
+    t_det     shift, and go to state 13
+    t_inv     shift, and go to state 14
+    '['       shift, and go to state 15
+    '-'       shift, and go to state 16
+    '('       shift, and go to state 18
+
+    matrix_stmt  go to state 20
+    matrix       go to state 21
+    exp          go to state 93
+    m_exp        go to state 34
+
+
+State 93
+
+   22 exp: m_exp '[' exp ']' '[' exp ']' '=' exp •
+   24    | exp • '+' exp
+   25    | exp • '-' exp
+   26    | exp • '*' exp
+   27    | exp • '/' exp
+   28    | exp • '%' exp
+   30    | exp • '^' exp
+
+    '-'  shift, and go to state 38
+    '+'  shift, and go to state 39
+    '*'  shift, and go to state 40
+    '/'  shift, and go to state 41
+    '^'  shift, and go to state 42
+    '%'  shift, and go to state 43
+
+    $default  reduce using rule 22 (exp)

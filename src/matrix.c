@@ -6,7 +6,7 @@ bool ans_NULL = 0;
 
 void matrix_malloc(matrix_t* a) {
   a->matrix = (double**)malloc(
-      a->row * sizeof(double*));  // this * took me a whole afternoon,̩����!
+      a->row * sizeof(double*));
   for (unsigned int i = 0; i < (a->row); ++i) {
     a->matrix[i] = (double*)malloc((a->column) * sizeof(double));
   }

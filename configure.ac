@@ -13,7 +13,7 @@ AC_CONFIG_FILES([Makefile
 PKG_PROG_PKG_CONFIG([0.2])
 
 # Checks for programs.
-AC_PROG_CC
+AC_PROG_CC([gcc clang])
 AC_PROG_LEX(yywrap)
 
 AC_SUBST(YACC,'bison')

@@ -10,13 +10,8 @@
 // Header files
 #include <math.h>
 #include <stdbool.h>
-
-#if defined(HAVE_CONFIG_H)
+#if defined (HAVE_CONFIG_H)
 #include "../config.h"
-#else
-#error "..\/config.h is not found"
-#endif
-
 #if HAVE_STDLIB_H
 #include <stdlib.h>
 #else
@@ -50,6 +45,15 @@ extern char* optarg;
 #warning "won't support options as unistd.h not found"
 // a portable getopt.h may be implemented in the future
 // to support WINDOWS user
+#endif
+
+#else
+#include <stdlib.h>
+#include <stdio.h>
+#include <readline/history.h>
+#include <readline/readline.h>
+#include <unistd.h>
+extern char* optarg;
 #endif
 
 // Macro

@@ -8,9 +8,9 @@
 typedef double(func_t)(double);
 
 struct array_t {
-  size_t size;    // numer of elements has been allocated
-  int count;      // last number in *num (count from 0)
-  double num[0];  // flexible array
+  size_t size;
+  int count;    // last number in *num (count from 0)
+  double* num;  // flexible array
 };
 
 typedef struct array_t array_t;
@@ -18,7 +18,7 @@ typedef struct array_t array_t;
 struct vector_t {
   size_t size;
   int count;
-  array_t*(arrays[0]);  // flexible array of array_t
+  array_t** arrays;  // an array of all *arrays in the vector
 };
 
 typedef struct vector_t vector_t;

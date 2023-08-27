@@ -1,10 +1,15 @@
 //
 // Created by LiZeCheng-Jason on 2023-06-25.
 //
+#include <stdio.h>
+#include <string.h>
 #include "config.h"
-#include "syms.h"
 
-void print_help_msg(void) {
+extern int yy_scan_buffer(char* base, size_t size);
+extern int yy_scan_string(const char* yy_str);
+extern int yyparse(void);
+
+void print_help_msg(void) {  // FIXME help msg need to be update
   printf("%.80s\n", PACKAGE_STRING);
   printf("License: GPL-3.0 Author: bajzc %s\n", PACKAGE_BUGREPORT);
   printf("Math Functions:\n");
@@ -84,7 +89,7 @@ char** cal_completion(const char* text, int start, int end) {
   int list_index = 0;
   char* name;
 
-  while (name = commands[list_index].name) {
+  while ((name = commands[list_index].name)) {  // calng warning
     if (strncmp(name, text, 3) == 0)
       break;
     list_index++;
@@ -114,7 +119,7 @@ char* command_generator(const char* text, int state) {
     len = strlen(text);
   }
 
-  while (name = commands[list_index].name) {
+  while ((name = commands[list_index].name)) {  // calng warning
     // TODO functions should follow by '('
     rl_completion_suppress_append =
         1;  // "not appended to matches at the end of the command line"
@@ -128,26 +133,39 @@ char* command_generator(const char* text, int state) {
 
 int cli(int opt) {
   if (opt == 'f') {
+    // extern FILE* ifp;
+    // fclose(std);
+    // stdin = ifp;
+    if (!freopen(optarg, "r", stdin)) {
+      fprintf(stderr, "freopen stdin to %s error", optarg);
+      exit(-1);
+    }
     extern FILE* ifp;
+    size_t input_len;
+    char* input = NULL;
+    // FIXME if the last line of file does not contain '\n', add it!!!
+    while (getline(&input, &input_len, ifp) != -1) {
+      add_history(input);
+      yy_scan_string(input);
+      yyparse();
+    }
     fclose(stdin);
-    stdin = ifp;
-    yy_scan_buffer(stdin);
-    yyparse();
-    fclose(ifp);
     exit(1);
   }
+
   // normal mode
   char* input = readline(">>> ");
-  if (*input == EOF || *input == '\0') {
-    free(input);
+  if (!input) {
     cli(0);
     return 0;
   }
   add_history(input);
-  int newline = strlen(input);
-  realloc(input, strlen(input) + 2);
-  input[newline] = '\n';
-  input[newline + 1] = '\0';
-  yy_scan_string(input);
+  char* input_newline = malloc(sizeof(char) * strlen(input) + 2);
+  strcpy(input_newline, input);
+  input_newline[strlen(input)] = '\n';
+  input_newline[strlen(input) + 1] = '\0';
+  yy_scan_string(input_newline);  // ignore this warning
+  free(input);
+  free(input_newline);
   return yyparse();
 }
