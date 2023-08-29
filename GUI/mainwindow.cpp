@@ -70,7 +70,7 @@ void MainWindow::ShowAboutMsg(void) {
 #elif _WIN32
       tr("Built on Windows\n\n")
 #endif
-      + tr("Copyright 2023 **bajzc** <lzecheng98@gmail.com>\n\n"
+      + tr("Copyright 2023 (C) **Jason Li** <lzecheng98@gmail.com>\n\n"
            "**License: GPL-3.0** \n\n"
            "This is free software: you can redistribute it and/or modify it "
            "under the terms of the GNU General Public License as published by "
@@ -290,8 +290,9 @@ void MainWindow::on_DeterminantButton_clicked() {
   if (ok && !Name.isEmpty()) {
     Eigen::MatrixXd MA(MatrixMap.find(Name.toStdString())->second.matrix());
     double det = MA.determinant();
+    std::cout << det << std::endl;
     Eigen::MatrixXd Mans(1, 1);
-    Mans(1, 1) = det;
+    Mans << det;
     MatrixMap.insert_or_assign("ans", Mans);
     UpdateTable();
   }
