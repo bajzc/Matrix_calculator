@@ -84,6 +84,11 @@ ylwrap
 parser.xml
 parser.html
 parser.output
+parser.c
+parser.h
 
 #vscodium
 *.json
+
+#lex
+lex.c

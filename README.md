@@ -8,6 +8,10 @@
 
 ``./src/CLI``
 
+### test:
+
+``./src/CLI -f test/100x100``
+
 ### grammar
 
 ![grammar](./doc/grammar.png)
