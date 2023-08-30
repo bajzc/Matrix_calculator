@@ -1,8 +1,6 @@
-#ifndef SYMS_H
-#define SYMS_H
+#ifndef SRC_SYMS_H
+#define SRC_SYMS_H
 
-#include <stdlib.h>
-#include <string.h>
 #include "config.h"
 
 typedef double(func_t)(double);
@@ -53,10 +51,12 @@ array_t* array_init(double num1, double num2);
 array_t* array_add(array_t* array, double num1);
 vector_t* vector_init(array_t* arr);
 vector_t* vector_add(vector_t* vector, array_t* arr);
+vector_t* vector_init_nums(double num1,double num2);
 bool vector_check(vector_t* vector);
 matrix_t* matrix_init(vector_t* vector);
 matrix_t* matrix_temp(void);
 void init_table(void);
 double matrix_get_entity(matrix_t* matrix, double x, double y);
+void yyerror(char const *);
 
 #endif

@@ -1,8 +1,6 @@
 //
 // Created by LiZeCheng-Jason on 2023-06-25.
 //
-#include <stdio.h>
-#include <string.h>
 #include "config.h"
 
 extern int yy_scan_buffer(char* base, size_t size);

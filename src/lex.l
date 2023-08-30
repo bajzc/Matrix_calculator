@@ -4,7 +4,8 @@
 #include "parser.h"
 void yyerror(char const *);
 extern int opt;
-int lex_line_count=0;
+static int lex_line_count=0;
+
 %}
 
 NUM         ([0-9]+\.?[0-9]*)

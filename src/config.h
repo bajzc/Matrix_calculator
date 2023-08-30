@@ -1,4 +1,5 @@
-#pragma once
+#ifndef SRC_CONFIG_H
+#define SRC_CONFIG_H
 // Preprocess
 #ifdef __GNUC__
 #define CLEAR "clear"
@@ -9,8 +10,7 @@
 
 // Header files
 #include <math.h>
-#include <stdbool.h>
-#if defined (HAVE_CONFIG_H)
+#if defined(HAVE_CONFIG_H)
 #include "../config.h"
 #if HAVE_STDLIB_H
 #include <stdlib.h>
@@ -18,10 +18,16 @@
 #error "stdlib.h NOT FOUND"
 #endif
 
-#if HAVE__BOOL
+#if HAVE_STDIO_H
 #include <stdio.h>
 #else
 #error "stdio.h not found"
+#endif
+
+#if HAVE__BOOL
+#include <stdbool.h>
+#else
+#error "stdbool.h not found"
 #endif
 
 #if HAVE_LOCALE_H
@@ -47,11 +53,11 @@ extern char* optarg;
 // to support WINDOWS user
 #endif
 
-#else
-#include <stdlib.h>
-#include <stdio.h>
+#else  // for clangd
 #include <readline/history.h>
 #include <readline/readline.h>
+#include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 extern char* optarg;
 #endif
@@ -127,3 +133,5 @@ void error_exit(char* errormsg);
 void error_print(char* errormsg);
 int regex(const char* string);
 void regex_malloc_all(void);
+
+#endif
