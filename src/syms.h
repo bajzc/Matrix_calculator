@@ -1,7 +1,7 @@
 #ifndef SRC_SYMS_H
 #define SRC_SYMS_H
-
-#include "config.h"
+#include "system.h"
+#include "matrix.h"
 
 typedef double (func_t) (double);
 
@@ -33,7 +33,7 @@ struct symvar
     func_t *fun;
     matrix_t *matrix;
   } value;
-  struct symvar *next;
+  struct symvar *next, *prev;
 };
 
 typedef struct symvar symvar;
@@ -75,5 +75,16 @@ void
 init_table (void);
 double
 matrix_get_entity (matrix_t *matrix, double x, double y);
-
+void
+print_symtab (void);
+void
+clean_symtab (void);
+int
+matrix_check_coord (matrix_t *matrix, double x, double y);
+double
+matrix_edit_entity (matrix_t *matrix, double x, double y, double num);
+void
+init_sym_head (symvar *head);
+void
+add_sym_node (symvar *new, symvar *head);
 #endif

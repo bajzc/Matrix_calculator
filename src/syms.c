@@ -1,23 +1,50 @@
+#include <config.h>
 #include "syms.h"
+#include "cli.h"
+#include "system.h"
 #include "parser.h"
-extern void yyerror(char const *);
-symvar *sym_table;
-double
-matrix_get_entity (matrix_t *matrix, double x, double y)
+
+extern void
+yyerror (char const *);
+symvar *sym_table = NULL; // header
+
+int
+matrix_check_coord (matrix_t *matrix, double x, double y)
 {
-  printf ("matrix:row:%u\tcol:%u\n", matrix->row, matrix->column);
+  printf ("matrix: row:%u\tcol:%u\n", matrix->row, matrix->column);
   if (ceil (x) != x || ceil (y) != y)
     {
       puts ("Matrix index is not an integer");
-      return NAN;
+      return -1;
     }
   if (x > matrix->row || y > matrix->column || x < 0 || y < 0)
     {
       puts ("Matrix index out of range");
-      return NAN;
+      return -1;
     }
+  return 0;
+}
 
-  return matrix->matrix[(size_t) x - 1][(size_t) y - 1];
+double
+matrix_edit_entity (matrix_t *matrix, double x, double y, double num)
+{
+  if (matrix_check_coord (matrix, x, y))
+    return -1;
+  unsigned x1 = (unsigned) (x) -1;
+  unsigned y1 = (unsigned) (y) -1;
+  printf ("%g -> ", matrix->matrix[x1][y1]);
+  matrix->matrix[x1][y1] = num;
+  printf ("%g\n", matrix->matrix[x1][y1]);
+  return num;
+}
+
+double
+matrix_get_entity (matrix_t *matrix, double x, double y)
+{
+  if (matrix_check_coord (matrix, x, y))
+    return NAN;
+  else
+    return matrix->matrix[(size_t) x - 1][(size_t) y - 1];
 }
 
 matrix_t *
@@ -199,6 +226,8 @@ struct init const funs[] = {
 void
 init_table (void)
 {
+  sym_table = malloc (sizeof (symvar));
+  init_sym_head (sym_table);
   for (int i = 0; funs[i].name; i++)
     {
       symvar *ptr = putsym (funs[i].name, t_fun);
@@ -217,16 +246,112 @@ putsym (char const *name, int sym_type)
   res->name = strdup (name);
   res->type = sym_type;
   res->value.var = NAN;
-  res->next = sym_table;
-  sym_table = res;
+  add_sym_node (res, sym_table);
   return res;
 }
 
 symvar *
 getsym (char const *name)
 {
-  for (symvar *p = sym_table; p; p = p->next)
+  symvar *p;
+  for (p = sym_table->next; p != sym_table; p = p->next)
     if (strcmp (p->name, name) == 0)
       return p;
   return NULL;
+}
+
+void
+print_symtab (void)
+{
+  int found = 0; // flag for first found
+  for (symvar *p = sym_table->next; p != sym_table; p = p->next)
+    {
+      if (p->type == t_name)
+	{
+	  if (!found)
+	    {
+	      puts ("--- Variable ---");
+	      found = 1;
+	    }
+	  printf ("%s: %f\n", p->name, p->value.var);
+	}
+    }
+
+  found = 0;
+  for (symvar *p = sym_table->next; p != sym_table; p = p->next)
+    {
+      if (p->type == t_matrix)
+	{
+	  if (!found)
+	    {
+	      puts ("\n---- Matrix ----");
+	      found = 1;
+	    }
+	  printf ("%s: %u by %u\n", p->name, p->value.matrix->row,
+		  p->value.matrix->column);
+	  matrix_t_print (p->value.matrix);
+	}
+    }
+  found = 0;
+  for (symvar *p = sym_table->next; p != sym_table; p = p->next)
+    {
+      if (p->type == t_fun)
+	{
+	  if (!found)
+	    {
+	      puts ("\n--- Function ---");
+	      found = 1;
+	    }
+	  printf ("%s\t", p->name);
+	}
+    }
+  puts ("");
+}
+
+void
+clean_symtab (void)
+{
+  while (1)
+    {
+      printf ("Proceed with \"clean\"? [y/N]: ");
+      char ch = getchar ();
+      if (ch == 'Y' || ch == 'y')
+	break;
+      else if (ch == 'n' || ch == 'N' || ch == '\n')
+	return;
+    }
+  free (sym_table);
+  sym_table = NULL;
+  init_table ();
+}
+
+// Circular doubly linked list
+// from <linux/list.h>
+void
+init_sym_head (symvar *head)
+    {
+  head->next = head;
+  head->prev = head;
+    }
+
+void
+add_sym_node (symvar *new, symvar *head)
+{
+  symvar *prev = head;
+  symvar *next = head->next;
+
+  next->prev = new;
+  new->next = next;
+  new->prev = prev;
+  prev->next = new;
+}
+
+void
+del_sym_entry (symvar *entry)
+{
+  symvar *prev = entry->prev;
+  symvar *next = entry->next;
+
+  next->prev = prev;
+  prev->next = next;
 }
