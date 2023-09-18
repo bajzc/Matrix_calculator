@@ -1,14 +1,24 @@
 //
 // Created by LiZeCheng-Jason on 2023-06-25.
 //
-#include "config.h"
-
+#include <config.h>
+#include "cli.h"
+#include "system.h"
 extern int
 yy_scan_buffer (char *base, size_t size);
 extern int
 yy_scan_string (const char *yy_str);
 extern int
 yyparse (void);
+COMMAND commands[]
+  = {{"inv", "1 / matrix"},
+     {"det", "The determinant of matrix"},
+     {"list", "Show all initialized matrix"},
+     {"clean", "Delete all matrix stored in memory! (ans will remain)"},
+     {"quit", "quit this program"},
+     {"exit", "same as above"},
+     {"help", "print help message"},
+     {(char *) NULL, (char *) NULL}}; // readline completion commands
 
 void
 print_help_msg (void)
@@ -20,7 +30,7 @@ print_help_msg (void)
   printf ("%-40s\n", "Find the inverse of matrix");
   printf ("%-40s", "det(matrix)");
   printf ("%-40s\n", "The determinant of matrix");
-  printf("\nThe developing document is in doc/MatCal.pdf\n\n");
+  printf ("\nThe developing document is in doc/MatCal.pdf\n\n");
 }
 void
 print_ver_msg (void)
@@ -44,16 +54,6 @@ print_ver_msg (void)
     "with \n"
     "this program. If not, see <https://www.gnu.org/licenses/>.\n\n");
 }
-
-COMMAND commands[]
-  = {{"inv", "1 / matrix"},
-     {"det", "The determinant of matrix"},
-     {"list", "Show all initialized matrix"},
-     {"clean", "Delete all matrix stored in memory! (ans will remain)"},
-     {"quit", "quit this program"},
-     {"exit", "same as above"},
-     {"help", "print help message"},
-     {(char *) NULL, (char *) NULL}}; // readline completion commands
 
 char *
 dupstr (char *s)
@@ -127,37 +127,32 @@ command_generator (const char *text, int state)
 }
 
 int
-cli (int opt)
+cli_file (void)
 {
-  if (opt == 'f')
+  if (!freopen (optarg, "r", stdin))
     {
-      // extern FILE* ifp;
-      // fclose(std);
-      // stdin = ifp;
-      if (!freopen (optarg, "r", stdin))
-	{
-	  fprintf (stderr, "freopen stdin to %s error", optarg);
-	  exit (-1);
-	}
-      extern FILE *ifp;
-      size_t input_len;
-      char *input = NULL;
-      // FIXME if the last line of file does not contain '\n', add it!!!
-      while (getline (&input, &input_len, ifp) != -1)
-	{
-	  add_history (input);
-	  yy_scan_string (input);
-	  yyparse ();
-	}
-      fclose (stdin);
-      exit (1);
+      fprintf (stderr, "freopen stdin to '%s' error\n", optarg);
+      exit (-1);
     }
+  extern FILE *ifp;
+  size_t input_len;
+  char *input = NULL;
+  while (getline (&input, &input_len, ifp) != -1)
+    {
+      yy_scan_string (input);
+      yyparse ();
+    }
+  fclose (stdin);
+  exit (1);
+}
 
-  // normal mode
+int
+cli (void)
+{
   char *input = readline (">>> ");
   if (!input)
     {
-      cli (0);
+      cli ();
       return 0;
     }
   add_history (input);
@@ -170,3 +165,64 @@ cli (int opt)
   free (input_newline);
   return yyparse ();
 }
+
+#ifndef HAVE_GETLINE
+size_t
+getline (char **lineptr, size_t *n, FILE *stream)
+{
+  size_t pos;
+  int c;
+
+  if (lineptr == NULL || stream == NULL || n == NULL)
+    {
+      errno = EINVAL;
+      return -1;
+    }
+
+  c = getc (stream);
+  if (c == EOF)
+    {
+      return -1;
+    }
+
+  if (*lineptr == NULL)
+    {
+      *lineptr = malloc (128);
+      if (*lineptr == NULL)
+	{
+	  return -1;
+	}
+      *n = 128;
+    }
+
+  pos = 0;
+  while (c != EOF)
+    {
+      if (pos + 1 >= *n)
+	{
+	  size_t new_size = *n + (*n >> 2);
+	  if (new_size < 128)
+	    {
+	      new_size = 128;
+	    }
+	  char *new_ptr = realloc (*lineptr, new_size);
+	  if (new_ptr == NULL)
+	    {
+	      return -1;
+	    }
+	  *n = new_size;
+	  *lineptr = new_ptr;
+	}
+
+      ((unsigned char *) (*lineptr))[pos++] = c;
+      if (c == '\n')
+	{
+	  break;
+	}
+      c = getc (stream);
+    }
+
+  (*lineptr)[pos] = '\0';
+  return pos;
+}
+#endif
