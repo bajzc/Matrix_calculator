@@ -4,6 +4,10 @@
 2. ``./configure``
 3. ``make``
 
+### Doc:
+
+[PDF](https://github.com/bajzc/Matrix_calculator/blob/dev/gnu-main/doc/MatCal.pdf) (developing)
+
 ### RUN:
 
 ``./src/CLI``
@@ -18,5 +22,5 @@
 
 ### TODO:
 - [ ] Optimize the process from exp -> matrix
-- [ ] More functions:exp ln sin cos tan (diff integral)?
-- [ ] A new Turing completeness language, LOL
+- [ ] More functions: diff integral?
+- [ ] A new Turing completeness language

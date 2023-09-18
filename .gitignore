@@ -72,6 +72,8 @@ ylwrap
 
 *.data
 *.old
+*.Po
+
 
 # Texinfo
 *.aux
@@ -92,3 +94,12 @@ parser.h
 
 #lex
 lex.c
+
+#gcov
+src/report
+*.gcda
+*.gcno
+*.info
+
+#format
+.clang-format

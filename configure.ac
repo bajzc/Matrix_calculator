@@ -3,8 +3,8 @@
 
 
 AC_PREREQ([2.70])
-AC_INIT([Matrix Calculator], [dev/lex&bison-0.1], [lzecheng98@gmail.com])
-AM_INIT_AUTOMAKE([-Wall -Werror foreign])
+AC_INIT([Matrix Calculator], [dev/lex-bison-0.2], [lzecheng98@gmail.com])
+AM_INIT_AUTOMAKE([-Wno-portability foreign])
 
 AC_CONFIG_SRCDIR([src/lex.l])
 AC_CONFIG_HEADERS([config.h])
@@ -34,6 +34,10 @@ AC_CHECK_HEADER_STDBOOL
 # Checks for library functions.
 AC_FUNC_MALLOC
 AC_FUNC_STRTOD
-AC_CHECK_FUNCS([pow strdup])
+AC_CHECK_FUNCS([getline])
+
+
+# gcov test
+AX_CODE_COVERAGE
 
 AC_OUTPUT
