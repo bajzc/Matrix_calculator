@@ -1,4 +1,0 @@
-@set VERSION Dev-0.1
-@set AUTHOR Li Zecheng
-@set EMAIL lzecheng98@gmail.com
-@set PROGNAME Matrix Calculaotr

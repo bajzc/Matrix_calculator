@@ -1,14 +1,14 @@
 \input texinfo @c -*-texinfo-*-
 @setfilename MatCal.info
 @documentencoding UTF-8
+@set PROGNAME Yet Another Matrix Calculator
+@set AUTHOR Zecheng Li
 @include version.texi
 @settitle @value{PROGNAME} @value{VERSION}
 @xrefautomaticsectiontitle on
 
 @copying
-
 This manual is for @value{PROGNAME} (@value{VERSION})
-
 Copyright @copyright{} 2023 @value{AUTHOR}.
 
 @quotation
@@ -31,7 +31,8 @@ and promoting software freedom.''
 @title @value{PROGNAME}
 
 @author by @value{AUTHOR}
-
+@c @page
+@c @insertcopying
 @end titlepage
 
 @contents
@@ -44,37 +45,41 @@ and promoting software freedom.''
 
 @menu
 * Introduction::          What "@value{PROGNAME}" is.
-* Conditions::            Conditions for using "@value{PROGNAME}".
 * Copying::               The GNU General Public License says how
                           you can copy and share.
 
-Installing @value{PROGNAME}:
-* On Linux::
-* On Windows::
+* Building::
 
-Tutorial sections:
-* Concepts::              Basic concepts for understanding it works.
-* Examples::              Simple explained examples of using it.
+@c Tutorial sections:
+@c * Concepts::              Basic concepts for understanding it works.
+@c * Examples::              Simple explained examples of using it.
 
-Reference sections:
-* Grammar::               About declarations rules and keywords
-* Expressions::           Supported operators
-* Functions::             Supported functions
-* Types::                 Ty
-* User interface::        Use command line and readline
+@c Reference sections:
+@c * Grammar::               About declarations rules and keywords
+@c * Expressions::           Supported operators
+@c * Functions::             Supported functions
+@c * Types::                 Ty
+@c * User interface::        Use command line and readline
 
 @end menu
 
 @node Introduction
-@unnumbered Introduction
+@chapter Introduction
 @cindex introduction
 
-@command{./CLI} [ -hfv ] [ @var{file} ]
+@code{./CLI} [ -hfv ] [ @var{file} ]
 
-@value{PROGNAME} is an interpreter of a language that support some
-functions with interactive execution of statements. It has some similarities
-in the syntax to Octave (MATLAB) such as the declaration of matrix. 
+This is an interpreter of a language that support some functions with
+interactive execution of statements. It has some similarities
+in the syntax to Octave (MATLAB) such as the declaration of matrix. Some
+of test file's commands are fully support by Octave (@file{test/100x100}).
 
+@menu
+* Command Line Options::
+* Reporting Bugs::
+@end menu
+
+@node Reporting Bugs
 @section Reporting Bugs
 This project is still in developing, so you may find lots of issues.
 Email bug reports to @email{lzecheng98@@gmail.com}.
@@ -86,7 +91,7 @@ When reporting a bug, please include the following information:
 The version number of @value{PROGNAME}
 
 @item
-The machine and OS that it is running on @command{uname -a}
+The machine and OS that it is running on @code{uname -a}
 
 @item
 A recipe for recreating the bug reliably (Your input)
@@ -95,8 +100,8 @@ A recipe for recreating the bug reliably (Your input)
 A fix for the bug if you have one!!!
 @end itemize
 
+@node Command Line Options
 @section Command Line Options
-
 @command{CLI} takes the following options from the command line:
 @table @code
 
@@ -111,12 +116,92 @@ Print the version number and copyright, and then quit.
 
 @end table
 
+@node Building
+@chapter Building
+@cindex Building
 
+@menu
+* On Unix-like environment::
+* On Windows::
+@end menu
+
+@node On Unix-like environment
+@section On Unix-like environment
+To avoid some common problems when building, please read through this section
+before you compile. For most people the easiest way to try this software is to
+download from
+@url{https://github.com/bajzc/Matrix_calculator/releases,,Github release page}.
+
+This project relays on the GNU Autotools building system, so you must have
+installed the tools on you system.
+
+If you do not have the
+@url{https://tiswww.case.edu/php/chet/readline/rltop.html,,readline},
+@url{https://www.gnu.org/software/bison/,,bison} and
+@url{https://github.com/westes/flex,,flex} already installed on your system, you
+can use your OS package manager to install if they are sufficiently recent
+versions. Alternative, go to the official website (as provided above) for more
+information.
+@menu
+* Configure::
+* Make::
+* Run::
+@end menu
+
+@node Configure
+@subsection Configure
+If you download the release tarball, run @command{./configure} from the root directory.
+
+The files in the Github repository do not contain "configure". You must run
+@command{sh ./autogen.sh}, before @command{./configure}. This runs several autotools,
+so you must have those commands installed in order to do this.
+
+People who downloaded source code are more likely to compile this TOY in their
+own way. And the usual way of changing defaults should be like this:
+
+@code{CC=clang CFLAGS='-O3 -Wall -g -pg' ./configure}
+
+This command specifies compiler and the flags it should run with.
+
+For more information, see @code{./configure --help}
+
+@node Make
+@subsection Make
+Once @code{./configure} has run, you can run @command{make}. This will build the
+project. So far, no test suit is provided.
+
+@table @code
+@item make
+@item make all
+Building programs, documentation (@file{MatCal.info})
+
+@item make clean
+Erase files produced by @code{make all}, such as @file{*.o} and @file{CLI}.
+
+@item make pdf
+Build the pdf version of documentation, but require TeX installed.
+
+@end table
+
+@node Run
+@subsection Run
+Simply issue @code{./src/CLI} at the root directory.
+
+@xref{Command Line Options}.
+
+@node On Windows
+@section On Windows
+To make life easier, you can download from Github release page named by "CLI-x86_64-windows..."
+
+Or if you really want to compile it on Windows, Install @url{https://www.msys2.org/,,Msys2},
+Open "MSYS2 MINGW64", install dev-environmental tools by issuing:
+
+@code{pacman -S mingw-w64-x86_64-autotools mingw-w64-x86_64-gcc mingw-w64-x86_64-readline autoconf-archive bison flex}
+
+And base on Msys2 shell, follow the instruction @xref{On Unix-like environment}.
 
 @node Copying
 @unnumbered GNU GENERAL PUBLIC LICENSE
 @include gpl-3.0.texi
-
-
 
 @bye
