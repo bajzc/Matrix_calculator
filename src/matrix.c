@@ -1,7 +1,9 @@
 //
 // Created by LiZeCheng-Jason on 2023-06-25.
 //
-#include "config.h"
+#include <config.h>
+#include "matrix.h"
+#include "system.h"
 bool ans_NULL = 0;
 
 void
@@ -378,4 +380,25 @@ matrix_det (matrix_t *a)
       return NAN;
     }
   return det;
+}
+
+void
+matrix_transpose (matrix_t *a, matrix_t *ans)
+{
+  if (&*a == &*ans)
+    {
+      matrix_t *a_bk = matrix_t_copy (a);
+      a = a_bk;
+    }
+  matrix_free (ans);
+  ans->row = a->column;
+  ans->column = a->row;
+  matrix_malloc (ans);
+  for (unsigned i = 0; i < ans->row; i++)
+    {
+      for (unsigned j = 0; j < ans->column; j++)
+	{
+	  ans->matrix[i][j] = a->matrix[j][i];
+	}
+    }
 }
