@@ -6,7 +6,7 @@
 
 ### Doc:
 
-[PDF](https://github.com/bajzc/Matrix_calculator/blob/dev/gnu-main/doc/MatCal.pdf) (developing)
+[PDF](https://github.com/bajzc/Matrix_calculator/blob/dev/gnu-main/doc/MatCal.pdf) (in development)
 
 ### RUN:
 
@@ -22,5 +22,6 @@
 
 ### TODO:
 - [ ] Optimize the process from exp -> matrix
-- [ ] More functions: diff integral?
+- [ ] More functions:exp ln sin cos tan (diff integral)?
 - [ ] A new Turing completeness language
+- [ ] Link with LLVM
