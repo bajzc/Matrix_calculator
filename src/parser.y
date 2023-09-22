@@ -22,16 +22,13 @@ extern int opt;
 %nterm command
 
 %precedence '='
-%left '['
-%left ';'
-%left ','
 %left '-' '+'
 %left '*' '/' '%'
+%precedence '['
 
 %precedence NEG
-
-%right ']'
-%right '^' '\''
+%precedence '\''
+%right '^'
 
 %verbose
 %define parse.trace
