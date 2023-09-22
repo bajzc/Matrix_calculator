@@ -51,6 +51,16 @@ Module.symvers
 Mkfile.old
 dkms.conf
 
+aminclude_static.am
+config.h
+config.h.in
+COPYING
+install
+mdate-sh
+stamp-h1
+texinfo.tex
+stamp-vti
+Makefile
 Makefile.in
 aclocal.m4
 ar-lib
@@ -67,6 +77,7 @@ libtool
 ltmain.sh
 missing
 ylwrap
+.dirstamp
 
 *~
 
@@ -74,6 +85,7 @@ ylwrap
 *.old
 *.Po
 
+CLI
 
 # Texinfo
 *.aux
@@ -103,3 +115,6 @@ src/report
 
 #format
 .clang-format
+
+#clangd
+compile_flags.txt
