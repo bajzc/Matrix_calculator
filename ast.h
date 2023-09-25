@@ -3,7 +3,7 @@
 #include "config.h"
 #include "syms.h"
 #include "stdbool.h"
-enum
+enum node_type
 {
   exp_t = 2 << 8, // 512
   assig_t,	  // 513
@@ -11,6 +11,7 @@ enum
   stmts_t,	  // 515
   while_stmt_t,	  // 516
   compare_t,	  // 517
+  postfix_t,	  // 518
 };
 
 typedef struct ast_node_s ast_node_t;
@@ -73,4 +74,8 @@ ast_node_t *
 make_compare (ast_node_t *right, int op, ast_node_t *left);
 bool
 ast_exec_compare (double left, int op, double right);
+double
+ast_exec_postfix (ast_node_t *root);
+ast_node_t *
+make_postfix_exp (ast_node_t *lval, int op);
 #endif

@@ -57,7 +57,7 @@ make_statement (ast_node_t *StmtList, ast_node_t *stmt)
 
   ast_node_t **temp
     = realloc (*stmt_arr,
-	       sizeof (ast_node_t *) * (StmtList->data.statements.count+1));
+	       sizeof (ast_node_t *) * (StmtList->data.statements.count + 1));
   if (!temp)
     {
       printf ("stmt_arr realloc error!\n");
@@ -85,6 +85,17 @@ make_compare (ast_node_t *left, int op, ast_node_t *right)
   node->type = compare_t;
   node->data.expression.left = left;
   node->data.expression.right = right;
+  node->data.expression.op = op;
+  return node;
+}
+
+ast_node_t *
+make_postfix_exp (ast_node_t *lval, int op)
+{
+  ast_node_t *node = malloc (sizeof (ast_node_t));
+  node->type = postfix_t;
+  node->data.expression.left = lval;
+  node->data.expression.right = NULL;
   node->data.expression.op = op;
   return node;
 }

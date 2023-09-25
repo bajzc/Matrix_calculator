@@ -33,12 +33,16 @@ ast_exec_compare (double left, int op, double right)
     {
     case '<':
       return left < right;
-    case t_equal:
-      return fabs (left - right) < DBL_EPSILON;
     case '>':
       return left > right;
     case t_notequal:
-      return left != right;
+      return fabs (left - right) > DBL_EPSILON;
+    case t_equal:
+      return fabs (left - right) < DBL_EPSILON;
+    case t_lessequal:
+      return left - right < -DBL_EPSILON;
+    case t_greaterequal:
+      return left - right > DBL_EPSILON;
     }
   return 0;
 }
@@ -50,6 +54,10 @@ ast_exec_exp (ast_node_t *root)
   ast_node_t *right = root->data.expression.right;
   double lval, rval; // value of left and right node
   int op = root->data.expression.op;
+  if (root->type == postfix_t)
+    {
+      return ast_exec_postfix (root);
+    }
   if (root->type == t_num)
     {
       return root->data.var;
@@ -69,7 +77,8 @@ ast_exec_exp (ast_node_t *root)
   if (left->type == t_num && right->type == t_num)
     {
       printf ("%g %c %g\n", left->data.var, op, right->data.var);
-      return ast_exec_op (left->data.var, op, right->data.var);
+      lval = left->data.var;
+      rval = right->data.var;
     }
   if (left->type == exp_t)
     {
@@ -129,8 +138,21 @@ ast_exec_while (ast_node_t *root)
   ast_node_t *stmts = root->data.whilestmt.statements;
   while (ast_exec_exp (root->data.whilestmt.condition))
     {
-      printf ("contidion:%lf\n", ast_exec_exp (root->data.whilestmt.condition));
       ast_exec (stmts);
+    }
+}
+
+double
+ast_exec_postfix (ast_node_t *root)
+{
+  ast_node_t *left = root->data.expression.left;
+  symbol_t *name = getsym (left->name);
+  switch (root->data.expression.op)
+    {
+    case t_increment:
+      return name->value->var++;
+    case t_decrement:
+      return name->value->var--;
     }
 }
 
@@ -155,12 +177,16 @@ ast_exec (ast_node_t *root)
       ast_exec_while (root);
       break;
     case compare_t:
-      printf ("%d", (bool) ast_exec_exp (root));
+      printf ("%d\n", (bool) ast_exec_exp (root));
+      break;
     case t_name:
       printf ("%s = %lf\n", root->name, root->data.var);
       break;
     case t_num:
       printf ("%lf\n", root->data.var);
+      break;
+    case postfix_t:
+      printf ("%lf\n", ast_exec_postfix (root));
     }
   return 0;
 }
