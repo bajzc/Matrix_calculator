@@ -1,9 +1,14 @@
 #include "ast.h"
+#include "mystring.h"
+#include "myprintf.h"
 #include "parser.h"
 #include "syms.h"
+#include <assert.h>
 #include <math.h>
 #include <float.h>
 #include <stdbool.h>
+
+extern int level;
 
 double
 ast_exec_op (double left, char op, double right)
@@ -11,6 +16,9 @@ ast_exec_op (double left, char op, double right)
   switch (op)
     {
     case '+':
+      //     if (left == 1 && right == 1) // Easter Egg here, enable if use
+      //     POSIX standard
+      // return 3;
       return left + right;
     case '-':
       return left - right;
@@ -21,14 +29,12 @@ ast_exec_op (double left, char op, double right)
     case '%':
       return (long) left % (long) right;
     }
-  printf ("NAN\n");
   return NAN;
 }
 
 bool
 ast_exec_compare (double left, int op, double right)
 {
-  printf ("compare: left:%lf right:%lf\n", left, right);
   switch (op)
     {
     case '<':
@@ -40,9 +46,9 @@ ast_exec_compare (double left, int op, double right)
     case t_equal:
       return fabs (left - right) < DBL_EPSILON;
     case t_lessequal:
-      return left - right < -DBL_EPSILON;
+      return left <= right;
     case t_greaterequal:
-      return left - right > DBL_EPSILON;
+      return left >= right;
     }
   return 0;
 }
@@ -76,31 +82,32 @@ ast_exec_exp (ast_node_t *root)
     }
   if (left->type == t_num && right->type == t_num)
     {
-      printf ("%g %c %g\n", left->data.var, op, right->data.var);
       lval = left->data.var;
       rval = right->data.var;
     }
+  if (left->type == postfix_t)
+    {
+      lval = ast_exec_postfix (left);
+    }
+  if (right->type == postfix_t)
+    {
+      rval = ast_exec_postfix (right);
+    }
   if (left->type == exp_t)
     {
-      printf ("cal left\n");
       lval = ast_exec_exp (left);
-      printf ("get %g\n", lval);
     }
   if (right->type == exp_t)
     {
-      printf ("cal right\n");
       rval = ast_exec_exp (right);
-      printf ("get %g\n", rval);
     }
   if (left->type == t_num)
     {
       lval = left->data.var;
-      printf ("left is num:%g\n", lval);
     }
   if (right->type == t_num)
     {
       rval = right->data.var;
-      printf ("right is num:%g\n", lval);
     }
   if (root->type == compare_t)
     {
@@ -154,6 +161,30 @@ ast_exec_postfix (ast_node_t *root)
     case t_decrement:
       return name->value->var--;
     }
+  return NAN;
+}
+int
+ast_exec_printf (ast_node_t *root)
+{
+  char *format = root->data.printf.format;
+  ast_node_t *print_avg = root->data.printf.print_avg;
+  if (print_avg == NULL)
+    {
+      char *p;
+      for (p = format + 1; p <= format + strlen (format) - 2; p++)
+	{
+	  if (*p == '\\')
+	    {
+	      p++;
+	      print_special_char (*p);
+	    }
+	  else
+	    printf ("%c", *p);
+	}
+    }
+  else
+    print_ast_avg (format, print_avg);
+  return 0;
 }
 
 int
@@ -164,11 +195,12 @@ ast_exec (ast_node_t *root)
   switch (root->type)
     {
     case exp_t:
-      printf ("%g\n", ast_exec_exp (root));
+      ast_exec_exp (root);
       break;
     case assig_t:
-      printf ("%s : %g\n", root->data.assignment.name->name,
-	      ast_exec_assigment (root));
+      // printf ("%s : %lf\n", root->data.assignment.name->name,
+      //   ast_exec_assigment (root));
+      ast_exec_assigment (root);
       break;
     case stmts_t:
       ast_exec_stmts (root);
@@ -177,16 +209,22 @@ ast_exec (ast_node_t *root)
       ast_exec_while (root);
       break;
     case compare_t:
-      printf ("%d\n", (bool) ast_exec_exp (root));
+      ast_exec_exp (root);
       break;
     case t_name:
       printf ("%s = %lf\n", root->name, root->data.var);
       break;
     case t_num:
-      printf ("%lf\n", root->data.var);
+      assert (0);
       break;
     case postfix_t:
-      printf ("%lf\n", ast_exec_postfix (root));
+      ast_exec_postfix (root);
+      break;
+    case t_printf:
+      ast_exec_printf (root);
+      break;
+    default:
+      assert (0);
     }
   return 0;
 }

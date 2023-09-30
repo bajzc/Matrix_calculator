@@ -5,7 +5,7 @@
 
 extern int level;
 
-enum Scope
+enum
 {
   CONSTANTS = 1,
   GLOBAL,
@@ -58,12 +58,32 @@ struct table_s
 {
   int level;
   table_t *previous;
-  symbol_t *head;
+  symbol_t *head;      // symbol in this scope
+  symbol_t **head_arr; // all symbols
 };
 
+void
+enter_scope ();
+void
+exit_scope ();
+
+#ifndef DEBUG_SYM
 symbol_t *
 putsym (char const *name, int sym_type);
 symbol_t *
 getsym (char const *name);
+
+#else
+
+symbol_t *
+putsym (char *name, table_t *tpp, int level);
+table_t *
+new_table (table_t *up, int level);
+symbol_t *
+loopup (char *name, table_t *tp);
+void
+init_sym_head (symbol_t *head);
+
+#endif
 
 #endif

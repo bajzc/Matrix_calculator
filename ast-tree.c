@@ -1,6 +1,11 @@
 #include "ast.h"
+#include "mystring.h"
 #include "parser.h"
 #include "syms.h"
+#include <string.h>
+
+extern int level;
+
 ast_node_t *
 make_var (double num)
 {
@@ -46,14 +51,12 @@ make_statement (ast_node_t *StmtList, ast_node_t *stmt)
 {
   if (StmtList == NULL)
     { // root is NULL, init statements
-      puts ("init statements");
       StmtList = malloc (sizeof (ast_node_t));
       StmtList->type = stmts_t;
       StmtList->data.statements.count = -1;
     }
   ast_node_t ***stmt_arr = &StmtList->data.statements.stmt_arr;
   StmtList->data.statements.count += 1;
-  printf ("stmts.count:%d\n", StmtList->data.statements.count);
 
   ast_node_t **temp
     = realloc (*stmt_arr,
@@ -97,5 +100,33 @@ make_postfix_exp (ast_node_t *lval, int op)
   node->data.expression.left = lval;
   node->data.expression.right = NULL;
   node->data.expression.op = op;
+  return node;
+}
+
+ast_node_t *
+make_string (struct str_s *string)
+{
+  ast_node_t *node = malloc (sizeof (ast_node_t));
+  node->type = t_string;
+  node->data.string = string;
+  return node;
+}
+
+ast_node_t *
+make_print_list (ast_node_t *print_list, ast_node_t *print_element)
+{
+  print_list = make_statement (print_list, print_element);
+}
+
+ast_node_t *
+make_printf (char *format, ast_node_t *print_list)
+{
+  ast_node_t *node = malloc (sizeof (ast_node_t));
+  node->type = t_printf;
+  if (print_list == NULL)
+    node->data.printf.print_avg = NULL;
+  else
+    node->data.printf.print_avg = print_list;
+  node->data.printf.format = strdup (format);
   return node;
 }

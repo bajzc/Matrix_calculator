@@ -1,4 +1,5 @@
 %{
+#include "mystring.h"
 #include "ast.h"
 #include "syms.h"
 void yyerror (char const *s);
@@ -10,11 +11,14 @@ struct ast_node_s* ast_root=NULL;
 %define api.value.type union
 
 %token <char*> t_name
+%token <struct str_s*> t_string
 %token t_while t_define
 %token t_equal t_notequal t_lessequal t_greaterequal
 %token t_increment t_decrement
+%token t_printf
 %token <double> t_num
-%nterm <struct ast_node_s*> WhileStmt exp stmt StmtBlock StmtList Lval
+%nterm <struct ast_node_s*> WhileStmt exp stmt StmtBlock
+%nterm <struct ast_node_s*> StmtList Lval print_element print_list Print
 
 %precedence '='
 %nonassoc t_equal t_notequal
@@ -40,12 +44,14 @@ StmtList:
 stmt:
 ';'                  { $$ = NULL;                                             }
 | exp ';'
+| Print ';'
 | WhileStmt
 | StmtBlock
 ;
 
 StmtBlock:
-  '{' StmtList '}'   { $$ = $2;                                               }
+  '{'                { enter_scope();                                         }
+  StmtList  '}'      { $$ = $3; exit_scope();                                 }
 | '{' '}'            { $$ = NULL;                                             }
 ;
 
@@ -79,4 +85,27 @@ Lval:
   t_name            { $$ = make_name($1);                                     }
 ;
 
+Print:
+  t_printf '(' t_string ')' { $$ = make_printf($3->data,NULL);                }
+| t_printf '(' t_string ',' print_list ')' { $$ = make_printf($3->data,$5);   }
+;
+
+print_list:
+  print_element     { $$ = make_print_list(NULL,$1);                          }
+| print_list ',' print_element { $$ = make_print_list($1,$3);                 }
+;
+
+print_element:
+  t_string          { $$ = make_string($1);                                   }
+| exp               { $$ = $1;                                                }
+;
+
+// FunctionDecl:
+//   t_define t_name '(' opt_formals ')' '{' StmtBlock '}'
+// ;
+
+// variables:
+//   t_name
+// | variables ',' t_name
+// ;
 %%

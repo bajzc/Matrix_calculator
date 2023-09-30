@@ -1,6 +1,7 @@
 #ifndef SRC_AST_H
 #define SRC_AST_H
 #include "config.h"
+#include "mystring.h"
 #include "syms.h"
 #include "stdbool.h"
 enum node_type
@@ -24,6 +25,7 @@ struct ast_node_s
   {
     double var;
     matrix_t *matrix;
+    struct str_s *string;
     struct
     {
       ast_node_t *left, *right;
@@ -49,6 +51,11 @@ struct ast_node_s
       symbol_t *name;
       ast_node_t *argv;
     } funcall;
+    struct
+    {
+      char *format;
+      ast_node_t *print_avg;
+    } printf;
   } data;
 };
 
@@ -78,4 +85,10 @@ double
 ast_exec_postfix (ast_node_t *root);
 ast_node_t *
 make_postfix_exp (ast_node_t *lval, int op);
+ast_node_t *
+make_print_list (ast_node_t *print_list, ast_node_t *print_element);
+ast_node_t *
+make_printf (char *format, ast_node_t *print_list);
+ast_node_t *
+make_string (struct str_s *string);
 #endif

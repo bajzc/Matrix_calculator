@@ -58,3 +58,7 @@ dkms.conf
 lex.c
 parser.c
 parser.h
+
+compile_flags.txt
+fibonacci*
+mlp_table*

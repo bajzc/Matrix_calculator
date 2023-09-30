@@ -1,17 +1,30 @@
 #include "ast.h"
 #include "parser.h"
+#include "syms.h"
 extern struct ast_node_s *ast_root;
+extern table_t *global;
+#ifndef DEBUG_SYM
 int
 main ()
 {
-  while (1)
+  void *temp;
+  temp = NULL;
+  yyparse ();
+  while (temp != ast_root)
     {
-      yyparse ();
-      printf ("%p\n", ast_root);
-      if (!ast_root)
-	exit (-1);
       ast_exec (ast_root);
+      temp = ast_root;
+      yyparse ();
     }
   return 0;
-  // return ast_exec(ast_root);
 }
+
+#else
+int
+main ()
+{
+  yyparse ();
+  return 0;
+}
+
+#endif
