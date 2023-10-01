@@ -63,7 +63,7 @@ void MainWindow::ShowAboutMsg(void) {
   QMessageBox *AboutMsg = new QMessageBox();
   AboutMsg->setWindowTitle(tr("About"));
   AboutMsg->setText(
-      tr("### Matrix Calculator 1.0-rc1\n\n"
+      tr("### Matrix Calculator 1.1\n\n"
          "Based on Qt 6\n\n") +
 #if __linux__
       tr("Built on Linux Gentoo\n\n")
@@ -207,8 +207,8 @@ void MainWindow::OpofTwoMatrix(int Opcode, std::string OpString) {
   bool okB;
   QString NameB = QInputDialog::getItem(this, QString::fromStdString(OpString),
                                         tr("Choose matrix B:"), MatrixNames, 0,
-                                        false, &okA);
-  if (okA && okB && !NameA.isEmpty() && !NameB.isEmpty()) {
+                                        false, &okB); // I dont know why it was 'A' // I dont know why it was 'A'
+  if (okA && okB) {
     Eigen::MatrixXd MA(MatrixMap.find(NameA.toStdString())->second.matrix());
     Eigen::MatrixXd MB(MatrixMap.find(NameB.toStdString())->second.matrix());
     Eigen::MatrixXd Mans;
@@ -223,6 +223,7 @@ void MainWindow::OpofTwoMatrix(int Opcode, std::string OpString) {
       Mans = MA * MB;
       break;
     }
+    std::cout<<Mans<<std::endl;
     MatrixMap.insert_or_assign("ans", Mans);
     UpdateTable();
   }

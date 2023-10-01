@@ -4,9 +4,9 @@
 #include <iostream>
 #include <limits>
 // The largest distance from (0,0), which should be the dimension of matrix.
-int MaxEditRow;
-int MaxEditCol;
-const int BufferCell = 8 + 1;
+static int MaxEditRow;
+static int MaxEditCol;
+const int BufferCell = 6;
 extern std::map<std::string, Eigen::MatrixXd> MatrixMap;
 bool ExprtkCompErrorFlag = 0;
 
