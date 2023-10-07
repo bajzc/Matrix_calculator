@@ -6,7 +6,7 @@ typedef struct str_s
 {
   size_t len;
   char *data;
-} my_str_t;
+}str_t;
 
 #define new_string(str)                                                        \
   {                                                                            \

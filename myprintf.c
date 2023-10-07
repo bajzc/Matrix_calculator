@@ -5,16 +5,17 @@
 #include "myprintf.h"
 #include "ast.h"
 #define IS_EXP(node) node->type == exp_t
-#define IS_NAME(node) node->type == t_name
+#define IS_NUM(node) node->type == t_num
+#define IS_NAME(node) node->type == t_identifier
 #define IS_STRING(node) node->type == t_string
 
 // inline optimize will be enabled with -O2
 int
-print_d (int count, ast_node_t **print_avg_arr)
+print_d (int count, ast_node_t **print_ast_avg)
 {
   double num;
-  if (IS_EXP (print_avg_arr[count]) || IS_NAME (print_avg_arr[count]))
-    num = ast_exec_exp (print_avg_arr[count]);
+  if (IS_EXP (print_ast_avg[count]) || IS_NAME (print_ast_avg[count])||IS_NUM(print_ast_avg[count]))
+    num = ast_exec_exp (print_ast_avg[count]);
   else
     return fprintf (
       stderr, "format specifies type '%%d' does not match the argument type\n");
@@ -41,7 +42,7 @@ int
 print_lf (int count, ast_node_t **print_ast_avg)
 {
   double num;
-  if (IS_EXP (print_ast_avg[count]) || IS_NAME (print_ast_avg[count]))
+  if (IS_EXP (print_ast_avg[count]) || IS_NAME (print_ast_avg[count])||IS_NUM(print_ast_avg[count]))
     num = ast_exec_exp (print_ast_avg[count]);
   else
     return fprintf (

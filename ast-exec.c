@@ -1,8 +1,8 @@
 #include "ast.h"
-#include "mystring.h"
 #include "myprintf.h"
 #include "parser.h"
 #include "syms.h"
+#include "types.h"
 #include <assert.h>
 #include <math.h>
 #include <float.h>
@@ -66,24 +66,24 @@ ast_exec_exp (ast_node_t *root)
     }
   if (root->type == t_num)
     {
-      return root->data.var;
+      return root->data.value;
     }
-  if (root->type == t_name)
+  if (root->type == t_identifier)
     {
-      return getsym (root->name)->value->var;
+      return root->data.variable->value->num;
     }
-  if (right->type == t_name)
+  if (right->type == t_identifier)
     {
-      rval = getsym (right->name)->value->var;
+      rval = right->data.variable->value->num;
     }
-  if (left->type == t_name)
+  if (left->type == t_identifier)
     {
-      lval = getsym (left->name)->value->var;
+      lval = left->data.variable->value->num;
     }
   if (left->type == t_num && right->type == t_num)
     {
-      lval = left->data.var;
-      rval = right->data.var;
+      lval = left->data.value;
+      rval = right->data.value;
     }
   if (left->type == postfix_t)
     {
@@ -103,11 +103,11 @@ ast_exec_exp (ast_node_t *root)
     }
   if (left->type == t_num)
     {
-      lval = left->data.var;
+      lval = left->data.value;
     }
   if (right->type == t_num)
     {
-      rval = right->data.var;
+      rval = right->data.value;
     }
   if (root->type == compare_t)
     {
@@ -124,9 +124,10 @@ ast_exec_assigment (ast_node_t *root)
   if (!name)
     {
       printf ("assigment is NULL\n");
+      assert(0);
     }
-  name->value->var = ast_exec_exp (right);
-  return name->value->var;
+  name->value->num = ast_exec_exp (right);
+  return name->value->num;
 }
 void
 ast_exec_stmts (ast_node_t *root)
@@ -152,14 +153,13 @@ ast_exec_while (ast_node_t *root)
 double
 ast_exec_postfix (ast_node_t *root)
 {
-  ast_node_t *left = root->data.expression.left;
-  symbol_t *name = getsym (left->name);
-  switch (root->data.expression.op)
+  symbol_t* var=root->data.variable;
+  switch (root->data.expression.op) // legacy
     {
     case t_increment:
-      return name->value->var++;
+      return var->value->num++;
     case t_decrement:
-      return name->value->var--;
+      return var->value->num--;
     }
   return NAN;
 }
@@ -211,8 +211,8 @@ ast_exec (ast_node_t *root)
     case compare_t:
       ast_exec_exp (root);
       break;
-    case t_name:
-      printf ("%s = %lf\n", root->name, root->data.var);
+    case t_identifier:
+      printf ("%s = %lf\n", root->name, root->data.variable->value->num);
       break;
     case t_num:
       assert (0);

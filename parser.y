@@ -10,15 +10,16 @@ struct ast_node_s* ast_root=NULL;
 
 %define api.value.type union
 
-%token <char*> t_name
+%token <char*> t_identifier
 %token <struct str_s*> t_string
-%token t_while t_define
+%token t_while t_define t_void
 %token t_equal t_notequal t_lessequal t_greaterequal
 %token t_increment t_decrement
 %token t_printf
 %token <double> t_num
-%nterm <struct ast_node_s*> WhileStmt exp stmt StmtBlock
+%nterm <struct ast_node_s*> WhileStmt exp stmt StmtBlock FunctionDecl
 %nterm <struct ast_node_s*> StmtList Lval print_element print_list Print
+%nterm <struct var_list_s*> variables opt_variables
 
 %precedence '='
 %nonassoc t_equal t_notequal
@@ -28,6 +29,7 @@ struct ast_node_s* ast_root=NULL;
 %precedence NEG
 %right '^'
 
+%define parse.trace
 %verbose
 %%
 
@@ -37,21 +39,22 @@ program:
 ;
 
 StmtList:
-  stmt               { $$ = make_statement(NULL,$1);                          }
-| StmtList stmt      { $$ = make_statement($1,$2);                            }
+  StmtList stmt      { $$ = make_statement($1,$2);                            }
+| stmt               { $$ = make_statement(NULL,$1);                          }
 ;
 
 stmt:
-';'                  { $$ = NULL;                                             }
-| exp ';'
-| Print ';'
-| WhileStmt
+  Print ';'
+| ';'                { $$ = NULL;                                             }
+| exp ';'            { $$ = $1;                                               }
+| WhileStmt          { $$ = $1;                                               }
+| FunctionDecl
 | StmtBlock
+| error ';'          { $$ = NULL; yyerror("error");}
 ;
 
 StmtBlock:
-  '{'                { enter_scope();                                         }
-  StmtList  '}'      { $$ = $3; exit_scope();                                 }
+  '{' StmtList  '}'  { $$ = $2;                                               }
 | '{' '}'            { $$ = NULL;                                             }
 ;
 
@@ -82,7 +85,7 @@ t_while '(' exp ')' stmt { $$ = make_while($3,$5);                            }
 ;
 
 Lval:
-  t_name            { $$ = make_name($1);                                     }
+  t_identifier       { $$ = make_name($1);                                    }
 ;
 
 Print:
@@ -100,12 +103,21 @@ print_element:
 | exp               { $$ = $1;                                                }
 ;
 
-// FunctionDecl:
-//   t_define t_name '(' opt_formals ')' '{' StmtBlock '}'
-// ;
+FunctionDecl:
+  t_define t_identifier '(' opt_variables ')' '{' StmtBlock '}'
+                    {  }
+| t_define t_void t_identifier '(' opt_variables ')' '{' StmtBlock '}'
+                    {  }
+;
 
-// variables:
-//   t_name
-// | variables ',' t_name
-// ;
+opt_variables:
+  variables            {  }
+| %empty               {  }
+;
+
+variables:
+  t_identifier               { $$ = new_variable_list ($1); }
+| variables ',' t_identifier { $$ = add_var_2_list($1,$3);  }
+;
+
 %%

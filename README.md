@@ -54,3 +54,9 @@ output:
 1 x 9 = 9       2 x 9 = 18      3 x 9 = 27      4 x 9 = 36      5 x 9 = 45      6 x 9 = 54      7 x 9 = 63      8 x 9 = 72      9 x 9 = 81
 ./a.out  0.00s user 0.00s system 81% cpu 0.001 total
 ```
+
+### TODO
+
+- [ ] Function declaration
+- [ ] Memory pool
+- [ ] GCC JIT

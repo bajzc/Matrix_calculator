@@ -1,34 +1,35 @@
 %{
 #include "mystring.h"
 #include "parser.h"
+#include "syms.h"
 #include <string.h>
-#include "ast.h"
 void yyerror (char const *s);
 long line_count=0;
 
 %}
 
 NUM         ([0-9]+\.?[0-9]*)
-NAME        ([a-zA-Z_][0-9a-zA-Z_]*)
-OPERATOR    [+*/%=^(),;<>[\]{}-]
+IDENTIFIER  ([a-zA-Z_][0-9a-zA-Z_]*)
+OPERATOR    [+*/%=^(),;<>[\]-]
 
 %%
 
 "while"           { return t_while;                           }
 "define"          { return t_define;                          }
 "printf"          { return t_printf;                          }
+"void"            { return t_void;                            }
 "=="              { return t_equal;                           }
 "!="              { return t_notequal;                        }
 "<="              { return t_lessequal;                       }
 ">="              { return t_greaterequal;                    }
 "++"              { return t_increment;                       }
 "--"              { return t_decrement;                       }
+"{"               { enter_scope(); return yytext[0];          }
+"}"               { exit_scope();  return yytext[0];          }
 {NUM}             { yylval.t_num=atof(yytext);  return t_num; }
-{NAME}            {  symbol_t *s=getsym(yytext);
-                    if(!s)
-                      {s=putsym(yytext,t_name);}
-                    yylval.t_name=s->name;
-                    return s->type.op;                        }
+{IDENTIFIER}      { flex_putsym(yytext);
+                    yylval.t_identifier=strdup(yytext);
+                    return t_identifier;                      }
 {OPERATOR}        { return yytext[0];                         }
 \"[^\"]*\"        { int count = 0;
                     yylval.t_string=malloc(sizeof(struct str_s));

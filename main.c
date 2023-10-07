@@ -3,12 +3,13 @@
 #include "syms.h"
 extern struct ast_node_s *ast_root;
 extern table_t *global;
-#ifndef DEBUG_SYM
 int
 main ()
 {
+  yydebug = 0;
   void *temp;
   temp = NULL;
+  init_base_tables ();
   yyparse ();
   while (temp != ast_root)
     {
@@ -18,13 +19,3 @@ main ()
     }
   return 0;
 }
-
-#else
-int
-main ()
-{
-  yyparse ();
-  return 0;
-}
-
-#endif
