@@ -16,9 +16,6 @@ ast_exec_op (double left, char op, double right)
   switch (op)
     {
     case '+':
-      //     if (left == 1 && right == 1) // Easter Egg here, enable if use
-      //     POSIX standard
-      // return 3;
       return left + right;
     case '-':
       return left - right;
@@ -124,7 +121,7 @@ ast_exec_assigment (ast_node_t *root)
   if (!name)
     {
       printf ("assigment is NULL\n");
-      assert(0);
+      assert (0);
     }
   name->value->num = ast_exec_exp (right);
   return name->value->num;
@@ -153,7 +150,7 @@ ast_exec_while (ast_node_t *root)
 double
 ast_exec_postfix (ast_node_t *root)
 {
-  symbol_t* var=root->data.variable;
+  symbol_t *var = root->data.variable;
   switch (root->data.expression.op) // legacy
     {
     case t_increment:
@@ -187,6 +184,46 @@ ast_exec_printf (ast_node_t *root)
   return 0;
 }
 
+value_t *
+ast_exec_funCall (ast_node_t *root)
+{
+  // func_t *func_body = root->data.funCall.body->value->fun;
+  // ast_node_t **stmt_arr = func_body->body->data.statements.stmt_arr;
+  // ast_node_t *argv = root->data.funCall.argv;
+  // value_t *RetVal = NULL;
+  // assert (argv->size + 1 == func_body->argc);
+  // for (int i = 0; i < func_body->argc; i++)
+  //   {
+  //     assert (func_body->argv[i]->type.op == argv->variables[i]->type.op);
+  //     func_body->argv[i]->value = argv->variables[i]->value;
+  //   }
+  // for (int i = 0; i <= func_body->body->data.statements.count; i++)
+  //   {
+  //     ast_exec (stmt_arr[i]);
+  //   }
+
+  // return RetVal;
+  func_t *func_body = root->data.funCall.body->value->fun;
+  ast_node_t **stmt_arr = func_body->body->data.statements.stmt_arr;
+  actuals_list_t *argv = root->data.funCall.argv;
+  value_t argv_val[argv->count + 1];
+  // TODO only support double
+  for (int i = 0; i <= argv->count; i++)
+    {
+      argv_val[i].num = ast_exec_exp (argv->actuals[i]);
+    }
+  for (int i = 0; i < func_body->argc; i++)
+    {
+      assert(func_body->argv[i]->value);
+      func_body->argv[i]->value->num = argv_val[i].num;
+    }
+  for (int i = 0; i <= func_body->body->data.statements.count; i++)
+    {
+      ast_exec (stmt_arr[i]);
+    }
+  return NULL;
+}
+
 int
 ast_exec (ast_node_t *root)
 { // entrance of ast
@@ -212,7 +249,8 @@ ast_exec (ast_node_t *root)
       ast_exec_exp (root);
       break;
     case t_identifier:
-      printf ("%s = %lf\n", root->name, root->data.variable->value->num);
+      printf ("%s = %lf\n", root->data.variable->name,
+	      root->data.variable->value->num);
       break;
     case t_num:
       assert (0);
@@ -223,7 +261,14 @@ ast_exec (ast_node_t *root)
     case t_printf:
       ast_exec_printf (root);
       break;
+    case funcDecl_t:
+      printf ("defined function %s\n", root->data.funDecl.body->name);
+      break;
+    case funCall_t:
+      ast_exec_funCall (root);
+      break;
     default:
+      printf ("type: %d\n", root->type);
       assert (0);
     }
   return 0;

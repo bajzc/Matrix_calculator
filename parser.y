@@ -15,11 +15,12 @@ struct ast_node_s* ast_root=NULL;
 %token t_while t_define t_void
 %token t_equal t_notequal t_lessequal t_greaterequal
 %token t_increment t_decrement
-%token t_printf
+%token t_printf t_return
 %token <double> t_num
-%nterm <struct ast_node_s*> WhileStmt exp stmt StmtBlock FunctionDecl
-%nterm <struct ast_node_s*> StmtList Lval print_element print_list Print
+%nterm <struct ast_node_s*> WhileStmt exp stmt StmtBlock FunctionDecl Return
+%nterm <struct ast_node_s*> StmtList Lval print_element print_list Print FunCall
 %nterm <struct var_list_s*> variables opt_variables
+%nterm <struct actual_list_s*> actuals opt_actuals
 
 %precedence '='
 %nonassoc t_equal t_notequal
@@ -49,8 +50,9 @@ stmt:
 | exp ';'            { $$ = $1;                                               }
 | WhileStmt          { $$ = $1;                                               }
 | FunctionDecl
+| FunCall ';'
+| Return ';'
 | StmtBlock
-| error ';'          { $$ = NULL; yyerror("error");}
 ;
 
 StmtBlock:
@@ -61,7 +63,7 @@ StmtBlock:
 exp:
   t_num              { $$ = make_var($1);                                     }
 | Lval               { $$ = $1;                                               }
-| Lval '=' exp       { $$ = make_assignment($1->name,$3);                     }
+| Lval '=' exp       { $$ = make_assignment($1->data.variable->name,$3);      }
 | exp '+' exp        { $$ = make_expression($1,'+',$3);                       }
 | exp '-' exp        { $$ = make_expression($1,'-',$3);                       }
 | exp '*' exp        { $$ = make_expression($1,'*',$3);                       }
@@ -93,6 +95,12 @@ Print:
 | t_printf '(' t_string ',' print_list ')' { $$ = make_printf($3->data,$5);   }
 ;
 
+//TODO
+Return:
+  t_return      {}
+| t_return exp  {}
+;
+
 print_list:
   print_element     { $$ = make_print_list(NULL,$1);                          }
 | print_list ',' print_element { $$ = make_print_list($1,$3);                 }
@@ -104,20 +112,33 @@ print_element:
 ;
 
 FunctionDecl:
-  t_define t_identifier '(' opt_variables ')' '{' StmtBlock '}'
-                    {  }
-| t_define t_void t_identifier '(' opt_variables ')' '{' StmtBlock '}'
-                    {  }
+  t_define t_identifier '(' opt_variables ')' { install_parameter($4); }
+  stmt              { $$ = make_function_decl($2,$4,$7); }
+| t_define t_void t_identifier '(' opt_variables ')' { install_parameter($5); }
+  stmt              { $$ = make_function_decl_void($3,$5,$8); }
 ;
 
 opt_variables:
-  variables            {  }
-| %empty               {  }
+  variables            { $$ = $1; }
+| %empty               { $$ = NULL; }
 ;
 
 variables:
-  t_identifier               { $$ = new_variable_list ($1); }
+  t_identifier               { $$ = new_variable_list($1); }
 | variables ',' t_identifier { $$ = add_var_2_list($1,$3);  }
 ;
 
+FunCall:
+  t_identifier '(' opt_actuals ')' { $$ = make_function_call($1,$3);}
+;
+
+opt_actuals:
+  actuals             { $$ = $1;}
+| %empty              { $$ = NULL;}
+;
+
+actuals:
+  exp                    { $$ = new_actuals_list($1);}
+| actuals ',' exp        { $$ = add_exp_2_list($1,$3);}
+;
 %%

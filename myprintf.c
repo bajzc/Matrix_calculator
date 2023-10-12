@@ -4,10 +4,7 @@
 #include <string.h>
 #include "myprintf.h"
 #include "ast.h"
-#define IS_EXP(node) node->type == exp_t
-#define IS_NUM(node) node->type == t_num
-#define IS_NAME(node) node->type == t_identifier
-#define IS_STRING(node) node->type == t_string
+
 
 // inline optimize will be enabled with -O2
 int

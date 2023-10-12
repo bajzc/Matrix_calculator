@@ -29,8 +29,8 @@ typedef struct func_s
 {
   unsigned argc;
   type_t ret; // return type, set to -1 for not return
-  value_t *argv;
-  struct ast_node_s *body;
+  symbol_t **argv;
+  ast_node_t *body;
 } func_t;
 
 struct value_s
@@ -71,10 +71,16 @@ typedef struct var_list_s
   symbol_t **variables;
 } var_list_t;
 
+typedef struct actuals_list_s
+{
+  size_t size;
+  unsigned count;
+  ast_node_t **actuals;
+} actuals_list_t;
+
 struct ast_node_s
 {
   int type; // from parser.y
-  char *name;
   union
   {
     double value;
@@ -102,9 +108,13 @@ struct ast_node_s
     } whilestmt, ifstmt;
     struct
     {
-      symbol_t *name;
-      ast_node_t *argv;
-    } funcall;
+      symbol_t *body;
+      actuals_list_t *argv;
+    } funCall;
+    struct
+    {
+      symbol_t *body;
+    } funDecl;
     struct
     {
       char *format;

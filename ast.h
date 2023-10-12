@@ -5,6 +5,11 @@
 #include "stdbool.h"
 #include "types.h"
 
+#define IS_EXP(node) node->type == exp_t
+#define IS_NUM(node) node->type == t_num
+#define IS_NAME(node) node->type == t_identifier
+#define IS_STRING(node) node->type == t_string
+
 enum node_type
 {
   exp_t = 2 << 8, // 512
@@ -14,6 +19,8 @@ enum node_type
   while_stmt_t,	  // 516
   compare_t,	  // 517
   postfix_t,	  // 518
+  funcDecl_t,	  // 519
+  funCall_t,	  // 520
 };
 
 ast_node_t *
@@ -50,4 +57,10 @@ ast_node_t *
 make_string (struct str_s *string);
 int
 is_constant (ast_node_t *root);
+ast_node_t *
+make_function_decl (char *name, var_list_t *argv, ast_node_t *stmt);
+ast_node_t *
+make_function_decl_void (char *name, var_list_t *argv, ast_node_t *stmt);
+ast_node_t *
+make_function_call (char *name, actuals_list_t *list);
 #endif

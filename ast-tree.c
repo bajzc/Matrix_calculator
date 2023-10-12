@@ -42,7 +42,6 @@ make_name (char *name)
 {
   ast_node_t *node = malloc (sizeof (ast_node_t));
   node->type = t_identifier;
-  node->name = name;
   node->data.variable = malloc (sizeof (symbol_t));
   node->data.variable = getsym (name, identifiers);
   return node;
@@ -126,7 +125,6 @@ make_postfix_exp (ast_node_t *lval, int op)
 {
   ast_node_t *node = malloc (sizeof (ast_node_t));
   node->type = postfix_t;
-  node->name = lval->name;
   node->data.variable = lval->data.variable;
   node->data.expression.op = op;
   return node;
@@ -158,5 +156,52 @@ make_printf (char *format, ast_node_t *print_list)
   else
     node->data.printf.print_avg = print_list;
   node->data.printf.format = strdup (format);
+  return node;
+}
+
+ast_node_t *
+make_function_decl (char *name, var_list_t *argv, ast_node_t *stmt)
+{
+  ast_node_t *node = NULL;
+  symbol_t *fun = NULL;
+  if ((fun = getsym (name, global)) != NULL)
+    {
+      assert (fun->type.op != funcDecl_t);
+    }
+  fun = putsym (name, &funcdef, GLOBAL);
+  fun->value = malloc (sizeof (value_t));
+  fun->type.op = fun->value->type.op = funcDecl_t;
+  fun->value->fun = malloc (sizeof (func_t));
+  fun->value->fun->argc = argv->count + 1;
+  fun->value->fun->ret.op = t_num;
+  fun->value->fun->argv = argv->variables;
+  fun->value->fun->body = stmt;
+
+  node = malloc (sizeof (ast_node_t));
+  node->type = funcDecl_t;
+  node->data.funDecl.body = fun;
+
+  return node;
+}
+
+ast_node_t *
+make_function_decl_void (char *name, var_list_t *argv, ast_node_t *stmt)
+// TODO need to be verify
+{
+  ast_node_t *p = make_function_decl (name, argv, stmt);
+  p->data.funDecl.body->value->fun->ret.op = -1;
+  return p;
+}
+
+ast_node_t *
+make_function_call (char *name, actuals_list_t *list)
+{
+  ast_node_t *node = malloc (sizeof (ast_node_t));
+  symbol_t *fun = getsym (name, funcdef);
+
+  assert (fun);
+  node->type = funCall_t;
+  node->data.funCall.argv = list;
+  node->data.funCall.body = fun;
   return node;
 }

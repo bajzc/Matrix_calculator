@@ -18,6 +18,7 @@ OPERATOR    [+*/%=^(),;<>[\]-]
 "define"          { return t_define;                          }
 "printf"          { return t_printf;                          }
 "void"            { return t_void;                            }
+"return"          { return t_return;                          }
 "=="              { return t_equal;                           }
 "!="              { return t_notequal;                        }
 "<="              { return t_lessequal;                       }
