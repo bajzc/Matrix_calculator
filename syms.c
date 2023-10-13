@@ -2,7 +2,7 @@
 #include "ast.h"
 #include "types.h"
 #include <assert.h>
-#include <linux/limits.h>
+#include <limits.h>
 #include <stdlib.h>
 #include <string.h>
 

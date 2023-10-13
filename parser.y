@@ -20,7 +20,7 @@ struct ast_node_s* ast_root=NULL;
 %nterm <struct ast_node_s*> WhileStmt exp stmt StmtBlock FunctionDecl Return
 %nterm <struct ast_node_s*> StmtList Lval print_element print_list Print FunCall
 %nterm <struct var_list_s*> variables opt_variables
-%nterm <struct actual_list_s*> actuals opt_actuals
+%nterm <struct actuals_list_s*> actuals opt_actuals
 
 %precedence '='
 %nonassoc t_equal t_notequal
