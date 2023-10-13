@@ -6,8 +6,8 @@ A brief introduction to this repository:
 |------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | [GUI](https://github.com/bajzc/Matrix_calculator/tree/GUI)                   | A user-friendly GUI matrix calculator, which is based on Qt framework and has capability to calculate expression. It supports six basic matrix operations                         |
 | [demo](https://github.com/bajzc/Matrix_calculator/tree/demo)                 | A command line version using regular expressions based on finite state ideas, and also includes the development of a matrix library (LU decomposition)                            |
-| [dev/AST-test](https://github.com/bajzc/Matrix_calculator/tree/dev/AST-test) | An interpreter has a similar syntax to MATLAB in terms of matrix creation and operation, it is highly efficient while supporting rich features (autocomplete, GNU-style argument) |
-| [main](https://github.com/bajzc/Matrix_calculator/tree/main)                 | This branch is still in development. So far, the AST builder and walker have been completed, which means it can be linked with GCC JIT to generate executable files.                                                                                                                                     |
+| [main](https://github.com/bajzc/Matrix_calculator/tree/main)                 | An interpreter has a similar syntax to MATLAB in terms of matrix creation and operation, it is highly efficient while supporting rich features (autocomplete, GNU-style argument) |
+| [dev/AST-test](https://github.com/bajzc/Matrix_calculator/tree/dev/AST-test) | This branch is still in development. So far, the AST builder and walker have been completed, which means it can be linked with GCC JIT to generate executable files.              |
 
 ## Showcase
 
