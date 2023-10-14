@@ -2,7 +2,9 @@
 #include "mystring.h"
 #include "parser.h"
 #include "syms.h"
+#include "mem_pool.h"
 #include <string.h>
+extern mem_pool_t* POOL;
 void yyerror (char const *s);
 long line_count=0;
 
@@ -28,14 +30,13 @@ OPERATOR    [+*/%=^(),;<>[\]-]
 "{"               { enter_scope(); return yytext[0];          }
 "}"               { exit_scope();  return yytext[0];          }
 {NUM}             { yylval.t_num=atof(yytext);  return t_num; }
-{IDENTIFIER}      { flex_putsym(yytext);
-                    yylval.t_identifier=strdup(yytext);
+{IDENTIFIER}      { yylval.t_identifier=my_strdup(yytext);
                     return t_identifier;                      }
 {OPERATOR}        { return yytext[0];                         }
 \"[^\"]*\"        { int count = 0;
-                    yylval.t_string=malloc(sizeof(struct str_s));
+                    yylval.t_string=mem_malloc(POOL,sizeof(struct str_s));
                     yylval.t_string->len=0;
-                    yylval.t_string->data=strdup(yytext);
+                    yylval.t_string->data=my_strdup(yytext);
                     char *lookup;
                     for(lookup=yytext;*lookup!='\0';lookup++){
                       yylval.t_string->len++;

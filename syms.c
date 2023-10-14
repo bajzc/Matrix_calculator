@@ -1,17 +1,22 @@
 #include "syms.h"
 #include "ast.h"
 #include "types.h"
+#include "mem_pool.h"
 #include <assert.h>
 #include <limits.h>
+#include <stddef.h>
 #include <stdlib.h>
 #include <string.h>
 
+extern mem_pool_t *POOL;
 extern int level;
 int level = GLOBAL;
 symbol_t *sym_table = NULL;
 
-static table_t cns = {CONSTANTS}, glb = {GLOBAL}, ids = {GLOBAL},
-	       fundef = {GLOBAL}; // init table_t.level
+static table_t cns = {CONSTANTS, NULL, NULL, NULL},
+	       glb = {GLOBAL, NULL, NULL, NULL},
+	       ids = {GLOBAL, NULL, NULL, NULL},
+	       fundef = {GLOBAL, NULL, NULL, NULL}; // init table_t.level
 
 table_t *constants = &cns;
 table_t *global = &glb;
@@ -56,42 +61,54 @@ enter_scope ()
     level++;
   else
     level = LOCAL;
-  printf ("current scope: %d\n", level);
+  printf ("current level: %d\n", level);
 }
 
 void
 exit_scope ()
 {
-  if (identifiers->level == level)
+  if (identifiers->level == level
+      && level == LOCAL) // exit a function decleration
+    {
+      if (identifiers->previous->level == 3)
+	{
+	  identifiers = identifiers->previous->previous;
+	}
+      else
+	{
+	  identifiers = identifiers->previous;
+	}
+      level = PARAM;
+    }
+  else if (identifiers->level == level)
     {
       identifiers = identifiers->previous;
     }
   --level;
-
-  printf ("current scope: %d\n", level);
+  printf ("current level: %d\n", level);
 }
 
 void
 init_base_tables ()
 {
-  identifiers->head = malloc (sizeof (symbol_t));
+  identifiers->head = mem_malloc (POOL, sizeof (symbol_t));
   init_sym_head (identifiers->head);
   identifiers->previous = NULL;
-  global->head = malloc (sizeof (symbol_t));
+  global->head = mem_malloc (POOL, sizeof (symbol_t));
   init_sym_head (global->head);
   global->previous = NULL;
-  funcdef->head = malloc (sizeof (symbol_t));
+  funcdef->head = mem_malloc (POOL, sizeof (symbol_t));
   init_sym_head (funcdef->head);
 }
 
-void
-flex_putsym (char *name)
-{
-  if (!getsym (name, identifiers))
-    {
-      putsym (name, &identifiers, level);
-    }
-}
+// void
+// flex_putsym (char *name)
+// {
+//   if (!getsym (name, identifiers))
+//     {
+//       putsym (name, &identifiers, level);
+//     }
+// }
 
 /*
  * !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -109,11 +126,11 @@ putsym (char *name, table_t **tpp, int level)
     {
       tp = *tpp = new_table (tp, level);
     }
-  p = malloc (sizeof (symbol_t));
+  p = mem_malloc (POOL, sizeof (symbol_t));
   p->name = strdup (name);
   p->scope = level;
   p->type.op = 0;
-  p->value = malloc (sizeof (value_t));
+  p->value = mem_malloc (POOL, sizeof (value_t));
   p->value->num = NAN;
   add_sym_node (p, tp->head);
   return p;
@@ -129,7 +146,7 @@ getsym (char *name, table_t *tp)
 	{
 	  if (strcmp (p->name, name) == 0)
 	    {
-	      printf ("%s: found in level:%d\n", name, tp->level);
+	      printf ("found %s in %d (%p)\n", name, tp->level, &p);
 	      return p;
 	    }
 	}
@@ -142,10 +159,10 @@ new_table (table_t *up, int level)
 {
   table_t *new;
 
-  new = malloc (sizeof (table_t));
+  new = mem_malloc (POOL, sizeof (table_t));
   new->previous = up; // this should not change ids
   new->level = level;
-  new->head = malloc (sizeof (symbol_t));
+  new->head = mem_malloc (POOL, sizeof (symbol_t));
   init_sym_head (new->head);
   if (up)
     new->head_arr = up->head_arr;
@@ -157,8 +174,8 @@ new_table (table_t *up, int level)
 var_list_t *
 new_variable_list (char *name)
 {
-  var_list_t *new = malloc (sizeof (var_list_t));
-  new->variables = malloc (sizeof (symbol_t *) * 4);
+  var_list_t *new = mem_malloc (POOL, sizeof (var_list_t));
+  new->variables = mem_malloc (POOL, sizeof (symbol_t *) * 4);
   new->count = 0;
   new->size = 4;
   new->count--;
@@ -180,9 +197,9 @@ add_var_2_list (var_list_t *list, char *name)
       list->size += 2;
     }
   list->count++;
-  list->variables[list->count] = malloc (sizeof (symbol_t));
+  list->variables[list->count] = mem_malloc (POOL, sizeof (symbol_t));
   list->variables[list->count]->name = name;
-  list->variables[list->count]->value = malloc (sizeof (symbol_t));
+  list->variables[list->count]->value = mem_malloc (POOL, sizeof (symbol_t));
   return list;
 }
 
@@ -190,8 +207,8 @@ actuals_list_t *
 new_actuals_list (ast_node_t *exp)
 {
   assert (IS_EXP (exp) || IS_NUM (exp) || IS_NAME (exp));
-  actuals_list_t *new = malloc (sizeof (actuals_list_t));
-  new->actuals = malloc (sizeof (ast_node_t *) * 4);
+  actuals_list_t *new = mem_malloc (POOL, sizeof (actuals_list_t));
+  new->actuals = mem_malloc (POOL, sizeof (ast_node_t *) * 4);
   new->count = 0;
   new->size = 4;
   new->count--;
@@ -222,11 +239,23 @@ install_parameter (var_list_t *list)
   if (list == NULL)
     return;
   symbol_t *p = NULL;
-  for (int i = 0; i <= list->count; i++)
+  for (unsigned i = 0; i <= list->count; i++)
     {
       p = putsym (list->variables[i]->name, &identifiers, PARAM);
       p->type.op = list->variables[i]->type.op;
       p->value = list->variables[i]->value;
-      //FIX copy all attributes
+      // FIX copy all attributes
     }
+}
+
+char *
+my_strdup (char *src)
+{
+  char *re = NULL;
+  size_t len = 0;
+  while (src[len])
+    len++;
+  re = mem_malloc (POOL, len + 1);
+  memcpy (re, src, len + 1);
+  return re;
 }

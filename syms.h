@@ -5,7 +5,7 @@
 #include <stddef.h>
 
 extern int level;
-extern table_t *constants, *global, *identifiers,*funcdef;
+extern table_t *constants, *global, *identifiers, *funcdef;
 
 enum
 {
@@ -39,7 +39,7 @@ add_exp_2_list (actuals_list_t *list, ast_node_t *exp);
 void
 init_base_tables ();
 void
-flex_putsym (char *name);
-void
 install_parameter (var_list_t *list);
+char *
+my_strdup (char *src);
 #endif

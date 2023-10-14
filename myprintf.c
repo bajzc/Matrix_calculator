@@ -5,13 +5,13 @@
 #include "myprintf.h"
 #include "ast.h"
 
-
 // inline optimize will be enabled with -O2
 int
 print_d (int count, ast_node_t **print_ast_avg)
 {
   double num;
-  if (IS_EXP (print_ast_avg[count]) || IS_NAME (print_ast_avg[count])||IS_NUM(print_ast_avg[count]))
+  if (IS_EXP (print_ast_avg[count]) || IS_NAME (print_ast_avg[count])
+      || IS_NUM (print_ast_avg[count]))
     num = ast_exec_exp (print_ast_avg[count]);
   else
     return fprintf (
@@ -39,7 +39,8 @@ int
 print_lf (int count, ast_node_t **print_ast_avg)
 {
   double num;
-  if (IS_EXP (print_ast_avg[count]) || IS_NAME (print_ast_avg[count])||IS_NUM(print_ast_avg[count]))
+  if (IS_EXP (print_ast_avg[count]) || IS_NAME (print_ast_avg[count])
+      || IS_NUM (print_ast_avg[count]))
     num = ast_exec_exp (print_ast_avg[count]);
   else
     return fprintf (

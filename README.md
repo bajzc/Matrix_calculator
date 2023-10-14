@@ -6,9 +6,9 @@ The implement by using AST tree.
 
 | Feature                      | Example                               |
 |------------------------------|---------------------------------------|
-| Arithmetic operations        | + - * / % ^                           |
-| Comparison operations        | < <= == >= >                          |
-| Postfix operations           | ++ --                                 |
+| Arithmetic operators        | + - * / % ^                           |
+| Comparison operators        | < <= == >= >                          |
+| Postfix operators           | ++ --                                 |
 | No declaration for variables | a=1;                                  |
 | Multi-scope symbol table     | \                                     |
 | Functions declaration        | define next(n){ printf("%d",n+1); }   |
@@ -20,7 +20,7 @@ The implement by using AST tree.
 
 ## Examples
 
-### Fibonacci
+### 1. Fibonacci
 
 ``` C
 define fib(n){
@@ -33,23 +33,45 @@ define fib(n){
     }
     printf("Fibonacci[%d]: %d\n",n,b);
 }
-fib(5);
-fib(10);
-fib(25);
+
+a=1;
+while(a<1000000){
+    a++;
+    b=1;
+    while(b<10){
+        b++;
+        fib(b);
+    }
+}
 ```
 
 `time cat fibonacci.test | ./a.out`
 
-output:
-
+#### output:
 ```
+......
+Fibonacci[2]: 1
+Fibonacci[3]: 2
+Fibonacci[4]: 3
 Fibonacci[5]: 5
+Fibonacci[6]: 8
+Fibonacci[7]: 13
+Fibonacci[8]: 21
+Fibonacci[9]: 34
 Fibonacci[10]: 55
-Fibonacci[25]: 75025
-./a.out  0.00s user 0.00s system 74% cpu 0.001 total
+
 ```
 
-### Multipilcation
+|malloc function| file     |time taken |
+|---------------|----------|-----------|
+|malloc()       |malloc.h  |25.202s    |
+|mem_malloc()   |mem_pool.h|22.152s    |
+
+#### Memory leak:
+
+![valgrind](./doc/valgrind.png)
+
+### 2. Multipilcation
 
 ```C
 define table(n){
@@ -83,5 +105,5 @@ output:
 ### TODO
 
 - [x] Function declaration
-- [ ] Memory pool
+- [x] Memory pool
 - [ ] GCC JIT

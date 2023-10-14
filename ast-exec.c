@@ -7,7 +7,9 @@
 #include <math.h>
 #include <float.h>
 #include <stdbool.h>
-
+#include <stddef.h>
+#include "mem_pool.h"
+extern mem_pool_t *POOL;
 extern int level;
 
 double
@@ -208,16 +210,16 @@ ast_exec_funCall (ast_node_t *root)
   actuals_list_t *argv = root->data.funCall.argv;
   value_t argv_val[argv->count + 1];
   // TODO only support double
-  for (int i = 0; i <= argv->count; i++)
+  for (unsigned i = 0; i <= argv->count; i++)
     {
       argv_val[i].num = ast_exec_exp (argv->actuals[i]);
     }
-  for (int i = 0; i < func_body->argc; i++)
+  for (unsigned i = 0; i < func_body->argc; i++)
     {
-      assert(func_body->argv[i]->value);
+      assert (func_body->argv[i]->value);
       func_body->argv[i]->value->num = argv_val[i].num;
     }
-  for (int i = 0; i <= func_body->body->data.statements.count; i++)
+  for (size_t i = 0; i <= func_body->body->data.statements.count; i++)
     {
       ast_exec (stmt_arr[i]);
     }
@@ -262,7 +264,7 @@ ast_exec (ast_node_t *root)
       ast_exec_printf (root);
       break;
     case funcDecl_t:
-      printf ("defined function %s\n", root->data.funDecl.body->name);
+      printf ("declared function \"%s\"\n", root->data.funDecl.body->name);
       break;
     case funCall_t:
       ast_exec_funCall (root);
