@@ -1,9 +1,12 @@
 #include <assert.h>
 #include <math.h>
+#include <stddef.h>
 #include <stdio.h>
 #include <string.h>
 #include "myprintf.h"
+#include "mem_pool.h"
 #include "ast.h"
+extern mem_pool_t *POOL;
 
 // inline optimize will be enabled with -O2
 int
@@ -108,4 +111,40 @@ print_ast_avg (char *format, ast_node_t *print_avg)
 	printf ("%c", *p);
     }
   return 0;
+}
+
+char *
+conver_format (const char *src)
+{
+  assert (src);
+  char *buffer = mem_malloc (POOL, strlen (src));
+  size_t index = 0;
+
+  for (const char *p = src; *p != '\0'; p++)
+    {
+      if (*p == '\\')
+	{
+	  p++;
+	  switch (*p)
+	    {
+	    case 'n':
+	      buffer[index] = '\n';
+	      break;
+	    case 't':
+	      buffer[index] = '\t';
+	      break;
+	    case 'f':
+	      buffer[index] = '\f';
+	      break;
+	    case 'r':
+	      buffer[index] = '\r';
+	    }
+	}
+      else
+	{
+	  buffer[index] = *p;
+	}
+      index++;
+    }
+  return buffer;
 }

@@ -2,6 +2,7 @@
 #define MEM_POOL_H
 
 // similar to nginx's memory pool
+// nginx/src/core/ngx_palloc.c
 
 #include "config.h"
 
@@ -10,6 +11,7 @@
 #define mem_align(n, alignment) (((n) + (alignment - 1)) & ~(alignment - 1))
 #define mem_align_ptr(p, alignment)                                            \
   (void *) ((((size_t) p) + (alignment - 1)) & ~(alignment - 1))
+#define DEFAULT_POOL POOL
 
 typedef struct mp_node_s
 {
@@ -44,4 +46,8 @@ mem_pool_t *
 mem_create_pool (size_t size);
 void
 mem_destroy_pool (mem_pool_t *pool);
+void *
+mem_yy_malloc (size_t size);
+void
+mem_yy_free (void *p);
 #endif

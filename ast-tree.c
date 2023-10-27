@@ -1,14 +1,18 @@
 #include "ast.h"
+#include "ast_jit.h"
 #include "parser.h"
 #include "syms.h"
 #include "types.h"
 #include "mem_pool.h"
+#include "libgccjit.h"
 #include <stdbool.h>
 #include <string.h>
 #include <assert.h>
 
 extern mem_pool_t *POOL;
 extern int level;
+void
+yyerror (char const *s);
 
 int
 is_constant (ast_node_t *root)
@@ -37,6 +41,8 @@ make_var (double num)
   ast_node_t *node = mem_malloc (POOL, sizeof (ast_node_t));
   node->type = t_num;
   node->data.value = num;
+
+  node->jit_literal = jit_make_literal (&num, GCC_JIT_TYPE_DOUBLE);
   return node;
 }
 
@@ -116,6 +122,19 @@ make_while (ast_node_t *condition, ast_node_t *statements)
 }
 
 ast_node_t *
+make_if (ast_node_t *condition, ast_node_t *if_body, ast_node_t *else_body)
+{
+  assert (condition != NULL && if_body != NULL);
+
+  ast_node_t *node = mem_malloc (POOL, sizeof (ast_node_t));
+  node->type = if_stmt_t;
+  node->data.ifstmt.condition = condition;
+  node->data.ifstmt.if_body = if_body;
+  node->data.ifstmt.else_body = else_body;
+  return node;
+}
+
+ast_node_t *
 make_compare (ast_node_t *left, int op, ast_node_t *right)
 {
   ast_node_t *node = mem_malloc (POOL, sizeof (ast_node_t));
@@ -142,6 +161,9 @@ make_string (struct str_s *string)
   ast_node_t *node = mem_malloc (POOL, sizeof (ast_node_t));
   node->type = t_string;
   node->data.string = string;
+
+  node->jit_literal
+    = jit_make_literal (string->data, GCC_JIT_TYPE_CONST_CHAR_PTR);
   return node;
 }
 
@@ -161,7 +183,7 @@ make_printf (char *format, ast_node_t *print_list)
     node->data.printf.print_avg = NULL;
   else
     node->data.printf.print_avg = print_list;
-  node->data.printf.format = strdup (format);
+  node->data.printf.format = my_strdup (format);
   return node;
 }
 
@@ -169,23 +191,33 @@ ast_node_t *
 make_function_decl (char *name, var_list_t *argv, ast_node_t *stmt)
 {
   ast_node_t *node = NULL;
-  symbol_t *fun = NULL;
-  if ((fun = getsym (name, global)) != NULL)
+  symbol_t *fun_sym = NULL;
+  if ((fun_sym = getsym (name, global)) != NULL)
     {
-      assert (fun->type.op != funcDecl_t);
+      assert (fun_sym->type.op != funcDecl_t);
     }
-  fun = putsym (name, &funcdef, GLOBAL);
-  fun->value = mem_malloc (POOL, sizeof (value_t));
-  fun->type.op = fun->value->type.op = funcDecl_t;
-  fun->value->fun = mem_malloc (POOL, sizeof (func_t));
-  fun->value->fun->argc = argv->count + 1;
-  fun->value->fun->ret.op = t_num;
-  fun->value->fun->argv = argv->variables;
-  fun->value->fun->body = stmt;
+  fun_sym = putsym (name, &funcdef, GLOBAL);
+  fun_sym->value = mem_malloc (POOL, sizeof (value_t));
+  fun_sym->type.op = fun_sym->value->type.op = funcDecl_t;
+  fun_sym->value->fun = mem_malloc (POOL, sizeof (func_t));
+
+  if (argv == NULL)
+    {
+      fun_sym->value->fun->argc = 0;
+      fun_sym->value->fun->argv = NULL;
+    }
+  else
+    {
+      fun_sym->value->fun->argc = argv->count + 1;
+      fun_sym->value->fun->argv = argv->variables;
+    }
+
+  fun_sym->value->fun->ret.op = t_num;
+  fun_sym->value->fun->body = stmt;
 
   node = mem_malloc (POOL, sizeof (ast_node_t));
   node->type = funcDecl_t;
-  node->data.funDecl.body = fun;
+  node->data.funDecl.body = fun_sym;
 
   return node;
 }
@@ -210,4 +242,25 @@ make_function_call (char *name, actuals_list_t *list)
   node->data.funCall.argv = list;
   node->data.funCall.body = fun;
   return node;
+}
+
+ast_node_t *
+make_return (ast_node_t *ret_exp)
+{
+  ast_node_t *node = mem_malloc (POOL, sizeof (ast_node_t));
+
+  node->type = return_exp_t;
+  node->data.return_exp.ret_exp = ret_exp;
+  return node;
+}
+
+ast_node_t *
+make_return_exp (ast_node_t *funCall)
+{
+  // if (funCall->data.funCall.body->value->fun->ret.op == -1)
+  //   {
+  //     return funCall;
+  //   }
+  // funCall->type = return_val_t;
+  return funCall;
 }

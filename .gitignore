@@ -58,6 +58,7 @@ dkms.conf
 lex.c
 parser.c
 parser.h
+.clangd
 
 compile_flags.txt
 fibonacci*

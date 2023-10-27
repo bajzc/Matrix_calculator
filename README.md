@@ -16,9 +16,39 @@ The implement by using AST tree.
 
 ### Build
 
-`make all`
+You need to install **libgccjit** compile from source.
 
-## Examples
+`make`
+
+# Examples
+
+## GCC JIT:
+### Multipilcation Table
+```C
+define void table(a){
+i=1;
+while(i<=a){
+	j=1;
+	while(j<=i){
+		printf("%.0lf * %.0lf = %.0lf\t",j,i,i*j);
+		j=j+1;
+	}
+	printf("\n");
+	i=i+1;
+	}
+}
+table(9);
+```
+
+### Function Calls and Return
+```C
+define plus(a,b){
+    return a+b;
+}
+printf("%.0lf + %.0lf = %.0lf\n",1,2,plus(1,2));
+```
+
+## old AST walker:
 
 ### 1. Fibonacci
 
@@ -66,12 +96,9 @@ Fibonacci[10]: 55
 |---------------|----------|-----------|
 |malloc()       |malloc.h  |25.202s    |
 |mem_malloc()   |mem_pool.h|22.152s    |
+|JIT compiled   |-         |16.975s    |
 
-#### Memory leak:
-
-![valgrind](./doc/valgrind.png)
-
-### 2. Multipilcation
+### 2. Multipilcation Table
 
 ```C
 define table(n){

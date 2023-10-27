@@ -67,22 +67,23 @@ enter_scope ()
 void
 exit_scope ()
 {
-  if (identifiers->level == level
-      && level == LOCAL) // exit a function decleration
+  if (level == LOCAL)
     {
-      if (identifiers->previous->level == 3)
+      if (identifiers->level == PARAM)
+	identifiers = identifiers->previous;
+      else if (identifiers->level == LOCAL)
 	{
-	  identifiers = identifiers->previous->previous;
+	  if (identifiers->previous->level < PARAM)
+	    identifiers = identifiers->previous;
+	  else
+	    identifiers = identifiers->previous->previous;
 	}
-      else
-	{
-	  identifiers = identifiers->previous;
-	}
-      level = PARAM;
+      level--;
     }
-  else if (identifiers->level == level)
+  else
     {
-      identifiers = identifiers->previous;
+      if (identifiers->level == level)
+	identifiers = identifiers->previous;
     }
   --level;
   printf ("current level: %d\n", level);
@@ -127,7 +128,7 @@ putsym (char *name, table_t **tpp, int level)
       tp = *tpp = new_table (tp, level);
     }
   p = mem_malloc (POOL, sizeof (symbol_t));
-  p->name = strdup (name);
+  p->name = my_strdup (name);
   p->scope = level;
   p->type.op = 0;
   p->value = mem_malloc (POOL, sizeof (value_t));
@@ -146,7 +147,7 @@ getsym (char *name, table_t *tp)
 	{
 	  if (strcmp (p->name, name) == 0)
 	    {
-	      printf ("found %s in %d (%p)\n", name, tp->level, &p);
+	      printf ("found %s in %d (%p)\n", name, tp->level, p);
 	      return p;
 	    }
 	}
@@ -244,7 +245,7 @@ install_parameter (var_list_t *list)
       p = putsym (list->variables[i]->name, &identifiers, PARAM);
       p->type.op = list->variables[i]->type.op;
       p->value = list->variables[i]->value;
-      // FIX copy all attributes
+      p->src = list->variables[i]->src;
     }
 }
 

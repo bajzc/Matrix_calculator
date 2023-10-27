@@ -6,4 +6,6 @@ int
 print_ast_avg (char *format, ast_node_t *print_avg);
 int
 print_special_char (char op);
+char *
+conver_format (const char *src);
 #endif

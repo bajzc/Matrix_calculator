@@ -1,6 +1,7 @@
 #ifndef TYPES_H
 #define TYPES_H
 #include "config.h"
+#include "libgccjit.h"
 #include "mystring.h"
 
 typedef struct ast_node_s ast_node_t;
@@ -39,9 +40,15 @@ struct value_s
   union
   {
     double num;
-    func_t *fun; // return value
+    func_t *fun;
     matrix_t *matrix;
   };
+  union
+  {
+    gcc_jit_lvalue *lval;
+    gcc_jit_function *fun;
+    gcc_jit_rvalue* rval;
+  } jit;
 };
 
 struct symbol_s
@@ -51,6 +58,7 @@ struct symbol_s
   int scope;
   coord_t src;
   value_t *value;
+
   struct symbol_s *next, *prev;
 };
 
@@ -105,11 +113,18 @@ struct ast_node_s
     {
       ast_node_t *condition;
       ast_node_t *statements;
-    } whilestmt, ifstmt;
+    } whilestmt;
+    struct
+    {
+      ast_node_t *condition;
+      ast_node_t *if_body;
+      ast_node_t *else_body;
+    } ifstmt;
     struct
     {
       symbol_t *body;
       actuals_list_t *argv;
+      value_t *ret;
     } funCall;
     struct
     {
@@ -120,7 +135,13 @@ struct ast_node_s
       char *format;
       ast_node_t *print_avg;
     } printf;
+    struct
+    {
+      ast_node_t *ret_exp;
+    } return_exp;
   } data;
+
+  gcc_jit_rvalue *jit_literal;
 };
 
 #endif

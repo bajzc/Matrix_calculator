@@ -1,6 +1,5 @@
 #ifndef SRC_AST_H
 #define SRC_AST_H
-#include "config.h"
 #include "syms.h"
 #include "stdbool.h"
 #include "types.h"
@@ -21,6 +20,9 @@ enum node_type
   postfix_t,	  // 518
   funcDecl_t,	  // 519
   funCall_t,	  // 520
+  return_exp_t,	  // 521 expression
+  return_val_t,	  // 522 value
+  if_stmt_t,	  // 523
 };
 
 ast_node_t *
@@ -63,4 +65,12 @@ ast_node_t *
 make_function_decl_void (char *name, var_list_t *argv, ast_node_t *stmt);
 ast_node_t *
 make_function_call (char *name, actuals_list_t *list);
+ast_node_t *
+make_return (ast_node_t *ret_exp);
+value_t *
+ast_exec_funCall (ast_node_t *root);
+ast_node_t *
+make_return_exp (ast_node_t *funCall);
+ast_node_t *
+make_if (ast_node_t *condition, ast_node_t *if_body, ast_node_t *else_body);
 #endif

@@ -2,6 +2,8 @@
 #include <assert.h>
 #include <stddef.h>
 #include <stdlib.h>
+extern mem_pool_t *DEFAULT_POOL;
+
 
 mem_pool_t *
 mem_create_pool (size_t size)
@@ -35,16 +37,17 @@ mem_destroy_pool (mem_pool_t *pool)
 	  free (large->alloc);
 	}
     }
-
-  mem_node_t *cur, *next;
-  cur = pool->head->next;
-  while (cur)
+  if (!pool)
     {
-      next = cur->next;
-      free (cur);
-      cur = next;
+      mem_node_t *cur, *next;
+      cur = pool->head->next;
+      while (cur)
+	{
+	  next = cur->next;
+	  free (cur);
+	  cur = next;
+	}
     }
-
   free (pool);
 }
 
@@ -199,4 +202,16 @@ mem_free (mem_pool_t *pool, void *p)
 	  return;
 	}
     }
+}
+
+void *
+mem_yy_malloc (size_t size)
+{
+  return mem_malloc (DEFAULT_POOL, size);
+}
+
+void
+mem_yy_free (void *p)
+{
+  return mem_free (DEFAULT_POOL, p);
 }

@@ -8,9 +8,14 @@
 #include <float.h>
 #include <stdbool.h>
 #include <stddef.h>
+#include <stdlib.h>
+#include <string.h>
 #include "mem_pool.h"
 extern mem_pool_t *POOL;
 extern int level;
+
+static int GLOBAL_RETURN_FLAG = 0; // change when a return occur
+static value_t GLOBAL_RETURN_VAL;
 
 double
 ast_exec_op (double left, char op, double right)
@@ -57,8 +62,13 @@ ast_exec_exp (ast_node_t *root)
 {
   ast_node_t *left = root->data.expression.left;
   ast_node_t *right = root->data.expression.right;
-  double lval, rval; // value of left and right node
+  double lval = 0, rval = 0; // value of left and right node
   int op = root->data.expression.op;
+  if (root->type == return_val_t)
+    {
+      ast_exec_funCall (root);
+      return GLOBAL_RETURN_VAL.num;
+    }
   if (root->type == postfix_t)
     {
       return ast_exec_postfix (root);
@@ -189,41 +199,41 @@ ast_exec_printf (ast_node_t *root)
 value_t *
 ast_exec_funCall (ast_node_t *root)
 {
-  // func_t *func_body = root->data.funCall.body->value->fun;
-  // ast_node_t **stmt_arr = func_body->body->data.statements.stmt_arr;
-  // ast_node_t *argv = root->data.funCall.argv;
-  // value_t *RetVal = NULL;
-  // assert (argv->size + 1 == func_body->argc);
-  // for (int i = 0; i < func_body->argc; i++)
-  //   {
-  //     assert (func_body->argv[i]->type.op == argv->variables[i]->type.op);
-  //     func_body->argv[i]->value = argv->variables[i]->value;
-  //   }
-  // for (int i = 0; i <= func_body->body->data.statements.count; i++)
-  //   {
-  //     ast_exec (stmt_arr[i]);
-  //   }
-
-  // return RetVal;
   func_t *func_body = root->data.funCall.body->value->fun;
   ast_node_t **stmt_arr = func_body->body->data.statements.stmt_arr;
-  actuals_list_t *argv = root->data.funCall.argv;
-  value_t argv_val[argv->count + 1];
-  // TODO only support double
-  for (unsigned i = 0; i <= argv->count; i++)
+  if (root->data.funCall.argv != NULL) // no argument
     {
-      argv_val[i].num = ast_exec_exp (argv->actuals[i]);
-    }
-  for (unsigned i = 0; i < func_body->argc; i++)
-    {
-      assert (func_body->argv[i]->value);
-      func_body->argv[i]->value->num = argv_val[i].num;
+      actuals_list_t *argv = root->data.funCall.argv;
+      value_t argv_val[argv->count + 1];
+      // TODO only support double
+      for (unsigned i = 0; i <= argv->count; i++)
+	{
+	  argv_val[i].num = ast_exec_exp (argv->actuals[i]);
+	}
+      for (unsigned i = 0; i < func_body->argc; i++)
+	{
+	  assert (func_body->argv[i]->value);
+	  func_body->argv[i]->value->num = argv_val[i].num;
+	}
     }
   for (size_t i = 0; i <= func_body->body->data.statements.count; i++)
     {
       ast_exec (stmt_arr[i]);
+      if (GLOBAL_RETURN_FLAG == 1)
+	{
+	  GLOBAL_RETURN_FLAG = 0;
+	  root->data.funCall.ret = mem_malloc (POOL, sizeof (ast_node_t));
+	  memcpy (root->data.funCall.ret, &GLOBAL_RETURN_VAL, sizeof (value_t));
+	  return &GLOBAL_RETURN_VAL;
+	}
     }
   return NULL;
+}
+void
+ast_exec_return (ast_node_t *root)
+{
+  GLOBAL_RETURN_VAL.num = ast_exec_exp (root->data.return_exp.ret_exp);
+  GLOBAL_RETURN_FLAG = 1;
 }
 
 int
@@ -251,11 +261,10 @@ ast_exec (ast_node_t *root)
       ast_exec_exp (root);
       break;
     case t_identifier:
-      printf ("%s = %lf\n", root->data.variable->name,
+      printf ("-->%s = %lf\n", root->data.variable->name,
 	      root->data.variable->value->num);
       break;
     case t_num:
-      assert (0);
       break;
     case postfix_t:
       ast_exec_postfix (root);
@@ -264,10 +273,16 @@ ast_exec (ast_node_t *root)
       ast_exec_printf (root);
       break;
     case funcDecl_t:
-      printf ("declared function \"%s\"\n", root->data.funDecl.body->name);
+      printf ("-->declared function \"%s\"\n", root->data.funDecl.body->name);
       break;
     case funCall_t:
       ast_exec_funCall (root);
+      break;
+    case return_exp_t:
+      ast_exec_return (root);
+      break;
+    case return_val_t:
+      printf ("-->return %lf\n", ast_exec_exp (root));
       break;
     default:
       printf ("type: %d\n", root->type);

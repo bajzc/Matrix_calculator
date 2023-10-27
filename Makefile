@@ -1,10 +1,27 @@
 CC = gcc
 SRC = ast-exec.c ast-tree.c lex.c main.c parser.c syms.c myprintf.c mem_pool.c
-DEBUG_SRC = main.c syms.c parser.c ast-exec.c ast-tree.c lex.c myprintf.c
+JIT_SRC = ast_jit.c
+OBJ = $(patsubst %.c,%.o,${SRC})
+JIT_OBJ = $(patsubst %.c,%.o,${JIT_SRC})
+all: CLI
+
+CLI:pre ${OBJ} ${JIT_OBJ}
+	${CC} -g -O0 -Wall ${OBJ} ${JIT_OBJ} -lgccjit -o $@
+
 pre:
-	bison -Wall -Wcounterexamples -d parser.y -o parser.c
+	gcc --version
 	flex -o lex.c lex.l
+	bison -Wall -Wcounterexamples -d parser.y -o parser.c
 
-all: pre
-	$(CC) -O0 -g3 -Wall -lm $(SRC)
 
+${OBJ}:%.o:%.c
+	${CC} -c -g $<
+
+${JIT_OBJ}:%.o:%.c
+	${CC} -c -g $< -lgccjit
+
+clean:
+	rm *.o
+	rm CLI
+
+.PHONY: pre clean
