@@ -1,12 +1,11 @@
-#include "ast.h"
 #include "ast_jit.h"
+#include "ast.h"
+#include "mem_pool.h"
+#include "myprintf.h"
 #include "parser.h"
 #include "types.h"
-#include "mem_pool.h"
-#include "parser.h"
-#include "myprintf.h"
-#include <libgccjit.h>
 #include <assert.h>
+#include <libgccjit.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -119,10 +118,9 @@ compare_trans (gcc_jit_rvalue *l, gcc_jit_rvalue *r, int op)
 gcc_jit_rvalue *
 get_rvalue (ast_node_t *root, gcc_jit_function *func, gcc_jit_block *block)
 {
-  gcc_jit_rvalue *ret = NULL;
   int op;
   ast_node_t *left, *right;
-  gcc_jit_rvalue *l, *r;
+  gcc_jit_rvalue *l = NULL, *r = NULL;
 
   switch (root->type)
     {
@@ -334,8 +332,8 @@ function_call_trans (ast_node_t *root, gcc_jit_function *parent_func,
 	      return;
 	    }
 	}
-  if(root->data.funCall.ret==NULL)
-    root->data.funCall.ret=mem_malloc(POOL, sizeof(value_t));
+      if (root->data.funCall.ret == NULL)
+	root->data.funCall.ret = mem_malloc (POOL, sizeof (value_t));
       root->data.funCall.ret->jit.rval
 	= gcc_jit_context_new_call (ctxt, NULL, func, ast_func->argc, args);
       gcc_jit_block_add_eval (parent_block, NULL,
@@ -390,7 +388,6 @@ function_decl_trans (ast_node_t *root)
   gcc_jit_block *b_entry = gcc_jit_function_new_block (func, "entry");
 
   ast_trans (func_body->body, func, &b_entry);
-  // TODO return exp
   if (root->data.funDecl.body->value->fun->ret.op == -1) // void foo()
     gcc_jit_block_end_with_void_return (b_entry, NULL);
   else if (root->data.funDecl.body->value->fun->ret.op == t_num) // double foo()
@@ -459,8 +456,8 @@ printf_trans (ast_node_t *root, gcc_jit_function *func, gcc_jit_block *block)
 
 void
 ast_trans (ast_node_t *root, gcc_jit_function *func,
-	   gcc_jit_block *
-	     *block) // add new statements to "main" or creating new function
+	   gcc_jit_block **block) // add new statements to "main" or
+				  // creating new function
 {
   if (!root)
     return;

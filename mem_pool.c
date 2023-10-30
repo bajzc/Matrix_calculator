@@ -4,7 +4,6 @@
 #include <stdlib.h>
 extern mem_pool_t *DEFAULT_POOL;
 
-
 mem_pool_t *
 mem_create_pool (size_t size)
 {
@@ -37,16 +36,15 @@ mem_destroy_pool (mem_pool_t *pool)
 	  free (large->alloc);
 	}
     }
-  if (!pool)
+
+  mem_node_t *cur, *next;
+  cur = pool->head->next;
+
+  while (cur)
     {
-      mem_node_t *cur, *next;
-      cur = pool->head->next;
-      while (cur)
-	{
-	  next = cur->next;
-	  free (cur);
-	  cur = next;
-	}
+      next = cur->next;
+      free (cur);
+      cur = next;
     }
   free (pool);
 }

@@ -1,13 +1,13 @@
 #include "ast.h"
 #include "ast_jit.h"
+#include "mem_pool.h"
 #include "parser.h"
 #include "syms.h"
 #include "types.h"
-#include "mem_pool.h"
-#include "libgccjit.h"
+#include <assert.h>
+#include <libgccjit.h>
 #include <stdbool.h>
 #include <string.h>
-#include <assert.h>
 
 extern mem_pool_t *POOL;
 extern int level;
@@ -41,8 +41,9 @@ make_var (double num)
   ast_node_t *node = mem_malloc (POOL, sizeof (ast_node_t));
   node->type = t_num;
   node->data.value = num;
-
+#ifdef DENABLE_JIT
   node->jit_literal = jit_make_literal (&num, GCC_JIT_TYPE_DOUBLE);
+#endif
   return node;
 }
 
@@ -162,8 +163,10 @@ make_string (struct str_s *string)
   node->type = t_string;
   node->data.string = string;
 
+#ifdef ENABLE_JIT
   node->jit_literal
     = jit_make_literal (string->data, GCC_JIT_TYPE_CONST_CHAR_PTR);
+#endif
   return node;
 }
 

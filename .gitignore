@@ -61,5 +61,3 @@ parser.h
 .clangd
 
 compile_flags.txt
-fibonacci*
-mlp_table*

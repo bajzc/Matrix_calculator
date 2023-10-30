@@ -6,9 +6,9 @@ The implement by using AST tree.
 
 | Feature                      | Example                               |
 |------------------------------|---------------------------------------|
-| Arithmetic operators        | + - * / % ^                           |
-| Comparison operators        | < <= == >= >                          |
-| Postfix operators           | ++ --                                 |
+| Arithmetic operators         | + - * / % ^                           |
+| Comparison operators         | < <= == >= >                          |
+| Postfix operators            | ++ --                                 |
 | No declaration for variables | a=1;                                  |
 | Multi-scope symbol table     | \                                     |
 | Functions declaration        | define next(n){ printf("%d",n+1); }   |
@@ -16,9 +16,14 @@ The implement by using AST tree.
 
 ### Build
 
-You need to install **libgccjit** compile from source.
+You need to install **libgccjit** for JIT compiler.
 
-`make`
+`make jit`
+
+**Flex** and **Bison** for both targets
+
+`make ast`
+
 
 # Examples
 
@@ -40,6 +45,8 @@ while(i<=a){
 table(9);
 ```
 
+![mlp_table](./doc/mlp_table.png)
+
 ### Function Calls and Return
 ```C
 define plus(a,b){
@@ -48,7 +55,7 @@ define plus(a,b){
 printf("%.0lf + %.0lf = %.0lf\n",1,2,plus(1,2));
 ```
 
-## old AST walker:
+## AST walker:
 
 ### 1. Fibonacci
 
@@ -92,6 +99,8 @@ Fibonacci[10]: 55
 
 ```
 
+![valgrind](./doc/valgrind.png)
+
 |malloc function| file     |time taken |
 |---------------|----------|-----------|
 |malloc()       |malloc.h  |25.202s    |
@@ -116,21 +125,8 @@ define table(n){
 table(8);
 ```
 
-output:
-```
-1 x 1 = 1
-1 x 2 = 2       2 x 2 = 4
-1 x 3 = 3       2 x 3 = 6       3 x 3 = 9
-1 x 4 = 4       2 x 4 = 8       3 x 4 = 12      4 x 4 = 16
-1 x 5 = 5       2 x 5 = 10      3 x 5 = 15      4 x 5 = 20      5 x 5 = 25
-1 x 6 = 6       2 x 6 = 12      3 x 6 = 18      4 x 6 = 24      5 x 6 = 30      6 x 6 = 36
-1 x 7 = 7       2 x 7 = 14      3 x 7 = 21      4 x 7 = 28      5 x 7 = 35      6 x 7 = 42      7 x 7 = 49
-1 x 8 = 8       2 x 8 = 16      3 x 8 = 24      4 x 8 = 32      5 x 8 = 40      6 x 8 = 48      7 x 8 = 56      8 x 8 = 64
-./a.out  0.00s user 0.00s system 88% cpu 0.001 total
-```
-
 ### TODO
 
 - [x] Function declaration
 - [x] Memory pool
-- [ ] GCC JIT
+- [x] GCC JIT

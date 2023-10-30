@@ -7,9 +7,10 @@
 extern mem_pool_t *POOL;
 void yyerror (char const *s);
 long line_count=0;
-//%option noyyalloc noyyfree noyyrealloc
 %}
 
+%option noyyalloc noyyfree noyyrealloc
+%option nounput noinput
 NUM         ([0-9]+\.?[0-9]*)
 IDENTIFIER  ([a-zA-Z_][0-9a-zA-Z_]*)
 OPERATOR    [+*/%=^(),;<>[\]-]
@@ -66,16 +67,16 @@ void yyerror (char const *s)
   fprintf (stderr, "%s\n", s);
 }
 
-// void yyfree(void* p){
-//   mem_yy_free(p);
-// }
+void yyfree(void* p){
+  mem_yy_free(p);
+}
 
-// void* yyalloc(size_t size){
-//   return mem_yy_malloc(size);
-// }
+void* yyalloc(size_t size){
+  return mem_yy_malloc(size);
+}
 
-// void* yyrealloc(void* p, size_t size){
-//   void *p_new = mem_yy_malloc(size);
-//   memcpy(p_new,p,size); //TODO unsafe
-//   return p_new;
-// }
+void* yyrealloc(void* p, size_t size){
+  void *p_new = mem_yy_malloc(size);
+  memcpy(p_new,p,size); //TODO unsafe
+  return p_new;
+}

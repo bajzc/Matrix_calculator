@@ -1,7 +1,7 @@
 #ifndef TYPES_H
 #define TYPES_H
 #include "config.h"
-#include "libgccjit.h"
+#include <libgccjit.h>
 #include "mystring.h"
 
 typedef struct ast_node_s ast_node_t;
