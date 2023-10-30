@@ -23,5 +23,5 @@
 ### TODO:
 - [ ] Optimize the process from exp -> matrix
 - [ ] More functions:exp ln sin cos tan (diff integral)?
-- [ ] A new Turing completeness language
-- [ ] Link with GCC JIT
+- [x] A new Turing-complete language
+- [x] Link with GCC JIT
