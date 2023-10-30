@@ -5,9 +5,9 @@ A brief introduction to this repository:
 | Branch                                                                       | Description                                                                                                                                                                       |
 |------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | [GUI](https://github.com/bajzc/Matrix_calculator/tree/GUI)                   | A user-friendly GUI matrix calculator, which is based on Qt framework and has capability to calculate expression. It supports six basic matrix operations                         |
-| [demo](https://github.com/bajzc/Matrix_calculator/tree/demo)                 | A command line version using regular expressions based on finite state ideas, and also includes the development of a matrix library (LU decomposition)                            |
+| [demo](https://github.com/bajzc/Matrix_calculator/tree/demo)                 | A command line version using regular expressions based on finite state ideas, and also includes the development of a matrix library (LU decomposition and optimized matrix multiplication)                            |
 | [main](https://github.com/bajzc/Matrix_calculator/tree/main)                 | An interpreter has a similar syntax to MATLAB in terms of matrix creation and operation, it is highly efficient while supporting rich features (autocomplete, GNU-style argument) |
-| [dev/AST-test](https://github.com/bajzc/Matrix_calculator/tree/dev/AST-test) | This branch is still in development. So far, the AST builder and walker have been completed, which means it can be linked with GCC JIT to generate executable files.              |
+| [dev/AST-test](https://github.com/bajzc/Matrix_calculator/tree/dev/AST-test) | This branch is still in development. So far, the AST builder, walker and GCC JIT interface have been completed, and will finally be merged with **main**              |
 
 ## Showcase
 
