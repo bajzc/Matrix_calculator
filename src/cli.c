@@ -30,13 +30,15 @@ print_help_msg (void)
   printf ("%-40s\n", "Find the inverse of matrix");
   printf ("%-40s", "det(matrix)");
   printf ("%-40s\n", "The determinant of matrix");
-  printf ("\nThe developing document is in doc/MatCal.pdf\n\n");
+  printf ("%-40s", "matrix\'");
+  printf ("%-40s\n", "The transpose of matrix");
+  printf ("\nThe document is at doc/MatCal.pdf\n");
 }
 void
 print_ver_msg (void)
 {
   printf ("%.80s\n", PACKAGE_STRING);
-  printf ("Copyright (C) 2023 Li Zecheng.\n");
+  printf ("Copyright (C) 2024 Li Zecheng.\n");
   printf (
     "This program is free software: you can redistribute it and/or modify it "
     "under \n"

@@ -3,14 +3,14 @@
 
 
 AC_PREREQ([2.70])
-AC_INIT([Matrix Calculator], [dev/lex-bison-0.2], [lzecheng98@gmail.com])
+AC_INIT([Matrix Calculator], [dev-0.3], [lzecheng98@gmail.com])
 AM_INIT_AUTOMAKE([-Wno-portability foreign])
 
 AC_CONFIG_SRCDIR([src/lex.l])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_FILES([Makefile
 		 src/Makefile])
-PKG_PROG_PKG_CONFIG([0.2])
+PKG_PROG_PKG_CONFIG([0.3])
 
 # Checks for programs.
 AC_PROG_CC([gcc clang])
