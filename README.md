@@ -16,7 +16,9 @@ The implement by using AST tree.
 
 ### Build
 
-You need to install **libgccjit** for JIT compiler.
+You need to install **libgccjit** for compile JIT version.
+
+**libgccjit** comes within **gcc** and the API is not yet stable, so only the current stable version (13.x) is tested
 
 `make jit`
 
@@ -24,6 +26,9 @@ You need to install **libgccjit** for JIT compiler.
 
 `make ast`
 
+### How to use
+
+There will be no prompt for input, and you will need to use EOF (usually Ctrl-D) to end the program.
 
 # Examples
 
