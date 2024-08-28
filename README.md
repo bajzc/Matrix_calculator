@@ -122,7 +122,7 @@ define table(n){
         i++;
     }
 }
-table(8);
+table(9);
 ```
 
 ### TODO

@@ -32,8 +32,8 @@ ${JIT_OBJ}:%.o:%.c
 	${CC} -c ${CFLAGS} $< ${CLIBS}
 
 clean:
-	- rm *.o 2> /dev/null || true
-	- rm CLI 2> /dev/null || true
-	- rm *.out 2> /dev/null || true
+	- rm -f *.o
+	- rm -f CLI
+	- rm -f *.out
 
 .PHONY: pre clean jit_flags ast_flags

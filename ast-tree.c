@@ -1,13 +1,15 @@
 #include "ast.h"
-#include "ast_jit.h"
 #include "mem_pool.h"
 #include "parser.h"
 #include "syms.h"
 #include "types.h"
 #include <assert.h>
-#include <libgccjit.h>
 #include <stdbool.h>
 #include <string.h>
+#ifdef ENABLE_JIT
+#include <libgccjit.h>
+#include "ast_jit.h"
+#endif
 
 extern mem_pool_t *POOL;
 extern int level;

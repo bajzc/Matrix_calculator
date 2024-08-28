@@ -1,7 +1,9 @@
 #ifndef TYPES_H
 #define TYPES_H
 #include "config.h"
+#ifdef ENABLE_JIT
 #include <libgccjit.h>
+#endif
 #include "mystring.h"
 
 typedef struct ast_node_s ast_node_t;
@@ -43,12 +45,14 @@ struct value_s
     func_t *fun;
     matrix_t *matrix;
   };
+#ifdef ENABLE_JIT
   union
   {
     gcc_jit_lvalue *lval;
     gcc_jit_function *fun;
     gcc_jit_rvalue* rval;
   } jit;
+#endif
 };
 
 struct symbol_s
@@ -141,7 +145,9 @@ struct ast_node_s
     } return_exp;
   } data;
 
+#ifdef ENABLE_JIT
   gcc_jit_rvalue *jit_literal;
+#endif
 };
 
 #endif

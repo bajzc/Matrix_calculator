@@ -1,5 +1,7 @@
 #include "ast.h"
+#ifdef ENABLE_JIT
 #include "ast_jit.h"
+#endif
 #include "mem_pool.h"
 #include "parser.h"
 #include "syms.h"
